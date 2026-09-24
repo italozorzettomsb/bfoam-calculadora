@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Bfoam — Calculadora de Custo</title>
 
@@ -16,7 +12,7 @@
 
 :root{
   --bg:#f4f7fb;
-  --card:#ffffff;
+  --card:#fff;
   --ink:#172033;
   --muted:#667085;
   --line:#dfe5ee;
@@ -24,25 +20,24 @@
   --primary2:#0d4678;
   --green:#16794a;
   --red:#b42318;
-  --orange:#9a6700;
-  --soft:#eef6ff;
+  --yellow:#9a6700
 }
 
 *{
-  box-sizing:border-box;
+  box-sizing:border-box
 }
 
 body{
   margin:0;
   background:var(--bg);
   font-family:Inter,Segoe UI,Arial,sans-serif;
-  color:var(--ink);
+  color:var(--ink)
 }
 
 header{
   background:linear-gradient(135deg,#0d4678,#1976b9);
   color:#fff;
-  padding:20px 28px;
+  padding:20px 28px
 }
 
 .header-inner{
@@ -51,18 +46,22 @@ header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:18px;
+  gap:18px
 }
 
 .brand h1{
   margin:0;
-  font-size:25px;
+  font-size:25px
 }
 
 .brand p{
   margin:5px 0 0;
   opacity:.84;
-  font-size:13px;
+  font-size:13px
+}
+
+button{
+  font:inherit
 }
 
 .load-btn{
@@ -72,13 +71,13 @@ header{
   border-radius:10px;
   padding:10px 14px;
   cursor:pointer;
-  font-weight:700;
+  font-weight:700
 }
 
 .container{
   max-width:1180px;
   margin:24px auto;
-  padding:0 18px;
+  padding:0 18px
 }
 
 .card{
@@ -87,53 +86,48 @@ header{
   border-radius:15px;
   padding:20px;
   margin-bottom:18px;
-  box-shadow:0 5px 18px rgba(25,45,75,.05);
+  box-shadow:0 5px 18px rgba(25,45,75,.05)
 }
 
 h2{
   font-size:17px;
-  margin:0 0 15px;
-}
-
-h3{
-  font-size:14px;
-  margin:0 0 12px;
+  margin:0 0 15px
 }
 
 .grid2{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
+  gap:14px
 }
 
 .grid3{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;
+  gap:14px
 }
 
 .kpi{
   border:1px solid var(--line);
   border-radius:12px;
   padding:14px;
-  background:#fff;
+  background:#fff
 }
 
 .kpi .l{
   font-size:11px;
   color:var(--muted);
-  text-transform:uppercase;
+  text-transform:uppercase
 }
 
 .kpi .v{
   font-size:23px;
   font-weight:850;
-  margin-top:5px;
+  margin-top:5px
 }
 
 .mode-buttons{
   display:flex;
-  gap:10px;
+  gap:10px
 }
 
 .mode-btn{
@@ -144,34 +138,34 @@ h3{
   background:#f7f9fc;
   color:#344054;
   font-weight:700;
-  cursor:pointer;
+  cursor:pointer
 }
 
 .mode-btn.active{
   background:var(--primary);
   color:#fff;
-  border-color:var(--primary);
+  border-color:var(--primary)
 }
 
 .slider-card{
   border:1px solid var(--line);
   border-radius:12px;
-  padding:14px;
+  padding:14px
 }
 
 .slider-top{
   display:flex;
-  justify-content:space-between;
+  justify-content:space-between
 }
 
 .slider-value{
   font-weight:800;
-  color:var(--primary);
+  color:var(--primary)
 }
 
 input[type=range]{
   width:100%;
-  accent-color:var(--primary);
+  accent-color:var(--primary)
 }
 
 label{
@@ -179,21 +173,20 @@ label{
   font-weight:700;
   color:var(--muted);
   display:block;
-  margin-bottom:6px;
+  margin-bottom:6px
 }
 
-input[type=number],
-select{
+input[type=number]{
   width:100%;
   padding:10px;
   border:1px solid var(--line);
   border-radius:9px;
-  background:#fff;
+  background:#fff
 }
 
 .small{
   font-size:11px;
-  color:var(--muted);
+  color:var(--muted)
 }
 
 .status{
@@ -201,45 +194,44 @@ select{
   padding:8px 10px;
   border-radius:8px;
   background:#fff7df;
-  color:var(--orange);
-  display:inline-block;
+  color:var(--yellow);
+  display:inline-block
 }
 
 .status.ok{
   background:#e9f8f0;
-  color:var(--green);
+  color:var(--green)
 }
 
 .result{
   background:linear-gradient(135deg,#eef7ff,#f8fbff);
   border:1px solid #cfe5fa;
   border-radius:13px;
-  padding:18px;
+  padding:18px
 }
 
 .result .value{
-  font-size:31px;
+  font-size:28px;
   font-weight:900;
-  color:var(--primary2);
+  color:var(--primary2)
 }
 
 table{
   width:100%;
   border-collapse:collapse;
-  font-size:13px;
+  font-size:13px
 }
 
-th,
-td{
+th,td{
   padding:9px;
   border-bottom:1px solid var(--line);
-  text-align:left;
+  text-align:left
 }
 
 th{
   color:var(--muted);
   font-size:11px;
-  text-transform:uppercase;
+  text-transform:uppercase
 }
 
 .badge{
@@ -248,27 +240,27 @@ th{
   padding:5px 9px;
   font-size:11px;
   font-weight:800;
-  margin:3px 3px 0 0;
+  margin:3px 3px 0 0
 }
 
 .badge-green{
   background:#e9f8f0;
-  color:var(--green);
+  color:var(--green)
 }
 
 .badge-red{
   background:#fdecec;
-  color:var(--red);
+  color:var(--red)
 }
 
-.badge-orange{
-  background:#fff4d6;
-  color:var(--orange);
+.badge-yellow{
+  background:#fff7df;
+  color:var(--yellow)
 }
 
 .toggle{
   display:flex;
-  gap:8px;
+  gap:8px
 }
 
 .toggle button{
@@ -278,17 +270,17 @@ th{
   border-radius:9px;
   background:#fff;
   cursor:pointer;
-  font-weight:700;
+  font-weight:700
 }
 
 .toggle button.active{
   background:var(--primary);
   color:#fff;
-  border-color:var(--primary);
+  border-color:var(--primary)
 }
 
 .hidden{
-  display:none!important;
+  display:none!important
 }
 
 .modal{
@@ -299,14 +291,14 @@ th{
   align-items:center;
   justify-content:center;
   padding:20px;
-  z-index:10;
+  z-index:10
 }
 
 .modal-box{
   background:#fff;
   width:min(400px,100%);
   border-radius:15px;
-  padding:24px;
+  padding:24px
 }
 
 .password{
@@ -314,13 +306,13 @@ th{
   padding:12px;
   border:1px solid var(--line);
   border-radius:9px;
-  margin:10px 0;
+  margin:10px 0
 }
 
 .actions{
   display:flex;
   justify-content:flex-end;
-  gap:8px;
+  gap:8px
 }
 
 .btn{
@@ -328,17 +320,17 @@ th{
   border:0;
   border-radius:9px;
   cursor:pointer;
-  font-weight:700;
+  font-weight:700
 }
 
 .primary{
   background:var(--primary);
-  color:#fff;
+  color:#fff
 }
 
 .secondary{
   background:#eef2f7;
-  color:#344054;
+  color:#344054
 }
 
 canvas{
@@ -346,42 +338,30 @@ canvas{
   height:260px;
   border:1px solid var(--line);
   border-radius:10px;
-  background:#fff;
-}
-
-.notice{
-  margin-top:10px;
-  padding:10px 12px;
-  border-radius:9px;
-  background:#f8fafc;
-  border:1px solid var(--line);
-  font-size:12px;
+  background:#fff
 }
 
 @media(max-width:760px){
 
   .grid2,
   .grid3{
-    grid-template-columns:1fr;
+    grid-template-columns:1fr
   }
 
   .mode-buttons{
-    flex-direction:column;
+    flex-direction:column
   }
 
   .header-inner{
-    align-items:flex-start;
+    align-items:flex-start
   }
 
 }
 
 </style>
-
 </head>
 
-
 <body>
-
 
 <header>
 
@@ -389,22 +369,17 @@ canvas{
 
 <div class="brand">
 
-<h1>
-Bfoam — Calculadora de Custo
-</h1>
+<h1>Bfoam — Calculadora de Custo</h1>
 
 <p>
-A planilha é a fonte de dados. O aplicativo trata volumes e alternativas.
+A planilha é a fonte de dados. O aplicativo trata volume,
+alternativas e regras de decisão.
 </p>
 
 </div>
 
-<button
-class="load-btn"
-id="loadBtn">
-
+<button class="load-btn" id="loadBtn">
 ⬆ Carregar planilha
-
 </button>
 
 </div>
@@ -415,58 +390,39 @@ id="loadBtn">
 <div class="container">
 
 
-<!-- FONTE -->
+<!-- FONTE DE DADOS -->
 
 <div class="card">
 
-<h2>
-Fonte de dados
-</h2>
+<h2>Fonte de dados</h2>
 
-<span
-id="status"
-class="status">
-
+<span id="status" class="status">
 Nenhuma planilha carregada
-
 </span>
 
-<div
-class="small"
-style="margin-top:8px">
+<div class="small" style="margin-top:8px">
 
-O aplicativo lê exclusivamente a última aba da planilha.
-Ela deve se chamar <b>APP_DATA</b>.
-
-<br>
+O aplicativo lê exclusivamente a última aba,
+que deve se chamar <b>APP_DATA</b>.
 
 A aba MATERIAIS não é obrigatória para o cálculo,
-pois os custos utilizados já estão nas abas de processo.
+pois os custos utilizados devem estar nas respectivas abas de processo.
 
 </div>
 
-<div
-id="dataCheck"
-style="margin-top:10px">
-
-</div>
+<div id="dataCheck" style="margin-top:10px"></div>
 
 </div>
 
 
-<div
-id="appArea"
-class="hidden">
+<div id="appArea" class="hidden">
 
 
 <!-- EVOLUÇÃO -->
 
 <div class="card">
 
-<h2>
-Evolução do volume de produção
-</h2>
-
+<h2>Evolução do volume de produção</h2>
 
 <div class="mode-buttons">
 
@@ -477,7 +433,6 @@ class="mode-btn active">
 Evolução trimestral — 1º ano
 
 </button>
-
 
 <button
 id="annualBtn"
@@ -513,7 +468,6 @@ Bfoam
 id="quarterlyPanel"
 class="grid3"
 style="margin-top:15px">
-
 </div>
 
 
@@ -521,7 +475,6 @@ style="margin-top:15px">
 id="annualPanel"
 class="grid3 hidden"
 style="margin-top:15px">
-
 </div>
 
 </div>
@@ -531,10 +484,7 @@ style="margin-top:15px">
 
 <div class="card">
 
-<h2>
-Alternativas de processo
-</h2>
-
+<h2>Alternativas de processo</h2>
 
 <div class="grid3">
 
@@ -548,15 +498,12 @@ Filtro
 <div
 class="v"
 id="filterChoice">
-
 —
-
 </div>
 
 <div
 class="small"
 id="filterReason">
-
 </div>
 
 </div>
@@ -571,15 +518,12 @@ Aplicador
 <div
 class="v"
 id="appChoice">
-
 —
-
 </div>
 
 <div
 class="small"
 id="appReason">
-
 </div>
 
 </div>
@@ -594,15 +538,12 @@ União
 <div
 class="v"
 id="unionChoice">
-
 —
-
 </div>
 
 <div
 class="small"
 id="unionReason">
-
 </div>
 
 </div>
@@ -621,7 +562,6 @@ id="unionReason">
 Custos financeiros opcionais
 </h2>
 
-
 <div class="grid2">
 
 
@@ -631,23 +571,17 @@ Custos financeiros opcionais
 Aplicar taxas administrativas?
 </label>
 
-
 <div class="toggle">
 
 <button
 id="feeNo"
 class="active">
-
 Não
-
 </button>
-
 
 <button
 id="feeYes">
-
 Sim
-
 </button>
 
 </div>
@@ -661,19 +595,18 @@ Sim
 Taxa administrativa (%)
 </label>
 
-
 <input
 id="adminRate"
 type="number"
 min="0"
 step="0.01"
-value="0"
->
-
+value="0">
 
 <div class="small">
 
-Aplicada somente sobre o custo base.
+Pode ser preenchida aqui.
+Se posteriormente existir uma premissa financeira
+na APP_DATA, ela poderá alimentar este campo.
 
 </div>
 
@@ -690,7 +623,7 @@ Aplicada somente sobre o custo base.
 <div class="card">
 
 <h2>
-Custo estimado
+Custo
 </h2>
 
 
@@ -706,9 +639,7 @@ CUSTO POR UNIDADE
 <div
 class="value"
 id="mainCost">
-
 R$ 0,00
-
 </div>
 
 </div>
@@ -723,9 +654,7 @@ CUSTO POR CAIXA
 <div
 class="value"
 id="boxCost">
-
 R$ 0,00
-
 </div>
 
 <div class="small">
@@ -744,9 +673,7 @@ CUSTO POR EMBALAGEM PRIMÁRIA
 <div
 class="value"
 id="primaryCost">
-
 R$ 0,00
-
 </div>
 
 <div class="small">
@@ -767,15 +694,13 @@ style="margin-top:14px">
 <div class="kpi">
 
 <div class="l">
-Custo industrial
+Custo industrial/base
 </div>
 
 <div
 class="v"
 id="baseCost">
-
 R$ 0,00
-
 </div>
 
 </div>
@@ -790,9 +715,7 @@ Taxas administrativas
 <div
 class="v"
 id="feeCost">
-
 R$ 0,00
-
 </div>
 
 </div>
@@ -801,15 +724,13 @@ R$ 0,00
 <div class="kpi">
 
 <div class="l">
-Custo final
+Custo final considerado
 </div>
 
 <div
 class="v"
 id="finalCost">
-
 R$ 0,00
-
 </div>
 
 </div>
@@ -836,9 +757,7 @@ Cenário
 <div
 class="v"
 id="scenario">
-
 —
-
 </div>
 
 </div>
@@ -854,9 +773,7 @@ Trajetória
 class="v"
 id="trajectory"
 style="font-size:16px">
-
 —
-
 </div>
 
 </div>
@@ -865,15 +782,13 @@ style="font-size:16px">
 <div class="kpi">
 
 <div class="l">
-Volume em 5 anos
+Volume 5 anos
 </div>
 
 <div
 class="v"
 id="fiveYearVolume">
-
 0
-
 </div>
 
 <div class="small">
@@ -892,7 +807,6 @@ Bfoam
 id="chart"
 width="1100"
 height="260">
-
 </canvas>
 
 </div>
@@ -916,16 +830,14 @@ Volume
 </th>
 
 <th>
-Custo/unidade
+Custo/un
 </th>
 
 </tr>
 
 </thead>
 
-<tbody
-id="summary">
-
+<tbody id="summary">
 </tbody>
 
 </table>
@@ -942,7 +854,6 @@ id="summary">
 <h2>
 Composição do custo
 </h2>
-
 
 <div style="overflow:auto">
 
@@ -972,10 +883,7 @@ Total/Bfoam
 
 </thead>
 
-
-<tbody
-id="composition">
-
+<tbody id="composition">
 </tbody>
 
 </table>
@@ -990,12 +898,11 @@ id="composition">
 </div>
 
 
-<!-- MODAL -->
+<!-- MODAL SENHA -->
 
 <div
 class="modal hidden"
 id="modal">
-
 
 <div class="modal-box">
 
@@ -1007,40 +914,30 @@ Carregar planilha
 Digite a senha para carregar uma nova planilha.
 </p>
 
-
 <input
 id="password"
 class="password"
 type="password"
-placeholder="Senha"
->
-
+placeholder="Senha">
 
 <div
 id="passError"
 class="small"
 style="color:#b42318;min-height:18px">
-
 </div>
-
 
 <div class="actions">
 
 <button
 class="btn secondary"
 id="cancelBtn">
-
 Cancelar
-
 </button>
-
 
 <button
 class="btn primary"
 id="passBtn">
-
 Continuar
-
 </button>
 
 </div>
@@ -1054,24 +951,23 @@ Continuar
 type="file"
 id="fileInput"
 accept=".xlsx,.xls"
-class="hidden"
->
+class="hidden">
 
 
 <script>
 
 
 /* =========================================================
-   CONFIGURAÇÃO
+   CONFIGURAÇÕES
 ========================================================= */
 
 const APP_SHEET_NAME = "APP_DATA";
 
 const PASSWORD = "msb19";
 
-const STORAGE_DATA = "bfoam_app_data_v4";
+const STORAGE_DATA = "bfoamAppDataV3";
 
-const STORAGE_FILE = "bfoam_app_file_v4";
+const STORAGE_FILE = "bfoamAppFileV3";
 
 
 let dataRows = [];
@@ -1086,402 +982,530 @@ let feeEnabled = false;
 
 
 /* =========================================================
-   AUXILIARES
+   FUNÇÕES BÁSICAS
 ========================================================= */
 
-const $ = id =>
-  document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 
-function cleanText(value){
+function norm(v){
 
-  if(value === null || value === undefined)
-    return "";
-
-  return String(value)
-    .trim();
-
-}
-
-
-function validValue(value){
-
-  if(value === null || value === undefined)
-    return false;
-
-  const s =
-    String(value)
-      .trim()
-      .toUpperCase();
-
-  if(!s)
-    return false;
-
-  if(
-    s === "NA" ||
-    s === "N/A" ||
-    s === "A DEFINIR" ||
-    s === "SEM VALOR"
-  )
-    return false;
-
-  if(
-    s.includes("#REF!") ||
-    s.includes("#VALUE!") ||
-    s.includes("#DIV/0!") ||
-    s.includes("#N/A")
-  )
-    return false;
-
-  return true;
+  return String(v ?? "")
+    .trim()
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g,"_");
 
 }
 
 
-function num(value){
+function num(v){
 
-  if(
-    value === null ||
-    value === undefined ||
-    value === ""
-  )
+  if(typeof v === "number")
+    return Number.isFinite(v) ? v : 0;
+
+  if(v === null || v === undefined || v === "")
     return 0;
 
+  let s = String(v)
+    .trim()
+    .replace(/R\$\s*/gi,"")
+    .replace(/%/g,"")
+    .replace(/\s/g,"");
 
-  if(typeof value === "number"){
+  if(s.includes(",")){
 
-    return Number.isFinite(value)
-      ? value
-      : 0;
+    s = s
+      .replace(/\./g,"")
+      .replace(",", ".");
 
   }
 
+  else if(/^[-+]?\d{1,3}(\.\d{3})+$/.test(s)){
 
-  let s =
-    String(value)
-      .trim();
+    s = s.replace(/\./g,"");
+
+  }
+
+  const n = Number(s);
+
+  return Number.isFinite(n) ? n : 0;
+
+}
 
 
-  if(!s)
-    return 0;
+function hasNum(v){
 
+  if(typeof v === "number")
+    return Number.isFinite(v);
 
-  /*
-    Aceita:
-    0,33
-    0.33
-    1.560,27
-    1560.27
-  */
+  if(v === null || v === undefined)
+    return false;
+
+  const s = String(v).trim();
+
+  if(s === "")
+    return false;
 
   if(
-    s.includes(",") &&
-    s.includes(".")
-  ){
+    s === "#REF!" ||
+    s === "#VALUE!" ||
+    s === "#N/A"
+  )
+    return false;
 
-    s =
-      s.replace(/\./g,"")
-       .replace(",",".");
-  
-  }
-  else if(
-    s.includes(",")
-  ){
-
-    s =
-      s.replace(",",".");
-  
-  }
-
-
-  const n =
-    Number(s);
-
-
-  return Number.isFinite(n)
-    ? n
-    : 0;
-
-}
-
-
-function getRow(
-  section,
-  id
-){
-
-  return dataRows.find(
-    r =>
-
-      cleanText(
-        r.SECTION
-      ).toUpperCase()
-      ===
-      section.toUpperCase()
-
-      &&
-
-      cleanText(
-        r.ID
-      ).toUpperCase()
-      ===
-      id.toUpperCase()
-  );
-
-}
-
-
-function getValue(
-  section,
-  id,
-  fallback = ""
-){
-
-  const r =
-    getRow(
-      section,
-      id
-    );
-
-
-  if(!r)
-    return fallback;
-
-
-  return r.VALUE;
-
-}
-
-
-function getNum(
-  section,
-  id,
-  fallback = 0
-){
-
-  const value =
-    getValue(
-      section,
-      id,
-      null
-    );
-
-
-  if(!validValue(value))
-    return fallback;
-
-
-  return num(value);
-
-}
-
-
-function rowsSection(section){
-
-  return dataRows.filter(
-    r =>
-      cleanText(
-        r.SECTION
-      ).toUpperCase()
-      ===
-      section.toUpperCase()
-  );
-
-}
-
-
-function money(value){
-
-  return Number(value || 0)
-    .toLocaleString(
-      "pt-BR",
-      {
-        style:"currency",
-        currency:"BRL"
-      }
-    );
-
-}
-
-
-function numberBR(value){
-
-  return Number(value || 0)
-    .toLocaleString(
-      "pt-BR",
-      {
-        maximumFractionDigits:2
-      }
-    );
+  return Number.isFinite(num(s));
 
 }
 
 
 /* =========================================================
-   EVOLUÇÃO
+   ACESSO À APP_DATA
+========================================================= */
+
+function rows(section){
+
+  return dataRows.filter(
+    r => norm(r.SECTION) === norm(section)
+  );
+
+}
+
+
+function byId(section,id){
+
+  return dataRows.find(
+    r =>
+      norm(r.SECTION) === norm(section) &&
+      norm(r.ID) === norm(id)
+  );
+
+}
+
+
+function byParam(section,param){
+
+  return dataRows.find(
+    r =>
+      norm(r.SECTION) === norm(section) &&
+      norm(r.PARAMETER) === norm(param)
+  );
+
+}
+
+
+function val(section,id,def=0){
+
+  const r = byId(section,id);
+
+  if(
+    r &&
+    hasNum(r.VALUE)
+  )
+    return num(r.VALUE);
+
+  return def;
+
+}
+
+
+function txt(section,id,def=""){
+
+  const r = byId(section,id);
+
+  if(
+    r &&
+    r.VALUE !== undefined &&
+    r.VALUE !== null &&
+    String(r.VALUE).trim() !== ""
+  )
+    return String(r.VALUE);
+
+  return def;
+
+}
+
+
+function pval(section,param,def=0){
+
+  const r = byParam(section,param);
+
+  if(
+    r &&
+    hasNum(r.VALUE)
+  )
+    return num(r.VALUE);
+
+  return def;
+
+}
+
+
+function ptxt(section,param,def=""){
+
+  const r = byParam(section,param);
+
+  if(
+    r &&
+    r.VALUE !== undefined &&
+    r.VALUE !== null &&
+    String(r.VALUE).trim() !== ""
+  )
+    return String(r.VALUE);
+
+  return def;
+
+}
+
+
+/* =========================================================
+   FORMATAÇÃO
+========================================================= */
+
+function money(v){
+
+  return new Intl.NumberFormat(
+    "pt-BR",
+    {
+      style:"currency",
+      currency:"BRL"
+    }
+  ).format(Number(v) || 0);
+
+}
+
+
+function fmt(v){
+
+  return new Intl.NumberFormat(
+    "pt-BR",
+    {
+      maximumFractionDigits:0
+    }
+  ).format(Number(v) || 0);
+
+}
+
+
+/* =========================================================
+   HORA DA OPERADORA
+   P012 = OPERATOR_HOURLY_COST
+========================================================= */
+
+function operatorHour(){
+
+  return pval(
+    "PREMISSAS",
+    "OPERATOR_HOURLY_COST",
+    0
+  );
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+function initialize(name){
+
+  $("status").textContent =
+    `Planilha carregada: ${name} | Aba lida: APP_DATA`;
+
+  $("status").className =
+    "status ok";
+
+  $("appArea").classList.remove("hidden");
+
+  checkData();
+
+  buildPeriods();
+
+  renderAll();
+
+}
+
+
+function loadSaved(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(STORAGE_DATA);
+
+    if(!raw)
+      return;
+
+    dataRows =
+      JSON.parse(raw);
+
+    initialize(
+      localStorage.getItem(STORAGE_FILE) ||
+      "planilha salva no navegador"
+    );
+
+  }
+
+  catch(e){
+
+    console.warn(e);
+
+  }
+
+}
+
+
+/* =========================================================
+   VERIFICAÇÃO DOS DADOS
+========================================================= */
+
+function checkData(){
+
+  const issues = [];
+
+
+  /* Hora da operadora */
+
+  if(
+    !hasNum(
+      pval(
+        "PREMISSAS",
+        "OPERATOR_HOURLY_COST",
+        NaN
+      )
+    )
+  ){
+
+    issues.push(
+      `<span class="badge badge-yellow">
+      Hora da operadora não preenchida
+      </span>`
+    );
+
+  }
+
+
+  /* FILTRO */
+
+  const filtroExterno =
+    val("FILTRO","F12",0);
+
+  const filtroInterno =
+    val("FILTRO","F22",0);
+
+  if(
+    filtroExterno <= 0 &&
+    filtroInterno <= 0
+  ){
+
+    issues.push(
+      `<span class="badge badge-red">
+      Filtro sem alternativa de custo
+      </span>`
+    );
+
+  }
+
+
+  /* APLICADOR */
+
+  const appExterno =
+    val("APLICADOR","A11",0);
+
+  const app3D =
+    val("APLICADOR","A21",0);
+
+  if(
+    appExterno <= 0 &&
+    app3D <= 0
+  ){
+
+    issues.push(
+      `<span class="badge badge-red">
+      Aplicador sem custo externo e sem custo 3D
+      </span>`
+    );
+
+  }
+
+
+  /* INJEÇÃO */
+
+  const inj =
+    val("INJECAO","INJ7",0);
+
+  if(inj <= 0){
+
+    issues.push(
+      `<span class="badge badge-red">
+      Custo de injeção não preenchido
+      </span>`
+    );
+
+  }
+
+
+  /* UNIÃO */
+
+  const unionExt =
+    val("SOLDA","S6",0);
+
+  const unionInt =
+    val("SOLDA","S12",0) *
+    operatorHour()
+    +
+    val("SOLDA","S14",0) *
+    val("SOLDA","S12",0);
+
+
+  if(
+    unionExt <= 0 &&
+    unionInt <= 0
+  ){
+
+    issues.push(
+      `<span class="badge badge-red">
+      União sem alternativa de custo
+      </span>`
+    );
+
+  }
+
+
+  if(!issues.length){
+
+    issues.push(
+      `<span class="badge badge-green">
+      Dados necessários encontrados.
+      Alternativas sem custo externo serão direcionadas automaticamente para a alternativa interna.
+      </span>`
+    );
+
+  }
+
+
+  $("dataCheck").innerHTML =
+    issues.join(" ");
+
+}
+
+
+/* =========================================================
+   VOLUMES
 ========================================================= */
 
 function buildPeriods(){
 
-  const names =
+  const quarterly =
+    [
+      1000,
+      2500,
+      5000,
+      7500,
+      10000
+    ];
 
-    currentMode === "quarterly"
-
-      ?
-
-      [
-        "1º trimestre",
-        "2º trimestre",
-        "3º trimestre",
-        "4º trimestre",
-        "Após o 1º ano"
-      ]
-
-      :
-
-      [
-        "Ano 1",
-        "Ano 2",
-        "Ano 3",
-        "Ano 4",
-        "Ano 5"
-      ];
-
-
-  const defaults =
-
-    currentMode === "quarterly"
-
-      ?
-
-      [
-        1000,
-        2500,
-        5000,
-        7500,
-        10000
-      ]
-
-      :
-
-      [
-        5000,
-        10000,
-        15000,
-        20000,
-        25000
-      ];
+  const annual =
+    [
+      5000,
+      10000,
+      15000,
+      20000,
+      25000
+    ];
 
 
   periods =
-    names.map(
-      (name,i) => ({
+    (
+      currentMode === "quarterly"
+      ? quarterly
+      : annual
+    )
+    .map(
+      (qty,i) => ({
+        name:
+          currentMode === "quarterly"
+          ?
+          [
+            "1º trimestre",
+            "2º trimestre",
+            "3º trimestre",
+            "4º trimestre",
+            "Após o 1º ano"
+          ][i]
+          :
+          `Ano ${i+1}`,
 
-        name:name,
-
-        qty:defaults[i]
-
+        qty
       })
     );
 
 
   const panel =
-
     currentMode === "quarterly"
-
-      ?
-
-      $("quarterlyPanel")
-
-      :
-
-      $("annualPanel");
+    ?
+    $("quarterlyPanel")
+    :
+    $("annualPanel");
 
 
-  panel.innerHTML = "";
+  panel.innerHTML =
+    periods.map(
+      (p,i) => `
 
+      <div class="slider-card">
 
-  periods.forEach(
-    (period,index) => {
-
-
-      const card =
-        document.createElement(
-          "div"
-        );
-
-
-      card.className =
-        "slider-card";
-
-
-      card.innerHTML =
-
-        `
         <div class="slider-top">
 
-          <b>
-            ${period.name}
-          </b>
+          <b>${p.name}</b>
 
           <span
             class="slider-value"
-            id="sv${index}"
-          >
-            ${numberBR(period.qty)}
+            id="sv${i}">
+            ${fmt(p.qty)}
           </span>
 
         </div>
 
         <input
+          id="sl${i}"
           type="range"
           min="0"
-          max="100000"
+          max="1000000"
           step="100"
-          value="${period.qty}"
-          id="sl${index}"
-        >
+          value="${p.qty}">
 
         <div class="small">
           Volume de Bfoam no período
         </div>
-        `;
+
+      </div>
+
+      `
+    )
+    .join("");
 
 
-      const slider =
-        card.querySelector(
-          "input"
-        );
+  periods.forEach(
+    (p,i) => {
 
+      $("sl"+i).oninput =
+        () => {
 
-      slider.oninput =
-        function(){
-
-          periods[index].qty =
-            num(
-              this.value
+          periods[i].qty =
+            Number(
+              $("sl"+i).value
             );
 
+          $("sv"+i).textContent =
+            fmt(periods[i].qty);
 
-          selectedIndex =
-            index;
-
-
-          $("sv"+index)
-            .textContent =
-            numberBR(
-              periods[index].qty
-            );
-
+          selectedIndex = i;
 
           renderAll();
 
         };
-
-
-      panel.appendChild(
-        card
-      );
 
     }
   );
@@ -1489,14 +1513,15 @@ function buildPeriods(){
 }
 
 
+/* =========================================================
+   MODO
+========================================================= */
+
 function setMode(mode){
 
-  currentMode =
-    mode;
+  currentMode = mode;
 
-
-  selectedIndex =
-    0;
+  selectedIndex = 0;
 
 
   $("quarterlyBtn")
@@ -1538,671 +1563,40 @@ function setMode(mode){
 }
 
 
-$("quarterlyBtn").onclick =
-  function(){
-
-    setMode(
-      "quarterly"
-    );
-
-  };
-
-
-$("annualBtn").onclick =
-  function(){
-
-    setMode(
-      "annual"
-    );
-
-  };
-
-
-/* =========================================================
-   SENHA / CARREGAMENTO
-========================================================= */
-
-$("loadBtn").onclick =
-  function(){
-
-    $("modal")
-      .classList
-      .remove("hidden");
-
-
-    $("password").value = "";
-
-    $("passError").textContent = "";
-
-
-    setTimeout(
-      function(){
-
-        $("password").focus();
-
-      },
-      50
-    );
-
-  };
-
-
-$("cancelBtn").onclick =
-  function(){
-
-    $("modal")
-      .classList
-      .add("hidden");
-
-  };
-
-
-$("passBtn").onclick =
-  function(){
-
-    if(
-      $("password").value !==
-      PASSWORD
-    ){
-
-      $("passError")
-        .textContent =
-        "Senha incorreta.";
-
-      return;
-
-    }
-
-
-    $("modal")
-      .classList
-      .add("hidden");
-
-
-    $("fileInput").click();
-
-  };
-
-
-$("password")
-  .addEventListener(
-    "keydown",
-    function(event){
-
-      if(
-        event.key === "Enter"
-      ){
-
-        $("passBtn").click();
-
-      }
-
-    }
-  );
-
-
-/* =========================================================
-   TAXA ADMINISTRATIVA
-========================================================= */
-
-$("feeNo").onclick =
-  function(){
-
-    feeEnabled =
-      false;
-
-
-    $("feeNo")
-      .classList
-      .add("active");
-
-
-    $("feeYes")
-      .classList
-      .remove("active");
-
-
-    renderAll();
-
-  };
-
-
-$("feeYes").onclick =
-  function(){
-
-    feeEnabled =
-      true;
-
-
-    $("feeYes")
-      .classList
-      .add("active");
-
-
-    $("feeNo")
-      .classList
-      .remove("active");
-
-
-    renderAll();
-
-  };
-
-
-$("adminRate").oninput =
-  function(){
-
-    renderAll();
-
-  };
-
-
-/* =========================================================
-   CARREGAR PLANILHA
-========================================================= */
-
-$("fileInput")
-  .addEventListener(
-    "change",
-    async function(event){
-
-      const file =
-        event.target.files[0];
-
-
-      if(!file)
-        return;
-
-
-      try{
-
-        const buffer =
-          await file.arrayBuffer();
-
-
-        const workbook =
-          XLSX.read(
-            buffer,
-            {
-              type:"array",
-              cellDates:true
-            }
-          );
-
-
-        const lastSheet =
-          workbook.SheetNames[
-            workbook.SheetNames.length - 1
-          ];
-
-
-        if(
-          lastSheet !==
-          APP_SHEET_NAME
-        ){
-
-          alert(
-            "Planilha recusada.\n\n" +
-
-            "A última aba encontrada foi: " +
-
-            lastSheet +
-
-            "\n\nA última aba precisa se chamar APP_DATA."
-          );
-
-
-          return;
-
-        }
-
-
-        const worksheet =
-          workbook.Sheets[
-            lastSheet
-          ];
-
-
-        const json =
-          XLSX.utils.sheet_to_json(
-            worksheet,
-            {
-              defval:""
-            }
-          );
-
-
-        if(
-          !json.length
-        ){
-
-          alert(
-            "A aba APP_DATA está vazia."
-          );
-
-
-          return;
-
-        }
-
-
-        dataRows =
-          json;
-
-
-        localStorage.setItem(
-          STORAGE_DATA,
-          JSON.stringify(
-            dataRows
-          )
-        );
-
-
-        localStorage.setItem(
-          STORAGE_FILE,
-          file.name
-        );
-
-
-        initialize(
-          file.name
-        );
-
-
-      }
-      catch(error){
-
-        console.error(
-          error
-        );
-
-
-        alert(
-          "Não foi possível ler a planilha."
-        );
-
-      }
-      finally{
-
-        event.target.value = "";
-
-      }
-
-    }
-  );
-
-
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
-
-function initialize(fileName){
-
-  $("status")
-    .textContent =
-    "Planilha carregada: "
-    +
-    fileName
-    +
-    " | Aba lida: APP_DATA";
-
-
-  $("status")
-    .className =
-    "status ok";
-
-
-  $("appArea")
-    .classList
-    .remove("hidden");
-
-
-  checkData();
-
-  buildPeriods();
-
-  renderAll();
-
-}
-
-
-/* =========================================================
-   VERIFICAÇÃO CORRIGIDA
-=========================================================
-
-   IMPORTANTE:
-
-   Esta função NÃO considera como erro:
-   - campos calculados;
-   - CAPEX amortizado;
-   - frete calculado;
-   - custo calculado;
-   - volume de 5 anos;
-   - alternativa externa propositalmente vazia.
-
-   Ela verifica somente entradas que realmente
-   são necessárias para uma alternativa escolhida.
-========================================================= */
-
-function checkData(){
-
-  const messages = [];
-
-
-  /* -----------------------------------------------
-     PREMISSAS
-  ------------------------------------------------ */
-
-  const operatorHour =
-    getNum(
-      "PREMISSAS",
-      "P007",
-      0
-    );
-
-
-  if(
-    operatorHour <= 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-red">
-        Hora da operadora não preenchida
-      </span>
-      `
-    );
-
-  }
-  else{
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        Hora da operadora: ${money(operatorHour)}/h
-      </span>
-      `
-    );
-
-  }
-
-
-  /* -----------------------------------------------
-     FILTRO
-  ------------------------------------------------ */
-
-  const filterExternal =
-    getNum(
-      "FILTRO",
-      "F001",
-      0
-    );
-
-
-  const filterInternalMaterial =
-    getNum(
-      "FILTRO",
-      "F008",
-      0
-    );
-
-
-  if(
-    filterExternal > 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        Filtro externo disponível
-      </span>
-      `
-    );
-
-  }
-  else if(
-    filterInternalMaterial > 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        Filtro interno disponível
-      </span>
-      `
-    );
-
-  }
-  else{
-
-    messages.push(
-      `
-      <span class="badge badge-red">
-        Filtro sem alternativa de custo
-      </span>
-      `
-    );
-
-  }
-
-
-  /* -----------------------------------------------
-     INJEÇÃO
-  ------------------------------------------------ */
-
-  const injection =
-    getNum(
-      "INJECAO",
-      "I001",
-      0
-    );
-
-
-  if(
-    injection > 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        Injeção preenchida
-      </span>
-      `
-    );
-
-  }
-  else{
-
-    messages.push(
-      `
-      <span class="badge badge-red">
-        Custo de injeção não preenchido
-      </span>
-      `
-    );
-
-  }
-
-
-  /* -----------------------------------------------
-     APLICADOR
-  ------------------------------------------------ */
-
-  const applicatorExternal =
-    getNum(
-      "APLICADOR",
-      "A005",
-      0
-    );
-
-
-  const applicator3D =
-    getNum(
-      "APLICADOR",
-      "A006",
-      0
-    );
-
-
-  if(
-    applicatorExternal > 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        Aplicador externo disponível
-      </span>
-      `
-    );
-
-  }
-  else if(
-    applicator3D > 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        Aplicador externo sem valor → fabricação 3D selecionada
-      </span>
-      `
-    );
-
-  }
-  else{
-
-    messages.push(
-      `
-      <span class="badge badge-red">
-        Aplicador sem custo externo e sem custo 3D
-      </span>
-      `
-    );
-
-  }
-
-
-  /* -----------------------------------------------
-     UNIÃO
-  ------------------------------------------------ */
-
-  const unionExternal =
-    getNum(
-      "UNIAO",
-      "U003",
-      0
-    );
-
-
-  const unionMachine =
-    getNum(
-      "UNIAO",
-      "U006",
-      0
-    );
-
-
-  if(
-    unionExternal > 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        União externa disponível
-      </span>
-      `
-    );
-
-  }
-  else if(
-    unionMachine > 0
-  ){
-
-    messages.push(
-      `
-      <span class="badge badge-green">
-        União externa sem valor → união interna selecionada
-      </span>
-      `
-    );
-
-  }
-  else{
-
-    messages.push(
-      `
-      <span class="badge badge-red">
-        União sem alternativa de custo
-      </span>
-      `
-    );
-
-  }
-
-
-  $("dataCheck")
-    .innerHTML =
-    messages.join("");
-
-}
-
-
 /* =========================================================
    VOLUME 5 ANOS
 ========================================================= */
 
-function getFiveYearVolume(){
+function fiveYearVolume(){
 
-  if(
-    currentMode === "annual"
-  ){
+  /*
+
+  Modo anual:
+  Ano 1 + Ano 2 + Ano 3 + Ano 4 + Ano 5
+
+  Modo trimestral:
+  4 trimestres = Ano 1
+  "Após o 1º ano" = volume anual dos anos 2 a 5
+
+  */
+
+  if(currentMode === "annual"){
 
     return periods.reduce(
-      function(total,period){
-
-        return total +
-          Math.max(
-            0,
-            period.qty
-          );
-
-      },
+      (s,p) =>
+        s + Math.max(0,p.qty),
       0
     );
 
   }
 
 
-  /*
-    Trimestral:
-
-    T1 + T2 + T3 + T4
-    =
-    primeiro ano.
-
-    "Após o 1º ano"
-    =
-    volume anual dos quatro anos seguintes.
-  */
-
   const firstYear =
     periods
-      .slice(
-        0,
-        4
-      )
+      .slice(0,4)
       .reduce(
-        function(total,period){
-
-          return total +
-            Math.max(
-              0,
-              period.qty
-            );
-
-        },
+        (s,p) =>
+          s + Math.max(0,p.qty),
         0
       );
 
@@ -2210,17 +1604,31 @@ function getFiveYearVolume(){
   const afterFirstYear =
     Math.max(
       0,
-      periods[4]
-        ? periods[4].qty
-        : 0
+      periods[4]?.qty || 0
     );
 
 
   return (
-    firstYear
-    +
+    firstYear +
     afterFirstYear * 4
   );
+
+}
+
+
+/* =========================================================
+   FAIXA DE VOLUME
+========================================================= */
+
+function band(q){
+
+  if(q < 50000)
+    return "BAIXA";
+
+  if(q < 150000)
+    return "MEDIA";
+
+  return "ALTA";
 
 }
 
@@ -2229,50 +1637,23 @@ function getFiveYearVolume(){
    CENÁRIO
 ========================================================= */
 
-function getScenario(){
-
-  const bands =
-    periods.map(
-      function(period){
-
-        if(
-          period.qty <= 1000
-        )
-          return "BAIXA";
-
-        if(
-          period.qty <= 5000
-        )
-          return "MEDIA";
-
-        return "ALTA";
-
-      }
-    );
-
+function scenarioInfo(){
 
   const compact = [];
 
 
-  bands.forEach(
-    function(band){
+  periods
+    .map(p => band(p.qty))
+    .forEach(
+      b => {
 
-      if(
-        compact[
-          compact.length - 1
-        ]
-        !==
-        band
-      ){
-
-        compact.push(
-          band
-        );
+        if(
+          compact.at(-1) !== b
+        )
+          compact.push(b);
 
       }
-
-    }
-  );
+    );
 
 
   const key =
@@ -2306,17 +1687,6 @@ function getScenario(){
   };
 
 
-  const labels = {
-
-    "BAIXA":"Baixa",
-
-    "MEDIA":"Média",
-
-    "ALTA":"Alta"
-
-  };
-
-
   return {
 
     id:
@@ -2325,11 +1695,9 @@ function getScenario(){
     trajectory:
       compact
         .map(
-          function(x){
-
-            return labels[x] || x;
-
-          }
+          x =>
+            x[0] +
+            x.slice(1).toLowerCase()
         )
         .join(" → ")
 
@@ -2339,589 +1707,734 @@ function getScenario(){
 
 
 /* =========================================================
-   MODELO DE CUSTO
+   FRETE CHINA
 ========================================================= */
 
-function calculateCost(){
+function chinaFreightKg(){
 
-  const volume5 =
-    getFiveYearVolume();
-
-
-  /*
-    BOM
-  */
-
-  const bodies =
-    getNum(
-      "BOM",
-      "B017",
-      2
+  const direct =
+    val(
+      "FRETE_CHINA",
+      "F004",
+      NaN
     );
 
 
-  const filters =
-    getNum(
-      "BOM",
-      "B016",
-      1
-    );
+  if(
+    Number.isFinite(direct) &&
+    direct > 0
+  )
+    return direct;
 
 
-  const applicators =
-    getNum(
-      "BOM",
-      "B018",
-      2
-    );
-
-
-  /*
-    PREMISSAS
-  */
-
-  const operatorHour =
-    getNum(
-      "PREMISSAS",
-      "P007",
-      0
-    );
-
-
-  /*
-    INJEÇÃO
-  */
-
-  const injectionCost =
-    getNum(
-      "INJECAO",
-      "I001",
-      0
-    );
-
-
-  const injectionFreight =
-    getNum(
-      "INJECAO",
-      "I003",
-      0
-    );
-
-
-  const injectionCapex =
-    getNum(
-      "INJECAO",
-      "I004",
-      0
-    );
-
-
-  const injectionCapexPerPiece =
-
-    volume5 > 0
-
-      ?
-
-      injectionCapex /
-      (
-        volume5 *
-        bodies
-      )
-
-      :
-
-      0;
-
-
-  const bodyUnit =
-
-    injectionCost
-    +
-    injectionFreight
-    +
-    injectionCapexPerPiece;
-
-
-  /*
-    FILTRO EXTERNO
-  */
-
-  const filterExternalPrice =
-    getNum(
-      "FILTRO",
+  const usd =
+    val(
+      "FRETE_CHINA",
       "F001",
       0
     );
 
 
-  const filterExternalFreight =
-    getNum(
-      "FILTRO",
+  const tax =
+    val(
+      "FRETE_CHINA",
       "F002",
+      1
+    );
+
+
+  const fx =
+    val(
+      "FRETE_CHINA",
+      "F003",
+      1
+    );
+
+
+  return usd * tax * fx;
+
+}
+
+
+/* =========================================================
+   FRETE GENÉRICO
+========================================================= */
+
+function genericFreight(section){
+
+  for(
+    const r of rows(section)
+  ){
+
+    const p =
+      norm(r.PARAMETER);
+
+
+    if(
+      p.includes("FREIGHT") ||
+      p.includes("FRETE")
+    ){
+
+      if(
+        hasNum(r.VALUE)
+      )
+        return num(r.VALUE);
+
+    }
+
+  }
+
+
+  return 0;
+
+}
+
+
+/* =========================================================
+   FRETE SÃO PAULO DA INJEÇÃO
+========================================================= */
+
+function injectionFreight(){
+
+  const direct =
+    genericFreight("INJECAO");
+
+
+  if(direct > 0)
+    return direct;
+
+
+  const p1 =
+    pval(
+      "PREMISSAS",
+      "INJECTION_FREIGHT_SP",
       0
     );
 
 
-  const filterExternalOperation =
-    getNum(
+  if(p1 > 0)
+    return p1;
+
+
+  const p2 =
+    pval(
+      "PREMISSAS",
+      "FREIGHT_SAO_PAULO",
+      0
+    );
+
+
+  if(p2 > 0)
+    return p2;
+
+
+  const p3 =
+    pval(
+      "FRETE_SAO_PAULO",
+      "R_KG",
+      0
+    );
+
+
+  return p3;
+
+}
+
+
+/* =========================================================
+   EMBALAGEM
+========================================================= */
+
+function packagingCost(){
+
+  let total = 0;
+
+
+  const pairs = [
+
+    ["E5","E5Q"],
+
+    ["E6","E6Q"],
+
+    ["E7","E7Q"],
+
+    ["E8","E8Q"]
+
+  ];
+
+
+  for(
+    const [id,qid]
+    of pairs
+  ){
+
+    const cost =
+      val(
+        "EMBALAGEM",
+        id,
+        0
+      );
+
+
+    const qty =
+      Math.max(
+        val(
+          "EMBALAGEM",
+          qid,
+          1
+        ),
+        1
+      );
+
+
+    total +=
+      cost / qty;
+
+  }
+
+
+  return total;
+
+}
+
+
+/* =========================================================
+   FRETE DO FILTRO
+========================================================= */
+
+function genericFilterExternalFreight(){
+
+  const mass =
+    val(
+      "BOM",
+      "B015",
+      0
+    ) / 1000;
+
+
+  return (
+    mass *
+    chinaFreightKg()
+  );
+
+}
+
+
+/* =========================================================
+   MODELO DE CUSTO
+========================================================= */
+
+function costModel(q5){
+
+  const bodyQty =
+    Math.max(
+      val(
+        "BOM",
+        "B017",
+        2
+      ),
+      0
+    );
+
+
+  const filterQty =
+    Math.max(
+      val(
+        "BOM",
+        "B016",
+        1
+      ),
+      0
+    );
+
+
+  const appQty =
+    Math.max(
+      val(
+        "BOM",
+        "B018",
+        2
+      ),
+      0
+    );
+
+
+  const oh =
+    operatorHour();
+
+
+  /* =====================================================
+     CORPO / INJEÇÃO TERCEIRIZADA
+  ===================================================== */
+
+  const injTreatment =
+    val(
+      "INJECAO",
+      "INJ7",
+      0
+    );
+
+
+  const injFreight =
+    injectionFreight();
+
+
+  const injCapex =
+    val(
+      "INJECAO",
+      "INJ10",
+      0
+    );
+
+
+  const bodyCapex =
+    q5 > 0
+    ?
+    injCapex /
+    (
+      q5 *
+      bodyQty
+    )
+    :
+    0;
+
+
+  const bodyUnit =
+    injTreatment +
+    injFreight +
+    bodyCapex;
+
+
+  /* =====================================================
+     FILTRO
+  ===================================================== */
+
+  const filterPurchase =
+    val(
       "FILTRO",
-      "F005",
+      "F12",
       0
     );
+
+
+  const filterFreight =
+    genericFilterExternalFreight();
+
+
+  const filterOperator =
+    val(
+      "FILTRO",
+      "F14",
+      0
+    ) *
+    oh /
+    3600;
 
 
   const filterExternalCost =
-
-    filterExternalPrice
-    +
-    filterExternalFreight
-    +
-    filterExternalOperation;
+    filterPurchase +
+    filterFreight +
+    filterOperator;
 
 
-  /*
-    FILTRO INTERNO
-  */
-
-  const filterMaterial =
-    getNum(
+  const filterRawMaterial =
+    val(
       "FILTRO",
-      "F008",
+      "F22",
       0
     );
 
 
-  const filterFreightInternal =
-    getNum(
+  const filterInternalTime =
+    val(
       "FILTRO",
-      "F009",
-      0
-    );
-
-
-  const filterOperationInternal =
-    getNum(
-      "FILTRO",
-      "F011",
+      "F24",
       0
     );
 
 
   const filterOpex =
-    getNum(
+    val(
       "FILTRO",
-      "F014",
+      "F26",
       0
     );
+
+
+  const filterInternalOperation =
+    filterInternalTime *
+    (
+      oh +
+      filterOpex
+    ) /
+    3600;
 
 
   const filterCapex =
-    getNum(
+    val(
       "FILTRO",
-      "F017",
+      "F28",
+      0
+    ) +
+    val(
+      "FILTRO",
+      "F29",
       0
     );
 
 
-  const filterInternalVariable =
-
-    filterMaterial
-    +
-    filterFreightInternal
-    +
-    filterOperationInternal
-    +
-    filterOpex;
-
-
-  const filterCapexPerPiece =
-
-    volume5 > 0
-
-      ?
-
-      filterCapex /
-      (
-        volume5 *
-        filters
-      )
-
-      :
-
-      0;
+  const filterCapexPerUnit =
+    q5 > 0
+    ?
+    filterCapex /
+    (
+      q5 *
+      filterQty
+    )
+    :
+    0;
 
 
   const filterInternalCost =
+    filterRawMaterial +
+    filterInternalOperation +
+    filterCapexPerUnit;
 
-    filterInternalVariable
-    +
-    filterCapexPerPiece;
 
-
-  const useExternalFilter =
+  const filterExternal =
     filterExternalCost > 0;
 
 
   const filterUnit =
-    useExternalFilter
-      ?
-      filterExternalCost
-      :
-      filterInternalCost;
+    filterExternal
+    ?
+    filterExternalCost
+    :
+    filterInternalCost;
 
 
-  /*
-    APLICADOR EXTERNO
-  */
+  /* =====================================================
+     APLICADOR
+  ===================================================== */
 
-  const applicatorExternal =
-    getNum(
+  const appExternalCost =
+    val(
       "APLICADOR",
-      "A005",
+      "A11",
       0
-    );
-
-
-  /*
-    APLICADOR 3D
-  */
-
-  const applicatorMaterial =
-    getNum(
+    ) +
+    val(
       "APLICADOR",
-      "A006",
+      "A12",
       0
-    );
-
-
-  const applicatorOperation =
-    getNum(
-      "APLICADOR",
-      "A013",
-      0
-    );
-
-
-  const applicatorMachine =
-    getNum(
-      "APLICADOR",
-      "A015",
-      0
-    );
-
-
-  const applicatorBench =
-    getNum(
-      "APLICADOR",
-      "A016",
-      0
-    );
-
-
-  const applicatorInternal =
-
-    applicatorMaterial
-    +
-    applicatorOperation
-    +
-    applicatorMachine
-    +
-
+    ) +
     (
-      volume5 > 0
-
-        ?
-
-        applicatorBench /
-        (
-          volume5 *
-          applicators
-        )
-
-        :
-
+      val(
+        "APLICADOR",
+        "A13",
         0
+      ) *
+      oh /
+      3600
     );
 
 
-  /*
-    IMPORTANTE:
-    Se o externo estiver 0,
-    usa automaticamente o interno.
-  */
-
-  const useExternalApplicator =
-    applicatorExternal > 0;
-
-
-  const applicatorUnit =
-    useExternalApplicator
-      ?
-      applicatorExternal
-      :
-      applicatorInternal;
-
-
-  /*
-    UNIÃO EXTERNA
-  */
-
-  const unionExternal =
-    getNum(
-      "UNIAO",
-      "U003",
+  const appMaterial =
+    val(
+      "APLICADOR",
+      "A21",
       0
     );
 
 
-  const unionExternalFreight =
-    getNum(
-      "UNIAO",
-      "U002",
+  const printerQty =
+    Math.max(
+      val(
+        "APLICADOR",
+        "A22",
+        1
+      ),
+      1
+    );
+
+
+  const printerCapex =
+    val(
+      "APLICADOR",
+      "A23",
       0
     );
 
+
+  const printerLife =
+    Math.max(
+      val(
+        "APLICADOR",
+        "A24",
+        1
+      ),
+      1
+    );
+
+
+  const printTime =
+    val(
+      "APLICADOR",
+      "A25",
+      0
+    );
+
+
+  const batchQty =
+    Math.max(
+      val(
+        "APLICADOR",
+        "A26",
+        1
+      ),
+      1
+    );
+
+
+  const appOperatorSeconds =
+    val(
+      "APLICADOR",
+      "A27",
+      0
+    );
+
+
+  const appOperatorCost =
+    appOperatorSeconds *
+    oh /
+    3600;
+
+
+  /*
+     Amortização simplificada da impressora
+     pelo volume de 5 anos.
+  */
+
+  const printerCapexPerUnit =
+    q5 > 0
+    ?
+    (
+      printerQty *
+      printerCapex
+    ) /
+    (
+      q5 *
+      appQty
+    )
+    :
+    0;
+
+
+  const benchCapex =
+    val(
+      "APLICADOR",
+      "A32",
+      0
+    );
+
+
+  const benchPrinterQty =
+    Math.max(
+      val(
+        "APLICADOR",
+        "A33",
+        1
+      ),
+      1
+    );
+
+
+  const benchPerUnit =
+    q5 > 0
+    ?
+    benchCapex /
+    (
+      q5 *
+      appQty *
+      benchPrinterQty
+    )
+    :
+    0;
+
+
+  const appInternalCost =
+    appMaterial +
+    appOperatorCost +
+    printerCapexPerUnit +
+    benchPerUnit;
+
+
+  const appExternal =
+    appExternalCost > 0;
+
+
+  const appUnit =
+    appExternal
+    ?
+    appExternalCost
+    :
+    appInternalCost;
+
+
+  /* =====================================================
+     UNIÃO ULTRASSÔNICA
+  ===================================================== */
 
   const unionExternalCost =
+    val(
+      "SOLDA",
+      "S6",
+      0
+    ) +
+    val(
+      "SOLDA",
+      "S7",
+      0
+    );
 
-    unionExternal
-    +
-    unionExternalFreight;
-
-
-  /*
-    UNIÃO INTERNA
-  */
 
   const unionMold =
-    getNum(
-      "UNIAO",
-      "U004",
+    val(
+      "SOLDA",
+      "S11",
       0
     );
 
 
   const unionOperatorHours =
-    getNum(
-      "UNIAO",
-      "U005",
+    val(
+      "SOLDA",
+      "S12",
       0
     );
 
 
   const unionMachineHour =
-    getNum(
-      "UNIAO",
-      "U006",
+    val(
+      "SOLDA",
+      "S14",
       0
     );
 
 
-  const unionInternalCapex =
-
-    volume5 > 0
-
+  const unionInternalCost =
+    (
+      q5 > 0
       ?
-
-      unionMold /
-      volume5
-
+      unionMold / q5
       :
-
-      0;
-
-
-  const unionInternalOperation =
+      0
+    ) +
 
     unionOperatorHours *
-    operatorHour;
-
-
-  const unionInternalMachine =
+    oh +
 
     unionOperatorHours *
     unionMachineHour;
 
 
-  const unionInternalCost =
-
-    unionInternalCapex
-    +
-    unionInternalOperation
-    +
-    unionInternalMachine;
-
-
-  const useExternalUnion =
+  const unionExternal =
     unionExternalCost > 0;
 
 
   const unionUnit =
-    useExternalUnion
-      ?
-      unionExternalCost
-      :
-      unionInternalCost;
+    unionExternal
+    ?
+    unionExternalCost
+    :
+    unionInternalCost;
 
 
-  /*
-    EMBALAGEM
+  /* =====================================================
+     EMBALAGEM
+  ===================================================== */
 
-    Só utiliza linhas que possuem
-    parâmetro COST_PER_PIECE.
-  */
-
-  let packaging = 0;
+  const pack =
+    packagingCost();
 
 
-  rowsSection(
-    "EMBALAGEM"
-  ).forEach(
-    function(r){
+  /* =====================================================
+     CUSTO BASE
+  ===================================================== */
 
-      if(
-        cleanText(
-          r.PARAMETER
-        ).toUpperCase()
-        ===
-        "COST_PER_PIECE"
-      ){
+  const base =
+    bodyUnit * bodyQty +
 
-        if(
-          validValue(
-            r.VALUE
-          )
-        ){
+    filterUnit * filterQty +
 
-          packaging +=
-            num(
-              r.VALUE
-            );
+    appUnit * appQty +
 
-        }
+    unionUnit +
 
-      }
-
-    }
-  );
+    pack;
 
 
-  /*
-    CUSTO INDUSTRIAL
-  */
+  /* =====================================================
+     TAXA ADMINISTRATIVA
+  ===================================================== */
 
-  const bodyTotal =
-    bodyUnit *
-    bodies;
-
-
-  const filterTotal =
-    filterUnit *
-    filters;
-
-
-  const applicatorTotal =
-    applicatorUnit *
-    applicators;
-
-
-  const unionTotal =
-    unionUnit;
-
-
-  const industrialCost =
-
-    bodyTotal
-    +
-    filterTotal
-    +
-    applicatorTotal
-    +
-    unionTotal
-    +
-    packaging;
-
-
-  /*
-    TAXA ADMINISTRATIVA
-  */
-
-  const adminRate =
-
+  const rate =
     feeEnabled
-
-      ?
-
-      Math.max(
-        0,
-        num(
-          $("adminRate").value
-        )
-      ) / 100
-
-      :
-
-      0;
+    ?
+    Math.max(
+      num(
+        $("adminRate").value
+      ),
+      0
+    ) / 100
+    :
+    0;
 
 
-  const administrativeFee =
-
-    industrialCost *
-    adminRate;
+  const fee =
+    base * rate;
 
 
   const finalCost =
-
-    industrialCost
-    +
-    administrativeFee;
+    base + fee;
 
 
   return {
 
-    volume5,
-
     bodyUnit,
 
-    bodyTotal,
+    bodyTotal:
+      bodyUnit * bodyQty,
 
     filterUnit,
 
-    filterTotal,
+    filterTotal:
+      filterUnit * filterQty,
 
-    applicatorUnit,
+    appUnit,
 
-    applicatorTotal,
+    appTotal:
+      appUnit * appQty,
 
     unionUnit,
 
-    unionTotal,
+    packaging:
+      pack,
 
-    packaging,
+    base,
 
-    industrialCost,
+    fee,
 
-    administrativeFee,
+    final:
+      finalCost,
 
-    finalCost,
+    filterExternal,
 
-    useExternalFilter,
+    appExternal,
 
-    useExternalApplicator,
+    unionExternal,
 
-    useExternalUnion,
-
-    filterExternalCost,
-
-    filterInternalCost,
-
-    applicatorExternal,
-
-    applicatorInternal,
-
-    unionExternalCost,
-
-    unionInternalCost
+    q5
 
   };
 
@@ -2929,343 +2442,264 @@ function calculateCost(){
 
 
 /* =========================================================
-   RENDERIZAÇÃO
+   RENDER
 ========================================================= */
 
 function renderAll(){
 
   if(
-    !dataRows.length ||
-    !periods.length
+    !periods.length ||
+    !dataRows.length
   )
     return;
 
 
-  const result =
-    calculateCost();
+  const q5 =
+    fiveYearVolume();
 
 
-  /*
-    SELEÇÃO
-  */
+  const r =
+    costModel(q5);
+
 
   $("selectedPeriod")
     .textContent =
-    periods[
-      selectedIndex
-    ].name;
+    periods[selectedIndex].name;
 
 
   $("selectedQty")
     .textContent =
-    numberBR(
-      periods[
-        selectedIndex
-      ].qty
+    fmt(
+      periods[selectedIndex].qty
     );
 
 
-  /*
-    ALTERNATIVAS
-  */
-
-  if(
-    result.useExternalFilter
-  ){
-
-    $("filterChoice")
-      .textContent =
-      "Externo — filtro PP";
+  $("fiveYearVolume")
+    .textContent =
+    fmt(q5);
 
 
-    $("filterReason")
-      .textContent =
-      "Preço externo cadastrado.";
+  /* FILTRO */
 
-  }
-  else{
-
-    $("filterChoice")
-      .textContent =
-      "Interno — malha metálica";
-
-
-    $("filterReason")
-      .textContent =
-      "Filtro externo sem custo; fabricação interna selecionada.";
-
-  }
+  $("filterChoice")
+    .textContent =
+    r.filterExternal
+    ?
+    "Externo — PP"
+    :
+    "Interno — malha metálica";
 
 
-  if(
-    result.useExternalApplicator
-  ){
-
-    $("appChoice")
-      .textContent =
-      "Externo — injeção";
-
-
-    $("appReason")
-      .textContent =
-      "Fornecedor externo cadastrado.";
-
-  }
-  else{
-
-    $("appChoice")
-      .textContent =
-      "Interno — impressão 3D";
+  $("filterReason")
+    .textContent =
+    r.filterExternal
+    ?
+    "Custo externo disponível."
+    :
+    "Custo externo indisponível; fabricação interna ativada.";
 
 
-    $("appReason")
-      .textContent =
-      "Aplicador externo sem valor; impressão 3D selecionada.";
+  /* APLICADOR */
 
-  }
-
-
-  if(
-    result.useExternalUnion
-  ){
-
-    $("unionChoice")
-      .textContent =
-      "Externa";
+  $("appChoice")
+    .textContent =
+    r.appExternal
+    ?
+    "Externo — injeção"
+    :
+    "Interno — impressão 3D";
 
 
-    $("unionReason")
-      .textContent =
-      "União externa cadastrada.";
-
-  }
-  else{
-
-    $("unionChoice")
-      .textContent =
-      "Interna — ultrassônica";
+  $("appReason")
+    .textContent =
+    r.appExternal
+    ?
+    "Custo externo disponível."
+    :
+    "Sem custo externo; fabricação 3D ativada.";
 
 
-    $("unionReason")
-      .textContent =
-      "União externa sem valor; processo interno selecionado.";
+  /* UNIÃO */
 
-  }
+  $("unionChoice")
+    .textContent =
+    r.unionExternal
+    ?
+    "Externa — união"
+    :
+    "Interna — ultrassônica";
 
 
-  /*
-    CUSTOS
-  */
+  $("unionReason")
+    .textContent =
+    r.unionExternal
+    ?
+    "Custo externo disponível."
+    :
+    "Sem custo externo; união interna ativada.";
+
+
+  /* CUSTOS */
 
   $("mainCost")
     .textContent =
-    money(
-      result.finalCost
-    );
+    money(r.final);
 
 
   $("boxCost")
     .textContent =
     money(
-      result.finalCost * 20
+      r.final * 20
     );
 
 
   $("primaryCost")
     .textContent =
     money(
-      result.finalCost * 200
+      r.final * 200
     );
 
 
   $("baseCost")
     .textContent =
-    money(
-      result.industrialCost
-    );
+    money(r.base);
 
 
   $("feeCost")
     .textContent =
-    money(
-      result.administrativeFee
-    );
+    money(r.fee);
 
 
   $("finalCost")
     .textContent =
-    money(
-      result.finalCost
-    );
+    money(r.final);
 
 
-  /*
-    VOLUME 5 ANOS
-  */
+  /* CENÁRIO */
 
-  $("fiveYearVolume")
-    .textContent =
-    numberBR(
-      result.volume5
-    );
-
-
-  /*
-    CENÁRIO
-  */
-
-  const scenario =
-    getScenario();
+  const sc =
+    scenarioInfo();
 
 
   $("scenario")
     .textContent =
-    scenario.id;
+    sc.id;
 
 
   $("trajectory")
     .textContent =
-    scenario.trajectory;
+    sc.trajectory;
 
 
-  /*
-    RESUMO
-  */
+  /* TABELA */
 
-  $("summary")
-    .innerHTML =
-
+  $("summary").innerHTML =
     periods
       .map(
-        function(period){
-
-          return `
-
-          <tr>
-
-            <td>
-              ${period.name}
-            </td>
-
-            <td>
-              ${numberBR(period.qty)}
-            </td>
-
-            <td>
-              ${money(result.finalCost)}
-            </td>
-
-          </tr>
-
-          `;
-
-        }
-      )
-      .join("");
-
-
-  /*
-    COMPOSIÇÃO
-  */
-
-  $("composition")
-    .innerHTML =
-
-    [
-
-      [
-        "Corpo — injeção",
-        getNum(
-          "BOM",
-          "B017",
-          2
-        ),
-        result.bodyUnit,
-        result.bodyTotal
-      ],
-
-      [
-        "Filtro — " +
-        (
-          result.useExternalFilter
-            ?
-            "externo PP"
-            :
-            "interno malha metálica"
-        ),
-        getNum(
-          "BOM",
-          "B016",
-          1
-        ),
-        result.filterUnit,
-        result.filterTotal
-      ],
-
-      [
-        "Aplicador — " +
-        (
-          result.useExternalApplicator
-            ?
-            "externo"
-            :
-            "impressão 3D"
-        ),
-        getNum(
-          "BOM",
-          "B018",
-          2
-        ),
-        result.applicatorUnit,
-        result.applicatorTotal
-      ],
-
-      [
-        "União ultrassônica",
-        1,
-        result.unionUnit,
-        result.unionTotal
-      ],
-
-      [
-        "Embalagem",
-        1,
-        result.packaging,
-        result.packaging
-      ]
-
-    ]
-
-    .map(
-      function(item){
-
-        return `
+        p => `
 
         <tr>
 
           <td>
-            ${item[0]}
+            ${p.name}
           </td>
 
           <td>
-            ${item[1]}
+            ${fmt(p.qty)}
           </td>
 
           <td>
-            ${money(item[2])}
-          </td>
-
-          <td>
-            ${money(item[3])}
+            ${money(r.final)}
           </td>
 
         </tr>
 
-        `;
+        `
+      )
+      .join("");
 
-      }
-    )
-    .join("");
+
+  /* COMPOSIÇÃO */
+
+  $("composition").innerHTML = [
+
+    [
+      "Corpo — injeção",
+      val("BOM","B017",2),
+      r.bodyUnit,
+      r.bodyTotal
+    ],
+
+    [
+      "Filtro — " +
+      (
+        r.filterExternal
+        ?
+        "externo PP"
+        :
+        "interno malha metálica"
+      ),
+      val("BOM","B016",1),
+      r.filterUnit,
+      r.filterTotal
+    ],
+
+    [
+      "Aplicador — " +
+      (
+        r.appExternal
+        ?
+        "externo"
+        :
+        "impressão 3D"
+      ),
+      val("BOM","B018",2),
+      r.appUnit,
+      r.appTotal
+    ],
+
+    [
+      "União ultrassônica",
+      1,
+      r.unionUnit,
+      r.unionUnit
+    ],
+
+    [
+      "Embalagem",
+      1,
+      r.packaging,
+      r.packaging
+    ]
+
+  ]
+
+  .map(
+    x => `
+
+      <tr>
+
+        <td>
+          ${x[0]}
+        </td>
+
+        <td>
+          ${x[1]}
+        </td>
+
+        <td>
+          ${money(x[2])}
+        </td>
+
+        <td>
+          ${money(x[3])}
+        </td>
+
+      </tr>
+
+    `
+  )
+  .join("");
 
 
   drawChart();
@@ -3279,30 +2713,26 @@ function renderAll(){
 
 function drawChart(){
 
-  const canvas =
+  const c =
     $("chart");
 
-
   const ctx =
-    canvas.getContext(
-      "2d"
-    );
+    c.getContext("2d");
 
 
-  const width =
-    canvas.clientWidth || 1100;
+  const W =
+    c.clientWidth || 1100;
 
 
-  const height =
-    260;
+  const H = 260;
 
 
-  canvas.width =
-    width * 2;
+  c.width =
+    W * 2;
 
 
-  canvas.height =
-    height * 2;
+  c.height =
+    H * 2;
 
 
   ctx.setTransform(
@@ -3318,62 +2748,39 @@ function drawChart(){
   ctx.clearRect(
     0,
     0,
-    width,
-    height
+    W,
+    H
   );
 
 
-  /*
-    Neste momento o custo industrial
-    é calculado usando a estrutura
-    de 5 anos.
-  */
-
-  const cost =
-    calculateCost()
-      .finalCost;
-
-
-  const values =
+  const vals =
     periods.map(
-      function(){
-
-        return cost;
-
-      }
+      () =>
+        costModel(
+          fiveYearVolume()
+        ).final
     );
 
 
   const max =
     Math.max(
-      cost * 1.2,
+      ...vals,
       1
-    );
+    ) * 1.2;
 
 
-  const pad = {
-
-    left:60,
-
-    right:20,
-
-    top:22,
-
-    bottom:45
-
+  const p = {
+    l:60,
+    r:20,
+    t:22,
+    b:45
   };
 
-
-  /*
-    GRID
-  */
 
   ctx.strokeStyle =
     "#dfe5ee";
 
-
-  ctx.lineWidth =
-    1;
+  ctx.lineWidth = 1;
 
 
   for(
@@ -3383,35 +2790,25 @@ function drawChart(){
   ){
 
     const y =
-
-      pad.top
-
-      +
-
+      p.t +
       (
-        height
-        -
-        pad.top
-        -
-        pad.bottom
-      )
-
-      *
-
-      i
-      /
+        H -
+        p.t -
+        p.b
+      ) *
+      i /
       4;
 
 
     ctx.beginPath();
 
     ctx.moveTo(
-      pad.left,
+      p.l,
       y
     );
 
     ctx.lineTo(
-      width-pad.right,
+      W-p.r,
       y
     );
 
@@ -3421,13 +2818,8 @@ function drawChart(){
     ctx.fillStyle =
       "#687386";
 
-
     ctx.font =
       "11px Arial";
-
-
-    ctx.textAlign =
-      "left";
 
 
     ctx.fillText(
@@ -3435,106 +2827,67 @@ function drawChart(){
         max *
         (
           1 -
-          i/4
+          i / 4
         )
       ),
       5,
-      y+4
+      y + 4
     );
 
   }
 
 
-  /*
-    PONTOS
-  */
-
-  const xPositions =
+  const xs =
     periods.map(
-      function(_,index){
-
-        return
-
-          pad.left
-
-          +
-
-          (
-            width
-            -
-            pad.left
-            -
-            pad.right
-          )
-
-          *
-
-          (
-            index /
-            Math.max(
-              periods.length-1,
-              1
-            )
-          );
-
-      }
+      (_,i) =>
+        p.l +
+        (
+          W -
+          p.l -
+          p.r
+        ) *
+        i /
+        Math.max(
+          periods.length - 1,
+          1
+        )
     );
 
 
   ctx.strokeStyle =
     "#145da0";
 
-
-  ctx.lineWidth =
-    3;
-
+  ctx.lineWidth = 3;
 
   ctx.beginPath();
 
 
-  values.forEach(
-    function(value,index){
+  vals.forEach(
+    (v,i) => {
 
       const y =
-
-        pad.top
-
-        +
-
+        p.t +
         (
-          height
-          -
-          pad.top
-          -
-          pad.bottom
-        )
-
-        *
-
+          H -
+          p.t -
+          p.b
+        ) *
         (
           1 -
-          value/max
+          v / max
         );
 
 
-      if(
-        index === 0
-      ){
-
-        ctx.moveTo(
-          xPositions[index],
-          y
-        );
-
-      }
-      else{
-
+      if(i)
         ctx.lineTo(
-          xPositions[index],
+          xs[i],
           y
         );
-
-      }
+      else
+        ctx.moveTo(
+          xs[i],
+          y
+        );
 
     }
   );
@@ -3543,28 +2896,19 @@ function drawChart(){
   ctx.stroke();
 
 
-  values.forEach(
-    function(value,index){
+  vals.forEach(
+    (v,i) => {
 
       const y =
-
-        pad.top
-
-        +
-
+        p.t +
         (
-          height
-          -
-          pad.top
-          -
-          pad.bottom
-        )
-
-        *
-
+          H -
+          p.t -
+          p.b
+        ) *
         (
           1 -
-          value/max
+          v / max
         );
 
 
@@ -3574,15 +2918,13 @@ function drawChart(){
 
       ctx.beginPath();
 
-
       ctx.arc(
-        xPositions[index],
+        xs[i],
         y,
         5,
         0,
-        Math.PI*2
+        Math.PI * 2
       );
-
 
       ctx.fill();
 
@@ -3590,26 +2932,24 @@ function drawChart(){
       ctx.fillStyle =
         "#172033";
 
-
       ctx.font =
         "11px Arial";
-
 
       ctx.textAlign =
         "center";
 
 
       ctx.fillText(
-        periods[index].name,
-        xPositions[index],
-        height-22
+        periods[i].name,
+        xs[i],
+        H - 22
       );
 
 
       ctx.fillText(
-        money(value),
-        xPositions[index],
-        y-10
+        money(v),
+        xs[i],
+        y - 10
       );
 
     }
@@ -3619,74 +2959,263 @@ function drawChart(){
 
 
 /* =========================================================
-   RECUPERAR PLANILHA SALVA
+   BOTÕES
 ========================================================= */
 
-function loadSavedData(){
-
-  try{
-
-    const raw =
-      localStorage.getItem(
-        STORAGE_DATA
-      );
+$("quarterlyBtn").onclick =
+  () =>
+    setMode("quarterly");
 
 
-    if(!raw)
-      return;
-
-
-    const parsed =
-      JSON.parse(
-        raw
-      );
-
-
-    if(
-      !Array.isArray(parsed)
-      ||
-      !parsed.length
-    )
-      return;
-
-
-    dataRows =
-      parsed;
-
-
-    const savedFile =
-      localStorage.getItem(
-        STORAGE_FILE
-      )
-      ||
-      "planilha salva no navegador";
-
-
-    initialize(
-      savedFile
-    );
-
-  }
-  catch(error){
-
-    console.warn(
-      "Não foi possível recuperar a planilha salva.",
-      error
-    );
-
-  }
-
-}
+$("annualBtn").onclick =
+  () =>
+    setMode("annual");
 
 
 /* =========================================================
-   INÍCIO
+   CARREGAR PLANILHA
 ========================================================= */
 
-loadSavedData();
+$("loadBtn").onclick =
+  () => {
+
+    $("modal")
+      .classList
+      .remove("hidden");
+
+    $("password").value = "";
+
+    $("passError").textContent = "";
+
+    setTimeout(
+      () =>
+        $("password").focus(),
+      50
+    );
+
+  };
+
+
+$("cancelBtn").onclick =
+  () =>
+    $("modal")
+      .classList
+      .add("hidden");
+
+
+$("passBtn").onclick =
+  () => {
+
+    if(
+      $("password").value !==
+      PASSWORD
+    ){
+
+      $("passError").textContent =
+        "Senha incorreta.";
+
+      return;
+
+    }
+
+
+    $("modal")
+      .classList
+      .add("hidden");
+
+
+    $("fileInput").click();
+
+  };
+
+
+$("password")
+  .addEventListener(
+    "keydown",
+    e => {
+
+      if(
+        e.key === "Enter"
+      )
+        $("passBtn").click();
+
+    }
+  );
+
+
+/* =========================================================
+   TAXAS
+========================================================= */
+
+$("feeNo").onclick =
+  () => {
+
+    feeEnabled = false;
+
+    $("feeNo")
+      .classList
+      .add("active");
+
+    $("feeYes")
+      .classList
+      .remove("active");
+
+    renderAll();
+
+  };
+
+
+$("feeYes").onclick =
+  () => {
+
+    feeEnabled = true;
+
+    $("feeYes")
+      .classList
+      .add("active");
+
+    $("feeNo")
+      .classList
+      .remove("active");
+
+    renderAll();
+
+  };
+
+
+$("adminRate").oninput =
+  renderAll;
+
+
+/* =========================================================
+   LEITURA DA PLANILHA
+========================================================= */
+
+$("fileInput")
+  .addEventListener(
+    "change",
+    async e => {
+
+      const file =
+        e.target.files[0];
+
+
+      if(!file)
+        return;
+
+
+      try{
+
+        const wb =
+          XLSX.read(
+            await file.arrayBuffer(),
+            {
+              type:"array",
+              cellDates:true
+            }
+          );
+
+
+        const last =
+          wb.SheetNames[
+            wb.SheetNames.length - 1
+          ];
+
+
+        if(
+          last !==
+          APP_SHEET_NAME
+        ){
+
+          alert(
+            `Planilha recusada.
+
+A última aba é "${last}".
+
+Ela precisa se chamar "APP_DATA".`
+          );
+
+          return;
+
+        }
+
+
+        const ws =
+          wb.Sheets[last];
+
+
+        const json =
+          XLSX.utils.sheet_to_json(
+            ws,
+            {
+              defval:""
+            }
+          );
+
+
+        if(!json.length){
+
+          alert(
+            "A APP_DATA está vazia."
+          );
+
+          return;
+
+        }
+
+
+        dataRows =
+          json;
+
+
+        localStorage.setItem(
+          STORAGE_DATA,
+          JSON.stringify(
+            dataRows
+          )
+        );
+
+
+        localStorage.setItem(
+          STORAGE_FILE,
+          file.name
+        );
+
+
+        initialize(
+          file.name
+        );
+
+      }
+
+      catch(err){
+
+        console.error(err);
+
+        alert(
+          "Não foi possível ler a planilha. Verifique se a última aba é APP_DATA."
+        );
+
+      }
+
+      finally{
+
+        e.target.value = "";
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+loadSaved();
+
 
 </script>
 
 </body>
-
 </html>
