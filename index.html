@@ -30,7 +30,7 @@ select,input[type=number]{width:100%;padding:10px;border:1px solid var(--line);b
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-size:11px;text-transform:uppercase}
 .badge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800}.badge-green{background:#e9f8f0;color:var(--green)}.badge-red{background:#fdecec;color:var(--red)}.badge-gray{background:#eef2f6;color:#475467}
 .toggle{display:flex;gap:8px}.toggle button{flex:1;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;font-weight:700}.toggle button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.hidden{display:none!important}.modal{position:fixed;inset:0;background:rgba(10,20,35,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-box{background:#fff;width:min(400px,100%);border-radius:15px;padding:24px}.password{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin:10px 0}.actions{display:flex;justify-content:flex-end;gap:8px}.btn{padding:10px 14px;border:0;border-radius:9px;cursor:pointer;font-weight:700}.primary{background:var(--primary);color:#fff}.secondary{background:#eef2f7;color:#344054}
+.hidden{display:none!important}.commercial-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.commercial-item{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fafcff}.commercial-item input{margin-top:4px}@media(max-width:760px){.commercial-grid{grid-template-columns:1fr}}.modal{position:fixed;inset:0;background:rgba(10,20,35,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-box{background:#fff;width:min(400px,100%);border-radius:15px;padding:24px}.password{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin:10px 0}.actions{display:flex;justify-content:flex-end;gap:8px}.btn{padding:10px 14px;border:0;border-radius:9px;cursor:pointer;font-weight:700}.primary{background:var(--primary);color:#fff}.secondary{background:#eef2f7;color:#344054}
 canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;background:#fff}
 .notice{padding:12px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:12px}.notice.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
 @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}.mode-buttons{flex-direction:column}.header-inner{align-items:flex-start}}
@@ -55,32 +55,7 @@ canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;b
       <div id="annualPanel" class="grid3 hidden" style="margin-top:15px"></div>
     </div>
 
-    <div class="card">
-      <h2>Alternativas de processo</h2>
-      <div class="grid3">
-        <div class="kpi"><div class="l">Filtro</div><div class="v" id="filterChoice">—</div><div class="small" id="filterReason"></div></div>
-        <div class="kpi"><div class="l">Aplicador</div><div class="v" id="appChoice">—</div><div class="small" id="appReason"></div></div>
-        <div class="kpi"><div class="l">União</div><div class="v" id="unionChoice">—</div><div class="small" id="unionReason"></div></div>
-      </div>
-    </div>
 
-    <div class="card">
-      <h2>Custos financeiros opcionais</h2>
-      <div class="grid2">
-        <div>
-          <label>Aplicar taxas administrativas?</label>
-          <div class="toggle">
-            <button id="feeNo" class="active">Não</button>
-            <button id="feeYes">Sim</button>
-          </div>
-        </div>
-        <div>
-          <label>Taxa administrativa (%)</label>
-          <input id="adminRate" type="number" min="0" step="0.01" value="0">
-          <div class="small">Aplicada somente sobre o custo base. Não altera os custos industriais armazenados na planilha.</div>
-        </div>
-      </div>
-    </div>
 
     <div class="card">
       <h2>Custo estimado</h2>
@@ -92,6 +67,7 @@ canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;b
       <div class="grid3" style="margin-top:14px">
         <div class="kpi"><div class="l">Custo industrial/base</div><div class="v" id="baseCost">R$ 0,00</div></div>
         <div class="kpi"><div class="l">Taxas administrativas</div><div class="v" id="feeCost">R$ 0,00</div></div>
+        <div class="kpi"><div class="l">Partidas comerciais</div><div class="v" id="commercialCostSummary">R$ 0,00</div></div>
         <div class="kpi"><div class="l">Custo final considerado</div><div class="v" id="finalCost">R$ 0,00</div></div>
       </div>
     </div>
@@ -102,13 +78,204 @@ canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;b
         <div class="kpi"><div class="l">Trajetória</div><div class="v" id="trajectory" style="font-size:16px">—</div></div>
         <div class="kpi"><div class="l">Volume 5 anos</div><div class="v" id="fiveYearVolume">0</div><div class="small">Bfoam</div></div>
       </div>
-      <div style="margin-top:14px"><canvas id="chart" width="1100" height="260"></canvas></div>
+      <div class="small" style="margin-top:12px">Gráfico do custo por Bfoam ao longo da trajetória selecionada.</div><div style="margin-top:10px"><canvas id="chart" width="1100" height="260"></canvas></div>
       <div style="margin-top:12px;overflow:auto"><table><thead><tr><th>Período</th><th>Volume</th><th>Custo/un</th></tr></thead><tbody id="summary"></tbody></table></div>
     </div>
 
     <div class="card">
       <h2>Composição do custo</h2>
       <div style="overflow:auto"><table><thead><tr><th>Componente</th><th>Quantidade</th><th>Custo unitário</th><th>Total/Bfoam</th></tr></thead><tbody id="composition"></tbody></table></div>
+    </div>
+
+
+    <div class="card">
+      <h2>Alternativas de processo</h2>
+      <div class="grid3">
+        <div class="kpi"><div class="l">Filtro</div><div class="v" id="filterChoice">—</div><div class="small" id="filterReason"></div></div>
+        <div class="kpi"><div class="l">Aplicador</div><div class="v" id="appChoice">—</div><div class="small" id="appReason"></div></div>
+        <div class="kpi"><div class="l">União</div><div class="v" id="unionChoice">—</div><div class="small" id="unionReason"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Partidas comerciais e financeiras opcionais</h2>
+      <div>
+        <label>Considerar partidas comerciais?</label>
+        <div class="toggle">
+          <button id="commercialNo" class="active">Não</button>
+          <button id="commercialYes">Sim</button>
+        </div>
+      </div>
+      <div id="commercialPanel" class="hidden">
+        <div class="notice" style="margin-top:14px">
+          <b>Referência de viabilidade comercial</b><br>
+          Os percentuais abaixo são <b>valores iniciais editáveis para simulação</b>, não parâmetros fixos de mercado. Eles só entram no custo quando “Sim” estiver selecionado.
+        </div>
+        <div class="commercial-grid">
+          <div class="commercial-item"><label>Taxa administrativa (%)</label><input id="adminRate" type="number" min="0" step="0.01" value="0"><div class="small">Despesa administrativa geral</div></div>
+          <div class="commercial-item"><label>Impostos sobre venda (%)</label><input id="commercialTax" type="number" min="0" step="0.01" value="10"><div class="small">Referência inicial de simulação</div></div>
+          <div class="commercial-item"><label>Comissão comercial (%)</label><input id="commercialCommission" type="number" min="0" step="0.01" value="5"><div class="small">Referência inicial de simulação</div></div>
+          <div class="commercial-item"><label>Despesas comerciais (%)</label><input id="commercialExpenses" type="number" min="0" step="0.01" value="3"><div class="small">Equipe, representação e suporte comercial</div></div>
+          <div class="commercial-item"><label>Marketing / divulgação (%)</label><input id="commercialMarketing" type="number" min="0" step="0.01" value="2"><div class="small">Referência inicial de simulação</div></div>
+          <div class="commercial-item"><label>Despesas financeiras (%)</label><input id="commercialFinance" type="number" min="0" step="0.01" value="1"><div class="small">Referência inicial de simulação</div></div>
+          <div class="commercial-item"><label>Perdas / inadimplência (%)</label><input id="commercialLoss" type="number" min="0" step="0.01" value="1"><div class="small">Referência inicial de simulação</div></div>
+          <div class="commercial-item"><label>Frete / distribuição comercial (%)</label><input id="commercialDistribution" type="number" min="0" step="0.01" value="2"><div class="small">Quando aplicável à venda</div></div>
+        </div>
+        <div class="grid3" style="margin-top:14px">
+          <div class="kpi"><div class="l">Partidas comerciais (%)</div><div class="v" id="commercialRateDisplay">0,00%</div></div>
+          <div class="kpi"><div class="l">Custo comercial</div><div class="v" id="commercialCostDisplay">R$ 0,00</div></div>
+          <div class="kpi"><div class="l">Custo após comerciais</div><div class="v" id="commercialFinalDisplay">R$ 0,00</div></div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <h2>Viabilidade econômico-financeira</h2>
+      <div class="grid2">
+        <div>
+          <label>Considerar viabilidade?</label>
+          <div class="toggle">
+            <button id="viabNo" class="active">Não</button>
+            <button id="viabYes">Sim</button>
+          </div>
+        </div>
+        <div class="notice">
+          A viabilidade usa a projeção de volume do aplicativo e permite testar preço de venda,
+          custos fixos, CAPEX, depreciação, capital de giro e impostos. Os valores do relatório
+          F-PJ-039 são usados apenas como referência de estrutura, não como dados do Bfoam.
+        </div>
+      </div>
+
+      <div id="viabPanel" class="hidden">
+        <div class="grid3" style="margin-top:14px">
+          <div class="commercial-item">
+            <label>Preço de venda por Bfoam (R$)</label>
+            <input id="salePrice" type="number" min="0" step="0.01" value="0">
+            <div class="small">Preço líquido de venda utilizado na simulação.</div>
+          </div>
+          <div class="commercial-item">
+            <label>Custos fixos anuais (R$)</label>
+            <input id="fixedAnnual" type="number" min="0" step="0.01" value="0">
+            <div class="small">Despesas fixas atribuídas ao projeto.</div>
+          </div>
+          <div class="commercial-item">
+            <label>WACC / taxa de desconto (%)</label>
+            <input id="wacc" type="number" min="0" step="0.01" value="0">
+            <div class="small">Taxa utilizada no VPL.</div>
+          </div>
+        </div>
+
+        <div class="grid3" style="margin-top:12px">
+          <div class="commercial-item">
+            <label>CAPEX inicial depreciável (R$)</label>
+            <input id="deprCapex" type="number" min="0" step="0.01" value="" placeholder="automático">
+            <div class="small">Vazio = usa o CAPEX do custeio (molde, ferramental, impressoras) + outros ativos.</div>
+          </div>
+          <div class="commercial-item">
+            <label>Vida útil (anos)</label>
+            <input id="deprLife" type="number" min="1" step="1" value="10">
+            <div class="small">Depreciação linear para a simulação.</div>
+          </div>
+          <div class="commercial-item">
+            <label>Imposto sobre lucro (%)</label>
+            <input id="profitTax" type="number" min="0" step="0.01" value="0">
+            <div class="small">Aplicado somente sobre EBIT positivo.</div>
+          </div>
+        </div>
+
+        <div class="grid3" style="margin-top:12px">
+          <div class="commercial-item">
+            <label>Capital de giro (% da receita)</label>
+            <input id="workingCapitalRate" type="number" min="0" step="0.01" value="0">
+            <div class="small">Usado para estimar a necessidade de capital de giro.</div>
+          </div>
+          <div class="commercial-item">
+            <label>CAPEX adicional — Ano 2 (R$)</label>
+            <input id="capexY2" type="number" min="0" step="0.01" value="0">
+            <div class="small">Entra no investimento do Ano 2.</div>
+          </div>
+          <div class="commercial-item">
+            <label>CAPEX adicional — Ano 3 (R$)</label>
+            <input id="capexY3" type="number" min="0" step="0.01" value="0">
+            <div class="small">Entra no investimento do Ano 3.</div>
+          </div>
+        </div>
+
+        <div class="grid3" style="margin-top:12px">
+          <div class="commercial-item">
+            <label>CAPEX adicional — Ano 4 (R$)</label>
+            <input id="capexY4" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div class="commercial-item">
+            <label>CAPEX adicional — Ano 5 (R$)</label>
+            <input id="capexY5" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div class="notice">
+            <b>Depreciação progressiva</b><br>
+            Se houver CAPEX adicional em anos posteriores, a depreciação dos anos seguintes aumenta.
+            Isso evita manter o gráfico artificialmente constante quando novos ativos são incorporados.
+          </div>
+        </div>
+
+        <div class="notice" style="margin-top:15px">
+          <b>Manutenção do maquinário e reajustes anuais</b><br>
+          Manutenção = % do valor do maquinário/ferramental (injeção, molde da união, malha, impressoras) por ano, crescendo por inflação e por envelhecimento.
+          Referências: benchmark industrial de 2% a 5% do valor de reposição por ano; envelhecimento de 1% a 3% ao ano acima da inflação; IPCA (Focus) ≈ 5,1% em 2026, 4,2% em 2027, 3,8% em 2028 e 3,5% em 2029.
+          Se o custo/hora de máquina já incluir manutenção, reduza o percentual para não contar duas vezes.
+        </div>
+        <div class="grid3" style="margin-top:12px">
+          <div class="commercial-item"><label>Manutenção (% do valor do maquinário/ano)</label><input id="maintPct" type="number" min="0" step="0.1" value="3"><div class="small">Meio da faixa de 2% a 5%.</div></div>
+          <div class="commercial-item"><label>Inflação da manutenção (%/ano)</label><input id="maintInfl" type="number" min="0" step="0.1" value="4"><div class="small">Média IPCA 2027–2029 (Focus).</div></div>
+          <div class="commercial-item"><label>Envelhecimento real (%/ano)</label><input id="maintAging" type="number" min="0" step="0.1" value="2"><div class="small">Custo extra por desgaste, além da inflação.</div></div>
+        </div>
+        <div class="grid3" style="margin-top:12px">
+          <div class="commercial-item"><label>Reajuste anual dos custos fixos (%)</label><input id="fixedInfl" type="number" min="0" step="0.1" value="4"><div class="small">Aplicado aos custos fixos a partir do Ano 2.</div></div>
+          <div class="commercial-item"><label>Outros ativos com manutenção (R$)</label><input id="otherAssets" type="number" min="0" step="0.01" value="0"><div class="small">Ex.: máquina de ultrassom (preço não está na planilha). Soma ao CAPEX inicial automático.</div></div>
+        </div>
+
+        <div class="grid3" style="margin-top:15px">
+          <div class="kpi"><div class="l">Receita acumulada — 5 anos</div><div class="v" id="viabRevenue5">R$ 0,00</div></div>
+          <div class="kpi"><div class="l">FCL acumulado — 5 anos</div><div class="v" id="viabFcf5">R$ 0,00</div></div>
+          <div class="kpi"><div class="l">Depreciação — Ano 5</div><div class="v" id="viabDep5">R$ 0,00</div></div>
+        </div>
+
+        <div style="margin-top:15px;overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Ano</th>
+                <th>Volume</th>
+                <th>Receita</th>
+                <th>Custo variável</th>
+                <th>Deduções s/ receita</th><th>Custos fixos</th><th>Manutenção</th>
+                <th>EBITDA</th>
+                <th>Depreciação</th>
+                <th>EBIT</th>
+                <th>Imposto</th>
+                <th>CAPEX</th>
+                <th>FCL</th>
+              </tr>
+            </thead>
+            <tbody id="viabTable"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:15px">
+          <canvas id="viabChart" width="1100" height="300"></canvas>
+        </div>
+
+        <div class="grid3" style="margin-top:15px">
+          <div class="kpi"><div class="l">VPL</div><div class="v" id="viabNpv">R$ 0,00</div></div>
+          <div class="kpi"><div class="l">Payback</div><div class="v" id="viabPayback" style="font-size:17px">—</div></div>
+          <div class="kpi"><div class="l">Ponto de equilíbrio</div><div class="v" id="viabBreakEven">—</div><div class="small">Bfoam/ano (Ano 1)</div></div>
+        </div>
+        <div class="grid3" style="margin-top:12px">
+          <div class="kpi"><div class="l">TIR</div><div class="v" id="viabIrr">—</div></div>
+          <div class="kpi"><div class="l">Margem EBITDA — Ano 5</div><div class="v" id="viabMargin">—</div></div>
+          <div class="kpi"><div class="l">CAPEX inicial considerado</div><div class="v" id="viabCapex">R$ 0,00</div><div class="small" id="viabMaint5"></div></div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -134,9 +301,9 @@ canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;b
 <script>
 const APP_SHEET_NAME="APP_DATA";
 const PASSWORD="msb19";
-const STORAGE_DATA="bfoamAppDataV4";
-const STORAGE_FILE="bfoamAppFileV4";
-let dataRows=[], workbookData=null, currentMode="quarterly", periods=[], selectedIndex=0, feeEnabled=false;
+const STORAGE_DATA="bfoamAppDataV7";
+const STORAGE_FILE="bfoamAppFileV7";
+let dataRows=[], workbookData=null, currentMode="quarterly", periods=[], selectedIndex=0, viabilityEnabled=false, feeEnabled=false, commercialEnabled=false;
 const $=id=>document.getElementById(id);
 
 function norm(v){return String(v??"").trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
@@ -239,11 +406,13 @@ function getNum(section,id,fallback=0){const v=get(section,id,null);return isNum
 function getByParam(section,words,fallback=0){const rr=rows(section).filter(r=>words.some(w=>norm(r.ITEM).includes(norm(w))||norm(r.PARAMETER).includes(norm(w))||norm(r.OPTION).includes(norm(w))));for(const r of rr){if(isNum(r.VALUE))return num(r.VALUE);}return fallback;}
 
 function buildPeriods(){
-  const names=currentMode==="quarterly"?["1º trimestre","2º trimestre","3º trimestre","4º trimestre","Após o 1º ano"]:["Ano 1","Ano 2","Ano 3","Ano 4","Ano 5"];
+  const names=currentMode==="quarterly"?["1º trimestre","2º trimestre","3º trimestre","4º trimestre","Após o 1º ano (por ano)"]:["Ano 1","Ano 2","Ano 3","Ano 4","Ano 5"];
   const defaults=currentMode==="quarterly"?[1000,2500,5000,7500,10000]:[5000,10000,15000,20000,25000];
-  periods=names.map((name,i)=>({name,qty:defaults[i]}));
+  const max=currentMode==="quarterly"?10000:50000;
+  const step=1000;
+  periods=names.map((name,i)=>({name,qty:Math.min(defaults[i],max)}));
   const panel=currentMode==="quarterly"?$("quarterlyPanel"):$("annualPanel");panel.innerHTML="";
-  periods.forEach((p,i)=>{const d=document.createElement("div");d.className="slider-card";d.innerHTML=`<div class="slider-top"><b>${p.name}</b><span class="slider-value" id="sv${i}">${fmt(p.qty)}</span></div><input type="range" min="0" max="1000000" step="100" value="${p.qty}" id="sl${i}"><div class="small">Volume de Bfoam no período</div>`;d.querySelector("input").oninput=e=>{periods[i].qty=Number(e.target.value);selectedIndex=i;$("sv"+i).textContent=fmt(periods[i].qty);renderAll();};panel.appendChild(d);});
+  periods.forEach((p,i)=>{const d=document.createElement("div");d.className="slider-card";d.innerHTML=`<div class="slider-top"><b>${p.name}</b><span class="slider-value" id="sv${i}">${fmt(p.qty)}</span></div><input type="range" min="0" max="${max}" step="${step}" value="${p.qty}" id="sl${i}"><div class="small">De 0 a ${fmt(max)} Bfoam${currentMode==="annual"||i===4?"/ano":""}</div>`;d.querySelector("input").oninput=e=>{periods[i].qty=Number(e.target.value);selectedIndex=i;$("sv"+i).textContent=fmt(periods[i].qty);renderAll();};panel.appendChild(d);});
 }
 function setMode(mode){currentMode=mode;selectedIndex=0;$("quarterlyBtn").classList.toggle("active",mode==="quarterly");$("annualBtn").classList.toggle("active",mode==="annual");$("quarterlyPanel").classList.toggle("hidden",mode!=="quarterly");$("annualPanel").classList.toggle("hidden",mode!=="annual");buildPeriods();renderAll();}
 
@@ -255,6 +424,27 @@ function scenarioInfo(){
   const bands=periods.map(p=>p.qty<=1000?"BAIXA":p.qty<=5000?"MEDIA":"ALTA");const c=[];bands.forEach(b=>{if(c[c.length-1]!==b)c.push(b)});
   const map={"BAIXA":"A","MEDIA":"B","ALTA":"C","BAIXA>MEDIA":"D","BAIXA>ALTA":"E","MEDIA>BAIXA":"F","MEDIA>ALTA":"G","ALTA>MEDIA":"H","ALTA>BAIXA":"I","BAIXA>MEDIA>ALTA":"J","ALTA>MEDIA>BAIXA":"K"};
   return {id:map[c.join(">")]||"—",trajectory:c.map(x=>x[0]+x.slice(1).toLowerCase()).join(" → ")};
+}
+
+/* ---------- REGRA DE ESCOLHA POR VOLUME (v8) ----------
+   Quando as duas alternativas têm custo cadastrado, o app escolhe a MAIS BARATA
+   para o volume de 5 anos. Se só uma tem custo, usa essa.
+   Ponto de virada = volume (Bfoam em 5 anos) em que interno = externo:
+   (CAPEX interno - CAPEX externo) / (custo variável externo - custo variável interno) / peças por Bfoam. */
+function pickAlt(extAvail,ext,intAvail,int,q5,extName,intName){
+  if(extAvail&&intAvail){
+    if(!(q5>0))return extName;               // sem volume não há como diluir CAPEX: mantém externo
+    return int<ext?intName:extName;
+  }
+  if(extAvail)return extName;
+  if(intAvail)return intName;
+  return "none";
+}
+function turnPoint(extVar,extCapex,intVar,intCapex,perBfoam){
+  const dv=extVar-intVar, dc=intCapex-extCapex;
+  if(dv>0&&dc<=0)return 0;                   // interno já é melhor desde a 1ª unidade
+  if(dv<=0)return null;                      // interno nunca fica mais barato
+  return Math.ceil(dc/dv/Math.max(perBfoam,1e-9)); // Bfoam em 5 anos
 }
 
 function costModel(q5){
@@ -445,14 +635,16 @@ function costModel(q5){
     nenhuma -> sem custo.
   */
 
-  let filterMode =
-    "none";
+  const fExtVar = fExtPrice + fExtFreight + fExtOperation;
+  const fIntVar = fIntMaterial + fIntFreight + fIntOperation;
 
-  if(fExtAvailable){
-    filterMode = "externo";
-  }else if(fIntAvailable){
-    filterMode = "interno";
-  }
+  const filterMode =
+    pickAlt(fExtAvailable,fExt,fIntAvailable,fInt,q5,"externo","interno");
+
+  const filterBE =
+    (fExtAvailable && fIntAvailable)
+      ? turnPoint(fExtVar,fExtCapex,fIntVar,fIntCapex,filters)
+      : null;
 
   const filterUnit =
     filterMode === "externo"
@@ -570,14 +762,13 @@ function costModel(q5){
     aMaterial > 0;
 
 
-  let appMode =
-    "none";
+  const appMode =
+    pickAlt(aExtAvailable,aExt,aIntAvailable,aInt,q5,"externo","3d");
 
-  if(aExtAvailable){
-    appMode = "externo";
-  }else if(aIntAvailable){
-    appMode = "3d";
-  }
+  const appBE =
+    (aExtAvailable && aIntAvailable)
+      ? turnPoint(aExt,0,aMaterial+aOperation+machinePerApplicator,bench,apps)
+      : null;
 
   const appUnit =
     appMode === "externo"
@@ -646,14 +837,15 @@ function costModel(q5){
     uMachineHour > 0;
 
 
-  let unionMode =
-    "none";
+  const unionMode =
+    pickAlt(uExtAvailable,uExt,uIntAvailable,uInt,q5,"externo","interno");
 
-  if(uExtAvailable){
-    unionMode = "externo";
-  }else if(uIntAvailable){
-    unionMode = "interno";
-  }
+  /* Ponto de virada da união: molde (CAPEX) ÷ economia variável por Bfoam
+     (externo − [horas do operador × R$/h + horas × R$/h da máquina]). */
+  const unionBE =
+    (uExtAvailable && uIntAvailable)
+      ? turnPoint(uExt,0,uOperation+uMachine,uMold,1)
+      : null;
 
   const unionUnit =
     unionMode === "externo"
@@ -710,19 +902,27 @@ function costModel(q5){
     packaging;
 
 
-  const feeRate =
-    feeEnabled
-      ? Math.max(
-          num($("adminRate").value),
-          0
-        ) / 100
-      : 0;
+  const feeRate = commercialEnabled
+    ? Math.max(num($("adminRate").value),0) / 100
+    : 0;
 
-  const fee =
-    base * feeRate;
+  const fee = base * feeRate;
 
-  const finalCost =
-    base + fee;
+  const commercialRate = commercialEnabled
+    ? (
+        num($("commercialTax").value) +
+        num($("commercialCommission").value) +
+        num($("commercialExpenses").value) +
+        num($("commercialMarketing").value) +
+        num($("commercialFinance").value) +
+        num($("commercialLoss").value) +
+        num($("commercialDistribution").value)
+      ) / 100
+    : 0;
+
+  const commercialCost = base * commercialRate;
+
+  const finalCost = base + fee + commercialCost;
 
 
   const missing = [];
@@ -759,19 +959,97 @@ function costModel(q5){
     filterMode,
     filterUnit,
     filterTotal,
+    filterExt: fExtAvailable ? fExt : null,
+    filterInt: fIntAvailable ? fInt : null,
+    filterBE,
 
     appMode,
     appUnit,
     appTotal,
+    appExt: aExtAvailable ? aExt : null,
+    appInt: aIntAvailable ? aInt : null,
+    appBE,
 
     unionMode,
     unionUnit,
     unionTotal,
+    unionExt: uExtAvailable ? uExt : null,
+    unionInt: uIntAvailable ? uInt : null,
+    unionMold: uMoldUnit,
+    unionOperation: uOperation,
+    unionMachine: uMachine,
+    unionBE,
 
     packaging,
 
+    /*
+      CAPEX selecionado das alternativas.
+      É separado do custo operacional para que a viabilidade
+      não conte o mesmo investimento duas vezes.
+    */
+    selectedCapex:
+      injCapex +
+      (
+        filterMode === "interno"
+          ? fIntCapex
+          : filterMode === "externo"
+            ? fExtCapex
+            : 0
+      ) +
+      (
+        appMode === "3d"
+          ? (printerQty * printerValue + bench)
+          : 0
+      ) +
+      (
+        unionMode === "interno"
+          ? uMold
+          : 0
+      ),
+
+    /*
+      Equivalente por unidade do CAPEX já embutido
+      no custo industrial.
+    */
+    capexUnit:
+      q5 > 0
+        ? (
+            injCapex +
+            (
+              filterMode === "interno"
+                ? fIntCapex
+                : filterMode === "externo"
+                  ? fExtCapex
+                  : 0
+            ) +
+            (
+              appMode === "3d"
+                ? bench
+                : 0
+            ) +
+            (
+              unionMode === "interno"
+                ? uMold
+                : 0
+            )
+          ) / q5
+        : 0,
+
+    /* Depreciação das impressoras que está dentro do custo do aplicador:
+       sai do custo operacional da viabilidade (o CAPEX já entra como investimento). */
+    machineDepUnit: appMode === "3d" ? machinePerApplicator * apps : 0,
+
+    /* Base de maquinário/ferramental que recebe manutenção. */
+    maintAssets:
+      injCapex +
+      (filterMode === "interno" ? fIntCapex : 0) +
+      (appMode === "3d" ? printerQty * printerValue + bench : 0) +
+      (unionMode === "interno" ? uMold : 0),
+
     base,
     fee,
+    commercialRate,
+    commercialCost,
     finalCost,
 
     missing
@@ -790,36 +1068,463 @@ function renderAll(){
   if(!dataRows.length||!periods.length)return;
   const q5=fiveYearVolume(),r=costModel(q5),sc=scenarioInfo();
   $("selectedPeriod").textContent=periods[selectedIndex].name;$("selectedQty").textContent=fmt(periods[selectedIndex].qty);$("fiveYearVolume").textContent=fmt(q5);
+  const vsText=(ext,int,be,q5v)=>{
+    if(ext===null||int===null)return null;
+    const virada=be===null?"A interna nunca fica mais barata com esses valores.":be===0?"A interna é mais barata desde a 1ª unidade.":`Ponto de virada: ${fmt(be)} Bfoam em 5 anos${q5v>0?` (seu volume: ${fmt(q5v)})`:""}.`;
+    if(!(q5v>0))return `Sem volume definido: mantida a externa (${money(ext)}). ${virada}`;
+    return `Externa ${money(ext)} × interna ${money(int)} neste volume. ${virada}`;
+  };
+  const fv=vsText(r.filterExt,r.filterInt,r.filterBE,q5),av=vsText(r.appExt,r.appInt,r.appBE,q5),uv=vsText(r.unionExt,r.unionInt,r.unionBE,q5);
   $("filterChoice").textContent=r.filterMode==="externo"?"Externo — PP":r.filterMode==="interno"?"Interno — malha metálica":"Não cadastrado";
-  $("filterReason").textContent=r.filterMode==="externo"?"Alternativa externa disponível; interna não é necessária.":r.filterMode==="interno"?"Externa sem valor; fabricação interna selecionada.":"Nenhuma alternativa possui custo.";
+  $("filterReason").textContent=fv||(r.filterMode==="externo"?"Só a alternativa externa tem custo cadastrado.":r.filterMode==="interno"?"Externa sem valor; fabricação interna selecionada.":"Nenhuma alternativa possui custo.");
   $("appChoice").textContent=r.appMode==="externo"?"Externo — injeção":r.appMode==="3d"?"Interno — impressão 3D":"Não cadastrado";
-  $("appReason").textContent=r.appMode==="externo"?"Alternativa externa disponível.":r.appMode==="3d"?"Externa sem valor; impressão 3D selecionada.":"Nenhuma alternativa possui custo.";
+  $("appReason").textContent=av||(r.appMode==="externo"?"Só a alternativa externa tem custo cadastrado.":r.appMode==="3d"?"Externa sem valor; impressão 3D selecionada.":"Nenhuma alternativa possui custo.");
   $("unionChoice").textContent=r.unionMode==="externo"?"Externa":r.unionMode==="interno"?"Interna — ultrassônica":"Não cadastrado";
-  $("unionReason").textContent=r.unionMode==="externo"?"Alternativa externa disponível.":r.unionMode==="interno"?"Externa sem valor; união interna selecionada.":"Nenhuma alternativa possui custo. Não bloqueia a visualização do custo disponível.";
-  $("mainCost").textContent=money(r.finalCost);$("boxCost").textContent=money(r.finalCost*20);$("primaryCost").textContent=money(r.finalCost*200);$("baseCost").textContent=money(r.base);$("feeCost").textContent=money(r.fee);$("finalCost").textContent=money(r.finalCost);
+  $("unionReason").textContent=uv||(r.unionMode==="externo"?"Só a alternativa externa tem custo cadastrado.":r.unionMode==="interno"?"Externa sem valor; união interna selecionada.":"Nenhuma alternativa possui custo. Não bloqueia a visualização do custo disponível.");
+  $("mainCost").textContent=money(r.finalCost);$("boxCost").textContent=money(r.finalCost*20);$("primaryCost").textContent=money(r.finalCost*200);$("baseCost").textContent=money(r.base);$("feeCost").textContent=money(r.fee);$("commercialCostSummary").textContent=money(r.commercialCost);$("finalCost").textContent=money(r.finalCost);
+  $("commercialRateDisplay").textContent=(r.commercialRate*100).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+"%";$("commercialCostDisplay").textContent=money(r.commercialCost);$("commercialFinalDisplay").textContent=money(r.base+r.fee+r.commercialCost);
   $("scenario").textContent=sc.id;$("trajectory").textContent=sc.trajectory;
-  $("summary").innerHTML=periods.map(p=>`<tr><td>${p.name}</td><td>${fmt(p.qty)}</td><td>${money(r.final)}</td></tr>`).join("");
+  $("summary").innerHTML=periods.map((p,i)=>{
+    const periodQ5=currentMode==="annual"
+      ? periods.reduce((a,x)=>a+Math.max(0,x.qty),0)
+      : periods.slice(0,4).reduce((a,x)=>a+Math.max(0,x.qty),0)+Math.max(0,periods[4]?.qty||0)*4;
+    const periodCost=costModel(periodQ5).finalCost;
+    return `<tr><td>${p.name}</td><td>${fmt(p.qty)}</td><td>${money(periodCost)}</td></tr>`;
+  }).join("");
   $("composition").innerHTML=[
     ["Corpo — injeção",bodiesQty(),r.bodyUnit,r.bodyTotal,r.bodyAvailable],
     ["Filtro — "+(r.filterMode==="externo"?"PP externo":r.filterMode==="interno"?"malha metálica interna":"sem alternativa"),getNum("BOM","B016",1),r.filterUnit,r.filterTotal,r.filterMode!=="none"],
     ["Aplicador — "+(r.appMode==="externo"?"injeção externa":r.appMode==="3d"?"impressão 3D":"sem alternativa"),getNum("BOM","B018",2),r.appUnit,r.appTotal,r.appMode!=="none"],
-    ["União ultrassônica",1,r.unionUnit,r.unionUnit,r.unionMode!=="none"],
+    ["União ultrassônica"+(r.unionMode==="externo"?" — externa (valor + frete)":r.unionMode==="interno"?` — interna (molde ${money(r.unionMold)} + operador ${money(r.unionOperation)} + máquina ${money(r.unionMachine)})`:" — sem alternativa"),1,r.unionUnit,r.unionUnit,r.unionMode!=="none"],
     ["Embalagem",1,r.packaging,r.packaging,true]
   ].map(x=>`<tr><td>${x[0]} ${x[4]?'':'<span class="badge badge-gray">sem custo</span>'}</td><td>${x[1]}</td><td>${money(x[2])}</td><td>${money(x[3])}</td></tr>`).join("");
-  checkData();drawChart();
+  checkData();drawChart();renderViability();
 }
 function bodiesQty(){return getNum("BOM","B017",2);}
 function drawChart(){
-  const c=$("chart"),ctx=c.getContext("2d"),W=c.clientWidth||1100,H=260;c.width=W*2;c.height=H*2;ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,W,H);
-  const v=costModel(fiveYearVolume()).finalCost,vals=periods.map(()=>v),max=Math.max(v,1)*1.2,p={l:60,r:20,t:22,b:45};ctx.strokeStyle="#dfe5ee";ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){const y=p.t+(H-p.t-p.b)*i/4;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(W-p.r,y);ctx.stroke();ctx.fillStyle="#687386";ctx.font="11px Arial";ctx.textAlign="left";ctx.fillText(money(max*(1-i/4)),5,y+4)}
-  const xs=periods.map((_,i)=>p.l+(W-p.l-p.r)*i/Math.max(periods.length-1,1));ctx.strokeStyle="#145da0";ctx.lineWidth=3;ctx.beginPath();vals.forEach((x,i)=>{const y=p.t+(H-p.t-p.b)*(1-x/max);i?ctx.lineTo(xs[i],y):ctx.moveTo(xs[i],y)});ctx.stroke();vals.forEach((x,i)=>{const y=p.t+(H-p.t-p.b)*(1-x/max);ctx.fillStyle="#145da0";ctx.beginPath();ctx.arc(xs[i],y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#172033";ctx.font="11px Arial";ctx.textAlign="center";ctx.fillText(periods[i].name,xs[i],H-22);ctx.fillText(money(x),xs[i],y-10)});
+  const c=$("chart");
+  const ctx=c.getContext("2d");
+  const W=c.clientWidth||1100,H=260;
+  c.width=W*2;c.height=H*2;
+  ctx.setTransform(2,0,0,2,0,0);
+  ctx.clearRect(0,0,W,H);
+
+  const q5=fiveYearVolume();
+  const vals=periods.map(()=>costModel(q5).finalCost);
+  const max=Math.max(...vals,1)*1.2;
+  const p={l:60,r:20,t:22,b:45};
+
+  ctx.strokeStyle="#dfe5ee";
+  ctx.lineWidth=1;
+
+  for(let i=0;i<=4;i++){
+    const y=p.t+(H-p.t-p.b)*i/4;
+    ctx.beginPath();
+    ctx.moveTo(p.l,y);
+    ctx.lineTo(W-p.r,y);
+    ctx.stroke();
+    ctx.fillStyle="#687386";
+    ctx.font="11px Arial";
+    ctx.textAlign="left";
+    ctx.fillText(money(max*(1-i/4)),5,y+4);
+  }
+
+  const xs=periods.map((_,i)=>
+    p.l+(W-p.l-p.r)*i/Math.max(periods.length-1,1)
+  );
+
+  ctx.strokeStyle="#145da0";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+
+  vals.forEach((value,i)=>{
+    const y=p.t+(H-p.t-p.b)*(1-value/max);
+    if(i===0)ctx.moveTo(xs[i],y);
+    else ctx.lineTo(xs[i],y);
+  });
+
+  ctx.stroke();
+
+  vals.forEach((value,i)=>{
+    const y=p.t+(H-p.t-p.b)*(1-value/max);
+
+    ctx.fillStyle="#145da0";
+    ctx.beginPath();
+    ctx.arc(xs[i],y,5,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="#172033";
+    ctx.font="11px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(periods[i].name,xs[i],H-22);
+    ctx.fillText(money(value),xs[i],y-10);
+  });
+}
+
+function viabilityVolumes(){
+  if(currentMode==="annual"){
+    return periods.map(p=>Math.max(0,p.qty));
+  }
+  const y1=periods.slice(0,4).reduce((s,p)=>s+Math.max(0,p.qty),0);
+  const steady=Math.max(0,periods[4]?.qty||0);
+  return [y1,steady,steady,steady,steady];
+}
+
+function viabNum(id){
+  const el=$(id);
+  return el ? Math.max(0,num(el.value)) : 0;
+}
+
+function viabilityModel(){
+  const vols=viabilityVolumes();
+  const sale=viabNum("salePrice");
+  const fixed=viabNum("fixedAnnual");
+  const tax=viabNum("profitTax")/100;
+  const wcRate=viabNum("workingCapitalRate")/100;
+  const wacc=viabNum("wacc")/100;
+  const q5=fiveYearVolume();
+  const cost=costModel(q5);
+  const otherAssets=viabNum("otherAssets");
+  const deprEl=$("deprCapex");
+  const initialDeprCapex=(deprEl&&String(deprEl.value).trim()!=="")
+    ? viabNum("deprCapex")
+    : cost.selectedCapex+otherAssets;
+  const maintPct=viabNum("maintPct")/100, maintInfl=viabNum("maintInfl")/100,
+        maintAging=viabNum("maintAging")/100, fixedInfl=viabNum("fixedInfl")/100;
+  const adminRate=cost.base>0?cost.fee/cost.base:0;
+  const life=Math.max(1,viabNum("deprLife")||10);
+
+  const extra=[
+    0,
+    viabNum("capexY2"),
+    viabNum("capexY3"),
+    viabNum("capexY4"),
+    viabNum("capexY5")
+  ];
+
+  /*
+    Para o fluxo de caixa, retiramos do custo unitário
+    o CAPEX que já está amortizado no custo industrial.
+    Assim o CAPEX é tratado como investimento separado.
+  */
+  const operatingUnitCost=Math.max(
+    0,
+    cost.base-cost.capexUnit-cost.machineDepUnit
+  );
+
+  let previousNwc=0;
+  let accumulated=0;
+
+  const rowsOut=[];
+
+  for(let i=0;i<5;i++){
+    const year=i+1;
+    const volume=vols[i]||0;
+    const revenue=volume*sale;
+    const variableCost=volume*operatingUnitCost*(1+adminRate);
+    /* Partidas comerciais incidem sobre a RECEITA (impostos s/ venda, comissão, frete, perdas...). */
+    const revDed=revenue*cost.commercialRate;
+    const fixedY=fixed*Math.pow(1+fixedInfl,i);
+    /* Manutenção: ativos base envelhecem; CAPEX adicional entra novo. */
+    const extraCum=extra.slice(1,i+1).reduce((a,b)=>a+b,0);
+    const maint=(
+      (cost.maintAssets+otherAssets)*maintPct*Math.pow(1+maintAging,i)+
+      extraCum*maintPct
+    )*Math.pow(1+maintInfl,i);
+
+    /*
+      Depreciação linear:
+      - CAPEX inicial começa no Ano 1;
+      - CAPEX adicional começa a depreciar no próprio ano;
+      - cada novo CAPEX aumenta a depreciação dos anos seguintes.
+    */
+    let depreciation=initialDeprCapex/life;
+
+    for(let j=1;j<=i;j++){
+      depreciation+=extra[j]/life;
+    }
+
+    const ebitda=revenue-revDed-variableCost-fixedY-maint;
+    const ebit=ebitda-depreciation;
+    const incomeTax=Math.max(0,ebit)*tax;
+
+    const targetNwc=revenue*wcRate;
+    const deltaNwc=targetNwc-previousNwc;
+    previousNwc=targetNwc;
+
+    const capex=extra[i];
+    const fcf=ebitda-incomeTax-capex-deltaNwc;
+
+    accumulated+=fcf;
+
+    rowsOut.push({
+      year,
+      volume,
+      revenue,
+      variableCost,
+      revDed,
+      maint,
+      fixed:fixedY,
+      ebitda,
+      depreciation,
+      ebit,
+      incomeTax,
+      capex,
+      deltaNwc,
+      fcf,
+      accumulated
+    });
+  }
+
+  /*
+    O CAPEX inicial é Ano 0 para VPL e payback.
+  */
+  const initialInvestment=initialDeprCapex;
+
+  let npv=-initialInvestment;
+
+  rowsOut.forEach((r,i)=>{
+    npv+=r.fcf/Math.pow(1+wacc,i+1);
+  });
+
+  let cumulative=-initialInvestment;
+  let payback="Não recuperado em 5 anos";
+
+  for(let i=0;i<rowsOut.length;i++){
+    const before=cumulative;
+    cumulative+=rowsOut[i].fcf;
+
+    if(before<0 && cumulative>=0){
+      const fraction=
+        rowsOut[i].fcf!==0
+          ? (-before)/rowsOut[i].fcf
+          : 0;
+
+      payback=`Ano ${i+1} + ${Math.round(fraction*12)} meses`;
+      break;
+    }
+  }
+
+  /*
+    Ponto de equilíbrio operacional:
+    Receita = custos fixos.
+    Considera o custo variável por unidade e o preço de venda.
+  */
+  const contributionPerUnit=
+    sale*(1-cost.commercialRate)-operatingUnitCost*(1+adminRate);
+
+  const breakEven=
+    contributionPerUnit>0
+      ? Math.ceil((fixed+(rowsOut[0]?.maint||0))/contributionPerUnit)
+      : null;
+
+  /* TIR por bisseção sobre [-investimento inicial, FCL1..FCL5]. */
+  const flows=[-initialInvestment,...rowsOut.map(r=>r.fcf)];
+  const f=r=>flows.reduce((a,c,k)=>a+c/Math.pow(1+r,k),0);
+  let irr=null;
+  if(initialInvestment>0&&f(-0.9)*f(10)<0){
+    let lo=-0.9,hi=10;
+    for(let k=0;k<80;k++){const mid=(lo+hi)/2;(f(lo)*f(mid)<=0)?hi=mid:lo=mid;}
+    irr=(lo+hi)/2;
+  }
+  const last=rowsOut[4];
+
+  return {
+    rows:rowsOut,
+    revenue5:rowsOut.reduce((s,r)=>s+r.revenue,0),
+    fcf5:rowsOut.reduce((s,r)=>s+r.fcf,0),
+    depreciation5:rowsOut[4]?.depreciation||0,
+    npv,
+    payback,
+    breakEven,
+    irr,
+    margin5:last&&last.revenue>0?last.ebitda/last.revenue:null,
+    initialInvestment,
+    maint5:rowsOut.reduce((a,r)=>a+r.maint,0),
+    operatingUnitCost,
+    selectedCapex:cost.selectedCapex
+  };
+}
+
+function drawViabilityChart(){
+  const c=$("viabChart");
+  if(!c)return;
+
+  const ctx=c.getContext("2d");
+  const W=c.clientWidth||1100,H=300;
+
+  c.width=W*2;
+  c.height=H*2;
+  ctx.setTransform(2,0,0,2,0,0);
+  ctx.clearRect(0,0,W,H);
+
+  const model=viabilityModel();
+  const vals=model.rows.map(r=>r.fcf);
+  const max=Math.max(...vals,0);
+  const min=Math.min(...vals,0);
+  const range=Math.max(max-min,1);
+
+  const p={l:70,r:25,t:25,b:50};
+
+  ctx.strokeStyle="#dfe5ee";
+  ctx.lineWidth=1;
+
+  for(let i=0;i<=4;i++){
+    const y=p.t+(H-p.t-p.b)*i/4;
+    ctx.beginPath();
+    ctx.moveTo(p.l,y);
+    ctx.lineTo(W-p.r,y);
+    ctx.stroke();
+
+    const value=max-range*(i/4);
+
+    ctx.fillStyle="#687386";
+    ctx.font="11px Arial";
+    ctx.textAlign="left";
+    ctx.fillText(money(value),5,y+4);
+  }
+
+  const zeroY=
+    p.t+
+    (H-p.t-p.b)*
+    (max/range);
+
+  ctx.strokeStyle="#98a2b3";
+  ctx.beginPath();
+  ctx.moveTo(p.l,zeroY);
+  ctx.lineTo(W-p.r,zeroY);
+  ctx.stroke();
+
+  const xs=model.rows.map((_,i)=>
+    p.l+(W-p.l-p.r)*i/4
+  );
+
+  ctx.strokeStyle="#145da0";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+
+  vals.forEach((v,i)=>{
+    const y=
+      p.t+
+      (H-p.t-p.b)*
+      ((max-v)/range);
+
+    if(i===0)ctx.moveTo(xs[i],y);
+    else ctx.lineTo(xs[i],y);
+  });
+
+  ctx.stroke();
+
+  vals.forEach((v,i)=>{
+    const y=
+      p.t+
+      (H-p.t-p.b)*
+      ((max-v)/range);
+
+    ctx.fillStyle="#145da0";
+    ctx.beginPath();
+    ctx.arc(xs[i],y,5,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="#172033";
+    ctx.font="11px Arial";
+    ctx.textAlign="center";
+
+    ctx.fillText(
+      "Ano "+(i+1),
+      xs[i],
+      H-22
+    );
+
+    ctx.fillText(
+      money(v),
+      xs[i],
+      y-10
+    );
+  });
+}
+
+function renderViability(){
+  const panel=$("viabPanel");
+  if(!panel)return;
+
+  if(!viabilityEnabled){
+    panel.classList.add("hidden");
+    return;
+  }
+
+  panel.classList.remove("hidden");
+
+  const m=viabilityModel();
+
+  $("viabRevenue5").textContent=money(m.revenue5);
+  $("viabFcf5").textContent=money(m.fcf5);
+  $("viabDep5").textContent=money(m.depreciation5);
+  $("viabNpv").textContent=money(m.npv);
+  $("viabPayback").textContent=m.payback;
+  $("viabBreakEven").textContent=
+    m.breakEven===null
+      ? "—"
+      : fmt(m.breakEven);
+
+  $("viabIrr").textContent=m.irr===null?"—":(m.irr*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"% a.a.";
+  $("viabMargin").textContent=m.margin5===null?"—":(m.margin5*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";
+  $("viabCapex").textContent=money(m.initialInvestment);
+  $("viabMaint5").textContent="Manutenção acumulada em 5 anos: "+money(m.maint5);
+  $("viabTable").innerHTML=
+    m.rows.map(r=>`
+      <tr>
+        <td>Ano ${r.year}</td>
+        <td>${fmt(r.volume)}</td>
+        <td>${money(r.revenue)}</td>
+        <td>${money(r.variableCost)}</td>
+        <td>${money(r.revDed)}</td>
+        <td>${money(r.fixed)}</td>
+        <td>${money(r.maint)}</td>
+        <td>${money(r.ebitda)}</td>
+        <td>${money(r.depreciation)}</td>
+        <td>${money(r.ebit)}</td>
+        <td>${money(r.incomeTax)}</td>
+        <td>${money(r.capex)}</td>
+        <td>${money(r.fcf)}</td>
+      </tr>
+    `).join("");
+
+  drawViabilityChart();
+}
+
+function bindViabilityInputs(){
+  [
+    "salePrice",
+    "fixedAnnual",
+    "wacc",
+    "deprCapex",
+    "maintPct",
+    "maintInfl",
+    "maintAging",
+    "fixedInfl",
+    "otherAssets",
+    "deprLife",
+    "profitTax",
+    "workingCapitalRate",
+    "capexY2",
+    "capexY3",
+    "capexY4",
+    "capexY5"
+  ].forEach(id=>{
+    const el=$(id);
+    if(el)el.oninput=renderViability;
+  });
 }
 
 $("quarterlyBtn").onclick=()=>setMode("quarterly");$("annualBtn").onclick=()=>setMode("annual");
-$("feeNo").onclick=()=>{feeEnabled=false;$("feeNo").classList.add("active");$("feeYes").classList.remove("active");renderAll()};
-$("feeYes").onclick=()=>{feeEnabled=true;$("feeYes").classList.add("active");$("feeNo").classList.remove("active");renderAll()};
+$("commercialNo").onclick=()=>{commercialEnabled=false;$("commercialNo").classList.add("active");$("commercialYes").classList.remove("active");$("commercialPanel").classList.add("hidden");renderAll()};
+$("commercialYes").onclick=()=>{commercialEnabled=true;$("commercialYes").classList.add("active");$("commercialNo").classList.remove("active");$("commercialPanel").classList.remove("hidden");renderAll()};
 $("adminRate").oninput=renderAll;
+$("viabNo").onclick=()=>{viabilityEnabled=false;$("viabNo").classList.add("active");$("viabYes").classList.remove("active");renderViability()};
+$("viabYes").onclick=()=>{viabilityEnabled=true;$("viabYes").classList.add("active");$("viabNo").classList.remove("active");renderViability()};
+bindViabilityInputs();
+["commercialTax","commercialCommission","commercialExpenses","commercialMarketing","commercialFinance","commercialLoss","commercialDistribution"].forEach(id=>$(id).oninput=renderAll);
 $("loadBtn").onclick=()=>{$("modal").classList.remove("hidden");$("password").value="";$("passError").textContent="";setTimeout(()=>$("password").focus(),50)};
 $("cancelBtn").onclick=()=>$("modal").classList.add("hidden");
 $("passBtn").onclick=()=>{if($("password").value!==PASSWORD){$("passError").textContent="Senha incorreta.";return;}$("modal").classList.add("hidden");$("fileInput").click()};
