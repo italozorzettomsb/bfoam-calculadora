@@ -32,6 +32,20 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;borde
 .toggle{display:flex;gap:8px}.toggle button{flex:1;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;font-weight:700}.toggle button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 .hidden{display:none!important}.commercial-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.commercial-item{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fafcff}.commercial-item input{margin-top:4px}@media(max-width:760px){.commercial-grid{grid-template-columns:1fr}}.modal{position:fixed;inset:0;background:rgba(10,20,35,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-box{background:#fff;width:min(400px,100%);border-radius:15px;padding:24px}.password{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin:10px 0}.actions{display:flex;justify-content:flex-end;gap:8px}.btn{padding:10px 14px;border:0;border-radius:9px;cursor:pointer;font-weight:700}.primary{background:var(--primary);color:#fff}.secondary{background:#eef2f7;color:#344054}
 canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.steril-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:8px}.steril-btn:hover,.load-btn:hover{background:rgba(255,255,255,.22)}.steril-btn svg{width:18px;height:18px;flex:none}.header-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.comp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.comp-head h2{margin:0}
+.adjust-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#f7f9fc;color:var(--primary2);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700;font-size:13px}.adjust-btn:hover{background:var(--soft);border-color:#b9d6f2}.adjust-btn svg{width:17px;height:17px}
+.comp-table td{vertical-align:middle;padding:11px 9px}.comp-name{display:flex;align-items:center;gap:11px}
+.chip{flex:none;width:34px;height:34px;border-radius:10px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:17px}
+.chip.add{background:#fff4e5}.comp-name b{font-weight:700}.comp-name .small{margin-top:2px;line-height:1.35}
+.bar{height:6px;border-radius:99px;background:#e6eef7;overflow:hidden;min-width:70px}.bar i{display:block;height:100%;background:var(--primary);border-radius:99px}.bar.add i{background:#e59a2f}
+.pct{font-size:11px;color:var(--muted);margin-bottom:4px}
+.comp-table tr.grp td{background:#f7f9fc;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:8px 9px}
+.comp-table tr.sub td{font-weight:800;background:#fafcff;border-top:1px solid var(--line)}
+.comp-table tr.tot td{font-weight:900;background:var(--soft);color:var(--primary2);border-top:2px solid var(--primary);font-size:14px}
+.comp-table td.num,.comp-table th.num{text-align:right;white-space:nowrap}
+.hint{font-size:11px;color:var(--muted);margin:4px 0 12px;line-height:1.4}
+.modal-box label{margin-top:8px}
 .notice{padding:12px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:12px}.notice.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
 @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}.mode-buttons{flex-direction:column}.header-inner{align-items:flex-start}}
 </style>
@@ -66,9 +80,10 @@ canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;b
       </div>
       <div class="grid3" style="margin-top:14px">
         <div class="kpi"><div class="l">Custo industrial/base</div><div class="v" id="baseCost">R$ 0,00</div></div>
+        <div class="kpi"><div class="l">Margem de segurança (CS)</div><div class="v" id="safetyCost">R$ 0,00</div></div>
         <div class="kpi"><div class="l">Taxas administrativas</div><div class="v" id="feeCost">R$ 0,00</div></div>
         <div class="kpi"><div class="l">Partidas comerciais</div><div class="v" id="commercialCostSummary">R$ 0,00</div></div>
-        <div class="kpi"><div class="l">Custo final considerado</div><div class="v" id="finalCost">R$ 0,00</div></div>
+        <div class="kpi" style="grid-column:span 2"><div class="l">Custo final considerado</div><div class="v" id="finalCost">R$ 0,00</div></div>
       </div>
     </div>
 
@@ -83,8 +98,9 @@ canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;b
     </div>
 
     <div class="card">
-      <h2>Composição do custo</h2>
-      <div style="overflow:auto"><table><thead><tr><th>Componente</th><th>Quantidade</th><th>Custo unitário</th><th>Total/Bfoam</th></tr></thead><tbody id="composition"></tbody></table></div>
+      <div class="comp-head"><h2>Composição do custo</h2>
+        <button class="adjust-btn" id="adjustBtn" title="Definir esterilização e coeficiente de segurança"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6"/><path d="M10 3v6.2L4.6 18.5A2 2 0 0 0 6.3 21.5h11.4a2 2 0 0 0 1.7-3L14 9.2V3"/><path d="M7.5 15h9"/></svg>Esterilização e CS</button></div>
+      <div style="overflow:auto"><table class="comp-table"><thead><tr><th>Componente</th><th class="num">Quantidade</th><th class="num">Custo unitário</th><th class="num">Total/Bfoam</th><th style="min-width:110px">Participação</th></tr></thead><tbody id="composition"></tbody></table></div>
     </div>
 
 
@@ -296,6 +312,19 @@ canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;b
     <div class="actions"><button class="btn secondary" id="cancelBtn">Cancelar</button><button class="btn primary" id="passBtn">Continuar</button></div>
   </div>
 </div>
+<div class="modal hidden" id="adjustModal">
+  <div class="modal-box" style="width:min(440px,100%)">
+    <h3>Ajustes de custo</h3>
+    <p class="small">Informe o que deve ser somado ao custo por Bfoam. Deixe em branco o que não se aplica.</p>
+    <label for="sterilInput">1. Custo unitário de esterilização (R$ por Bfoam)</label>
+    <input id="sterilInput" class="password" style="margin:4px 0 2px" type="text" inputmode="decimal" placeholder="Ex.: 0,35 (opcional)" autocomplete="off" autofocus>
+    <label for="csInput">2. Coeficiente de segurança — CS (fator multiplicador)</label>
+    <input id="csInput" class="password" style="margin:4px 0 2px" type="text" inputmode="decimal" placeholder="Ex.: 1,15 (opcional)" autocomplete="off">
+    <div class="hint">Referência para estimativas de custo: 1,10 a 1,20 quando os valores já vêm de cotações; 1,20 a 1,30 em fase de conceito. 1,00 = sem margem. O CS é aplicado sobre o custo industrial (incluindo a esterilização).</div>
+    <div id="sterilError" class="small" style="color:#b42318;min-height:18px"></div>
+    <div class="actions"><button class="btn secondary" id="sterilCancel">Pular</button><button class="btn primary" id="sterilOk">Aplicar</button></div>
+  </div>
+</div>
 <input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden">
 
 <script>
@@ -303,6 +332,11 @@ const APP_SHEET_NAME="APP_DATA";
 const PASSWORD="msb19";
 const STORAGE_DATA="bfoamAppDataV7";
 const STORAGE_FILE="bfoamAppFileV7";
+const STORAGE_STERIL="bfoamSterilCostV1";
+const STORAGE_CS="bfoamSafetyCSV1";
+let sterilCost=0, safetyCS=1;
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 let dataRows=[], workbookData=null, currentMode="quarterly", periods=[], selectedIndex=0, viabilityEnabled=false, feeEnabled=false, commercialEnabled=false;
 const $=id=>document.getElementById(id);
 
@@ -894,19 +928,28 @@ function costModel(q5){
   const unionTotal =
     unionUnit;
 
+  /* Esterilização: custo unitário informado pelo usuário (R$/Bfoam). */
+  const steril = Math.max(Number(sterilCost) || 0, 0);
+
   const base =
     bodyTotal +
     filterTotal +
     appTotal +
     unionTotal +
-    packaging;
+    packaging +
+    steril;
+
+  /* Coeficiente de segurança (CS): fator ≥ 1 aplicado sobre o custo industrial. */
+  const cs = Math.max(Number(safetyCS) || 1, 1);
+  const safety = base * (cs - 1);
+  const baseCS = base + safety;
 
 
   const feeRate = commercialEnabled
     ? Math.max(num($("adminRate").value),0) / 100
     : 0;
 
-  const fee = base * feeRate;
+  const fee = baseCS * feeRate;
 
   const commercialRate = commercialEnabled
     ? (
@@ -920,9 +963,24 @@ function costModel(q5){
       ) / 100
     : 0;
 
-  const commercialCost = base * commercialRate;
+  const commercialCost = baseCS * commercialRate;
 
-  const finalCost = base + fee + commercialCost;
+  const commercialItems = commercialEnabled
+    ? [
+        ["Impostos sobre venda","commercialTax","🧾"],
+        ["Comissão comercial","commercialCommission","🤝"],
+        ["Despesas comerciais","commercialExpenses","👥"],
+        ["Marketing / divulgação","commercialMarketing","📣"],
+        ["Despesas financeiras","commercialFinance","🏦"],
+        ["Perdas / inadimplência","commercialLoss","⚠️"],
+        ["Frete / distribuição comercial","commercialDistribution","🚚"]
+      ].map(([name,id,icon])=>{
+        const pct=Math.max(num($(id).value),0);
+        return {name,icon,pct,value:baseCS*pct/100};
+      })
+    : [];
+
+  const finalCost = baseCS + fee + commercialCost;
 
 
   const missing = [];
@@ -981,6 +1039,7 @@ function costModel(q5){
     unionBE,
 
     packaging,
+    steril,
 
     /*
       CAPEX selecionado das alternativas.
@@ -1047,9 +1106,13 @@ function costModel(q5){
       (unionMode === "interno" ? uMold : 0),
 
     base,
+    cs,
+    safety,
+    feeRate,
     fee,
     commercialRate,
     commercialCost,
+    commercialItems,
     finalCost,
 
     missing
@@ -1081,8 +1144,8 @@ function renderAll(){
   $("appReason").textContent=av||(r.appMode==="externo"?"Só a alternativa externa tem custo cadastrado.":r.appMode==="3d"?"Externa sem valor; impressão 3D selecionada.":"Nenhuma alternativa possui custo.");
   $("unionChoice").textContent=r.unionMode==="externo"?"Externa":r.unionMode==="interno"?"Interna — ultrassônica":"Não cadastrado";
   $("unionReason").textContent=uv||(r.unionMode==="externo"?"Só a alternativa externa tem custo cadastrado.":r.unionMode==="interno"?"Externa sem valor; união interna selecionada.":"Nenhuma alternativa possui custo. Não bloqueia a visualização do custo disponível.");
-  $("mainCost").textContent=money(r.finalCost);$("boxCost").textContent=money(r.finalCost*20);$("primaryCost").textContent=money(r.finalCost*200);$("baseCost").textContent=money(r.base);$("feeCost").textContent=money(r.fee);$("commercialCostSummary").textContent=money(r.commercialCost);$("finalCost").textContent=money(r.finalCost);
-  $("commercialRateDisplay").textContent=(r.commercialRate*100).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+"%";$("commercialCostDisplay").textContent=money(r.commercialCost);$("commercialFinalDisplay").textContent=money(r.base+r.fee+r.commercialCost);
+  $("mainCost").textContent=money(r.finalCost);$("boxCost").textContent=money(r.finalCost*20);$("primaryCost").textContent=money(r.finalCost*200);$("baseCost").textContent=money(r.base);$("safetyCost").textContent=money(r.safety);$("feeCost").textContent=money(r.fee);$("commercialCostSummary").textContent=money(r.commercialCost);$("finalCost").textContent=money(r.finalCost);
+  $("commercialRateDisplay").textContent=(r.commercialRate*100).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+"%";$("commercialCostDisplay").textContent=money(r.commercialCost);$("commercialFinalDisplay").textContent=money(r.finalCost);
   $("scenario").textContent=sc.id;$("trajectory").textContent=sc.trajectory;
   $("summary").innerHTML=periods.map((p,i)=>{
     const periodQ5=currentMode==="annual"
@@ -1091,14 +1154,36 @@ function renderAll(){
     const periodCost=costModel(periodQ5).finalCost;
     return `<tr><td>${p.name}</td><td>${fmt(p.qty)}</td><td>${money(periodCost)}</td></tr>`;
   }).join("");
-  $("composition").innerHTML=[
-    ["Corpo — injeção",bodiesQty(),r.bodyUnit,r.bodyTotal,r.bodyAvailable],
-    ["Filtro — "+(r.filterMode==="externo"?"PP externo":r.filterMode==="interno"?"malha metálica interna":"sem alternativa"),getNum("BOM","B016",1),r.filterUnit,r.filterTotal,r.filterMode!=="none"],
-    ["Aplicador — "+(r.appMode==="externo"?"injeção externa":r.appMode==="3d"?"impressão 3D":"sem alternativa"),getNum("BOM","B018",2),r.appUnit,r.appTotal,r.appMode!=="none"],
-    ["União ultrassônica"+(r.unionMode==="externo"?" — externa (valor + frete)":r.unionMode==="interno"?` — interna (molde ${money(r.unionMold)} + operador ${money(r.unionOperation)} + máquina ${money(r.unionMachine)})`:" — sem alternativa"),1,r.unionUnit,r.unionUnit,r.unionMode!=="none"],
-    ["Embalagem",1,r.packaging,r.packaging,true]
-  ].map(x=>`<tr><td>${x[0]} ${x[4]?'':'<span class="badge badge-gray">sem custo</span>'}</td><td>${x[1]}</td><td>${money(x[2])}</td><td>${money(x[3])}</td></tr>`).join("");
+  renderComposition(r);
   checkData();drawChart();renderViability();
+}
+function pctText(v){return (v*100).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"%";}
+function renderComposition(r){
+  const tot=r.finalCost>0?r.finalCost:1;
+  const line=(icon,name,sub,qty,unit,total,opts={})=>{
+    const share=Math.max(0,Math.min(total/tot,1));
+    return `<tr><td><div class="comp-name"><span class="chip${opts.add?" add":""}">${icon}</span><div><b>${name}</b>${opts.nocost?' <span class="badge badge-gray">sem custo</span>':''}${sub?`<div class="small">${sub}</div>`:''}</div></div></td>
+      <td class="num">${qty}</td><td class="num">${unit}</td><td class="num"><b>${money(total)}</b></td>
+      <td><div class="pct">${pctText(share)}</div><div class="bar${opts.add?" add":""}"><i style="width:${(share*100).toFixed(1)}%"></i></div></td></tr>`;
+  };
+  const grp=t=>`<tr class="grp"><td colspan="5">${t}</td></tr>`;
+  const rowsHtml=[];
+  rowsHtml.push(grp("Custo industrial"));
+  rowsHtml.push(line("🧩","Corpo","Injeção",bodiesQty(),money(r.bodyUnit),r.bodyTotal,{nocost:!r.bodyAvailable}));
+  rowsHtml.push(line("🕸️","Filtro",r.filterMode==="externo"?"PP externo":r.filterMode==="interno"?"Malha metálica interna":"Sem alternativa",getNum("BOM","B016",1),money(r.filterUnit),r.filterTotal,{nocost:r.filterMode==="none"}));
+  rowsHtml.push(line("💉","Aplicador",r.appMode==="externo"?"Injeção externa":r.appMode==="3d"?"Impressão 3D":"Sem alternativa",getNum("BOM","B018",2),money(r.appUnit),r.appTotal,{nocost:r.appMode==="none"}));
+  rowsHtml.push(line("🔗","União ultrassônica",r.unionMode==="externo"?"Externa (valor + frete)":r.unionMode==="interno"?`Interna — molde ${money(r.unionMold)} + operador ${money(r.unionOperation)} + máquina ${money(r.unionMachine)}`:"Sem alternativa",1,money(r.unionUnit),r.unionUnit,{nocost:r.unionMode==="none"}));
+  rowsHtml.push(line("📦","Embalagem","Primária, terciária e etiquetas",1,money(r.packaging),r.packaging));
+  if(r.steril>0)rowsHtml.push(line("🧪","Esterilização","Custo unitário informado",1,money(r.steril),r.steril));
+  rowsHtml.push(`<tr class="sub"><td colspan="3">Custo industrial (base)</td><td class="num">${money(r.base)}</td><td>${pctText(r.base/tot)}</td></tr>`);
+
+  const extras=[];
+  if(r.cs>1)extras.push(line("🛡️","Coeficiente de segurança (CS)",`Fator ${r.cs.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:3})} sobre o custo industrial`,"—","+"+pctText(r.cs-1),r.safety,{add:true}));
+  if(commercialEnabled&&r.feeRate>0)extras.push(line("🏢","Taxa administrativa","Despesa administrativa geral","—",pctText(r.feeRate),r.fee,{add:true}));
+  r.commercialItems.filter(x=>x.pct>0).forEach(x=>extras.push(line(x.icon,x.name,"Partida comercial / financeira","—",pctText(x.pct/100),x.value,{add:true})));
+  if(extras.length){rowsHtml.push(grp("Acréscimos"));rowsHtml.push(...extras);}
+  rowsHtml.push(`<tr class="tot"><td colspan="3">Custo final por Bfoam</td><td class="num">${money(r.finalCost)}</td><td>100%</td></tr>`);
+  $("composition").innerHTML=rowsHtml.join("");
 }
 function bodiesQty(){return getNum("BOM","B017",2);}
 function drawChart(){
@@ -1191,7 +1276,7 @@ function viabilityModel(){
     : cost.selectedCapex+otherAssets;
   const maintPct=viabNum("maintPct")/100, maintInfl=viabNum("maintInfl")/100,
         maintAging=viabNum("maintAging")/100, fixedInfl=viabNum("fixedInfl")/100;
-  const adminRate=cost.base>0?cost.fee/cost.base:0;
+  const adminRate=cost.feeRate;
   const life=Math.max(1,viabNum("deprLife")||10);
 
   const extra=[
@@ -1210,7 +1295,7 @@ function viabilityModel(){
   const operatingUnitCost=Math.max(
     0,
     cost.base-cost.capexUnit-cost.machineDepUnit
-  );
+  )*cost.cs;
 
   let previousNwc=0;
   let accumulated=0;
@@ -1517,6 +1602,31 @@ function bindViabilityInputs(){
   });
 }
 
+function fmtInput(v,dec){return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:dec});}
+function modalOpen(){return !$("adjustModal").classList.contains("hidden");}
+function focusSteril(){const el=$("sterilInput");if(modalOpen()&&document.activeElement!==el){el.focus();el.select();}}
+function openAdjustModal(){
+  $("sterilInput").value=sterilCost>0?fmtInput(sterilCost,4):"";
+  $("csInput").value=safetyCS>1?fmtInput(safetyCS,3):"";
+  $("sterilError").textContent="";$("adjustModal").classList.remove("hidden");
+  /* Após o seletor de arquivos fechar, o navegador demora a devolver o foco à página:
+     tentamos focar várias vezes e também quando a janela recuperar o foco. */
+  [30,200,500,900].forEach(t=>setTimeout(focusSteril,t));
+}
+window.addEventListener("focus",()=>setTimeout(focusSteril,30));
+function applyAdjust(){
+  const t1=$("sterilInput").value.trim(), t2=$("csInput").value.trim();
+  const bad=t=>t!==""&&!/^[0-9.,\s]+$/.test(t);
+  const s=t1===""?0:num(t1), c=t2===""?1:num(t2);
+  if(bad(t1)||!Number.isFinite(s)||s<0){$("sterilError").textContent="Esterilização: informe um valor numérico (ex.: 0,35).";return;}
+  if(bad(t2)||!Number.isFinite(c)||c<1||c>3){$("sterilError").textContent="CS: informe o fator entre 1,00 e 3,00 (ex.: 1,15 para +15%).";return;}
+  sterilCost=s;safetyCS=c;lsSet(STORAGE_STERIL,String(s));lsSet(STORAGE_CS,String(c));
+  $("adjustModal").classList.add("hidden");renderAll();
+}
+$("adjustBtn").onclick=openAdjustModal;
+$("sterilOk").onclick=applyAdjust;
+$("sterilCancel").onclick=()=>{$("adjustModal").classList.add("hidden");};
+["sterilInput","csInput"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")applyAdjust();if(e.key==="Escape")$("sterilCancel").click();}));
 $("quarterlyBtn").onclick=()=>setMode("quarterly");$("annualBtn").onclick=()=>setMode("annual");
 $("commercialNo").onclick=()=>{commercialEnabled=false;$("commercialNo").classList.add("active");$("commercialYes").classList.remove("active");$("commercialPanel").classList.add("hidden");renderAll()};
 $("commercialYes").onclick=()=>{commercialEnabled=true;$("commercialYes").classList.add("active");$("commercialNo").classList.remove("active");$("commercialPanel").classList.remove("hidden");renderAll()};
@@ -1554,14 +1664,16 @@ $("fileInput").addEventListener("change",async e=>{
       .map(r=>{const obj={};headers.forEach((h,i)=>{if(h!=="")obj[h]=r[i]!==undefined?r[i]:"";});return obj;});
     if(!json.length){alert("A APP_DATA está vazia.");return;}
     dataRows=resolveAppData(wb,json);
-    localStorage.setItem(STORAGE_DATA,JSON.stringify(dataRows));localStorage.setItem(STORAGE_FILE,file.name);
+    lsSet(STORAGE_DATA,JSON.stringify(dataRows));lsSet(STORAGE_FILE,file.name);
     initialize(file.name);
+    openAdjustModal();
   }catch(err){console.error(err);alert("Não foi possível ler a planilha. Verifique se a última aba é APP_DATA.");}
   finally{e.target.value="";}
 });
 
 function initialize(name){$("status").textContent=`Planilha carregada: ${name} | Aba lida: APP_DATA`;$("status").className="status ok";$("appArea").classList.remove("hidden");buildPeriods();renderAll();}
-function loadSaved(){try{const raw=localStorage.getItem(STORAGE_DATA);if(!raw)return;dataRows=JSON.parse(raw);initialize(localStorage.getItem(STORAGE_FILE)||"planilha salva no navegador");}catch(e){console.warn(e)}}
+function loadSaved(){try{const raw=lsGet(STORAGE_DATA);if(!raw)return;dataRows=JSON.parse(raw);initialize(lsGet(STORAGE_FILE)||"planilha salva no navegador");}catch(e){console.warn(e)}}
+sterilCost=Math.max(num(lsGet(STORAGE_STERIL)||"0"),0);safetyCS=Math.max(num(lsGet(STORAGE_CS)||"1"),1);
 loadSaved();
 </script>
 </body>
