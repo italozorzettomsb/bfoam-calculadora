@@ -3,2411 +3,380 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bfoam — Calculadora de Custos</title>
-
+<title>Bfoam — Calculadora de Custo</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
 <style>
 :root{
-  --bg:#f4f7fb;
-  --card:#fff;
-  --ink:#172033;
-  --muted:#687386;
-  --line:#dfe5ee;
-  --primary:#145da0;
-  --primary2:#0d4678;
-  --ok:#16794a;
-  --warn:#9a6700
+  --bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#dfe5ee;
+  --primary:#145da0;--primary2:#0d4678;--green:#16794a;--red:#b42318;--soft:#eef6ff
 }
-
-*{
-  box-sizing:border-box
-}
-
-body{
-  margin:0;
-  background:var(--bg);
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  color:var(--ink)
-}
-
-header{
-  background:linear-gradient(135deg,#0d4678,#1976b9);
-  color:#fff;
-  padding:20px 28px;
-  position:relative
-}
-
-.header-inner{
-  max-width:1180px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px
-}
-
-.brand h1{
-  margin:0;
-  font-size:25px
-}
-
-.brand p{
-  margin:5px 0 0;
-  opacity:.82;
-  font-size:13px
-}
-
-.load-btn{
-  border:1px solid rgba(255,255,255,.4);
-  background:rgba(255,255,255,.12);
-  color:#fff;
-  border-radius:10px;
-  padding:10px 14px;
-  cursor:pointer;
-  font-weight:700
-}
-
-.load-btn:hover{
-  background:rgba(255,255,255,.22)
-}
-
-.container{
-  max-width:1180px;
-  margin:24px auto;
-  padding:0 18px
-}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:20px;
-  margin-bottom:18px;
-  box-shadow:0 5px 18px rgba(25,45,75,.05)
-}
-
-h2{
-  font-size:17px;
-  margin:0 0 15px
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px
-}
-
-.grid3{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px
-}
-
-label{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:700;
-  display:block;
-  margin-bottom:6px
-}
-
-/* BOTÕES DE EVOLUÇÃO */
-
-.mode-buttons{
-  display:flex;
-  gap:10px;
-  width:100%;
-}
-
-.mode-btn{
-  flex:1;
-  padding:13px 18px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:#f7f9fc;
-  color:#344054;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.15s
-}
-
-.mode-btn.active{
-  background:var(--primary);
-  color:#fff;
-  border-color:var(--primary)
-}
-
-.mode-btn:hover:not(.active){
-  background:#eef3f8
-}
-
-.slider-card{
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:14px
-}
-
-.slider-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center
-}
-
-.slider-value{
-  font-weight:800;
-  color:var(--primary)
-}
-
-input[type=range]{
-  width:100%;
-  margin:14px 0 4px;
-  accent-color:var(--primary)
-}
-
-.small{
-  font-size:11px;
-  color:var(--muted)
-}
-
-.result{
-  background:linear-gradient(135deg,#eef7ff,#f8fbff);
-  border:1px solid #cfe5fa;
-  border-radius:13px;
-  padding:18px
-}
-
-.result .value{
-  font-size:32px;
-  font-weight:900;
-  color:var(--primary2)
-}
-
-.kpi{
-  border:1px solid var(--line);
-  border-radius:11px;
-  padding:14px
-}
-
-.kpi .v{
-  font-size:20px;
-  font-weight:800;
-  margin-top:5px
-}
-
-.kpi .l{
-  font-size:11px;
-  color:var(--muted)
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px
-}
-
-th,td{
-  padding:9px;
-  border-bottom:1px solid var(--line);
-  text-align:left
-}
-
-th{
-  color:var(--muted);
-  font-size:11px;
-  text-transform:uppercase
-}
-
-.status{
-  font-size:12px;
-  padding:8px 10px;
-  border-radius:8px;
-  background:#fff7df;
-  color:var(--warn);
-  display:inline-block
-}
-
-.status.ok{
-  background:#e9f8f0;
-  color:var(--ok)
-}
-
-canvas{
-  width:100%;
-  height:260px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:#fff
-}
-
-.hidden{
-  display:none!important
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(10,20,35,.55);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:10
-}
-
-.modal-box{
-  background:#fff;
-  width:min(400px,100%);
-  border-radius:15px;
-  padding:24px;
-  box-shadow:0 20px 70px rgba(0,0,0,.25)
-}
-
-.modal-box h3{
-  margin-top:0
-}
-
-.password{
-  width:100%;
-  padding:12px;
-  border:1px solid var(--line);
-  border-radius:9px;
-  font-size:15px;
-  margin:10px 0
-}
-
-.actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:8px
-}
-
-.btn{
-  padding:10px 14px;
-  border:0;
-  border-radius:9px;
-  cursor:pointer;
-  font-weight:700
-}
-
-.primary{
-  background:var(--primary);
-  color:#fff
-}
-
-.secondary{
-  background:#eef2f7;
-  color:#344054
-}
-
-.empty{
-  padding:22px;
-  text-align:center;
-  color:var(--muted);
-  font-size:13px
-}
-
-@media(max-width:760px){
-
-  .grid,
-  .grid3{
-    grid-template-columns:1fr
-  }
-
-  .header-inner{
-    align-items:flex-start
-  }
-
-  .brand h1{
-    font-size:21px
-  }
-
-  .mode-buttons{
-    flex-direction:column
-  }
-
-}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,#0d4678,#1976b9);color:#fff;padding:20px 28px}
+.header-inner{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand h1{margin:0;font-size:25px}.brand p{margin:5px 0 0;opacity:.84;font-size:13px}
+button{font:inherit}.load-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700}
+.container{max-width:1180px;margin:24px auto;padding:0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:18px;box-shadow:0 5px 18px rgba(25,45,75,.05)}
+h2{font-size:17px;margin:0 0 15px} h3{font-size:14px;margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.kpi .l{font-size:11px;color:var(--muted);text-transform:uppercase}.kpi .v{font-size:23px;font-weight:850;margin-top:5px}
+.mode-buttons{display:flex;gap:10px}.mode-btn{flex:1;padding:13px;border:1px solid var(--line);border-radius:10px;background:#f7f9fc;color:#344054;font-weight:700;cursor:pointer}.mode-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.slider-card{border:1px solid var(--line);border-radius:12px;padding:14px}.slider-top{display:flex;justify-content:space-between}.slider-value{font-weight:800;color:var(--primary)}
+input[type=range]{width:100%;accent-color:var(--primary)}label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px}
+select,input[type=number]{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.small{font-size:11px;color:var(--muted)}.status{font-size:12px;padding:8px 10px;border-radius:8px;background:#fff7df;color:#9a6700;display:inline-block}.status.ok{background:#e9f8f0;color:var(--green)}
+.result{background:linear-gradient(135deg,#eef7ff,#f8fbff);border:1px solid #cfe5fa;border-radius:13px;padding:18px}.result .value{font-size:31px;font-weight:900;color:var(--primary2)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-size:11px;text-transform:uppercase}
+.badge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800}.badge-green{background:#e9f8f0;color:var(--green)}.badge-red{background:#fdecec;color:var(--red)}.badge-gray{background:#eef2f6;color:#475467}
+.toggle{display:flex;gap:8px}.toggle button{flex:1;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;font-weight:700}.toggle button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.hidden{display:none!important}.modal{position:fixed;inset:0;background:rgba(10,20,35,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-box{background:#fff;width:min(400px,100%);border-radius:15px;padding:24px}.password{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin:10px 0}.actions{display:flex;justify-content:flex-end;gap:8px}.btn{padding:10px 14px;border:0;border-radius:9px;cursor:pointer;font-weight:700}.primary{background:var(--primary);color:#fff}.secondary{background:#eef2f7;color:#344054}
+canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.notice{padding:12px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:12px}.notice.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}.mode-buttons{flex-direction:column}.header-inner{align-items:flex-start}}
 </style>
 </head>
-
 <body>
-
-<header>
-
-  <div class="header-inner">
-
-    <div class="brand">
-
-      <h1>Bfoam — Calculadora de Custo</h1>
-
-      <p>
-        Modelo de cálculo alimentado pela aba APP_DATA da planilha.
-      </p>
-
-    </div>
-
-    <button
-      class="load-btn"
-      id="loadBtn"
-      title="Carregar planilha"
-    >
-      ⬆ Carregar
-    </button>
-
-  </div>
-
-</header>
-
+<header><div class="header-inner">
+  <div class="brand"><h1>Bfoam — Calculadora de Custo</h1><p>A planilha é a fonte de dados. O aplicativo trata volume, alternativas e regras de decisão.</p></div>
+  <button class="load-btn" id="loadBtn">⬆ Carregar planilha</button>
+</div></header>
 
 <div class="container">
-
-  <!-- FONTE DE DADOS -->
-
   <div class="card">
-
     <h2>Fonte de dados</h2>
-
-    <span
-      id="status"
-      class="status"
-    >
-      Nenhuma planilha carregada
-    </span>
-
-    <div
-      class="small"
-      style="margin-top:8px"
-    >
-      A aplicação lê exclusivamente a última aba da planilha carregada.
-      A aba deve se chamar <b>APP_DATA</b>.
-    </div>
-
+    <span id="status" class="status">Nenhuma planilha carregada</span>
+    <div class="small" style="margin-top:8px">O aplicativo lê exclusivamente a última aba, que deve se chamar <b>APP_DATA</b>. A aba MATERIAIS não é usada na decisão de custo.</div>
+    <div id="dataCheck" style="margin-top:10px"></div>
   </div>
-
 
   <div id="appArea" class="hidden">
-
-
-    <!-- EVOLUÇÃO -->
-
     <div class="card">
-
       <h2>Evolução do volume de produção</h2>
-
-      <label>Modo de evolução</label>
-
-      <div
-        class="mode-buttons"
-        role="group"
-        aria-label="Modo de evolução"
-      >
-
-        <button
-          type="button"
-          class="mode-btn active"
-          id="quarterlyBtn"
-        >
-          Evolução trimestral — 1º ano
-        </button>
-
-        <button
-          type="button"
-          class="mode-btn"
-          id="annualBtn"
-        >
-          Evolução anual
-        </button>
-
+      <div class="mode-buttons">
+        <button id="quarterlyBtn" class="mode-btn active">Evolução trimestral — 1º ano</button>
+        <button id="annualBtn" class="mode-btn">Evolução anual</button>
       </div>
-
-
-      <div
-        class="result"
-        style="padding:11px 14px;margin-top:12px"
-      >
-
-        <b id="selectedPeriod">
-          1º trimestre
-        </b>
-
-        —
-
-        <span id="selectedQty">
-          0
-        </span>
-
-        unidades
-
-      </div>
-
-
-      <!-- TRIMESTRAL -->
-
-      <div
-        id="quarterlyPanel"
-        class="grid3"
-        style="margin-top:15px"
-      >
-      </div>
-
-
-      <!-- ANUAL -->
-
-      <div
-        id="annualPanel"
-        class="grid3 hidden"
-        style="margin-top:15px"
-      >
-      </div>
-
+      <div class="result" style="padding:11px 14px;margin-top:12px"><b id="selectedPeriod">1º trimestre</b> — <span id="selectedQty">0</span> Bfoam</div>
+      <div id="quarterlyPanel" class="grid3" style="margin-top:15px"></div>
+      <div id="annualPanel" class="grid3 hidden" style="margin-top:15px"></div>
     </div>
 
-
-    <!-- CUSTOS -->
+    <div class="card">
+      <h2>Alternativas de processo</h2>
+      <div class="grid3">
+        <div class="kpi"><div class="l">Filtro</div><div class="v" id="filterChoice">—</div><div class="small" id="filterReason"></div></div>
+        <div class="kpi"><div class="l">Aplicador</div><div class="v" id="appChoice">—</div><div class="small" id="appReason"></div></div>
+        <div class="kpi"><div class="l">União</div><div class="v" id="unionChoice">—</div><div class="small" id="unionReason"></div></div>
+      </div>
+    </div>
 
     <div class="card">
+      <h2>Custos financeiros opcionais</h2>
+      <div class="grid2">
+        <div>
+          <label>Aplicar taxas administrativas?</label>
+          <div class="toggle">
+            <button id="feeNo" class="active">Não</button>
+            <button id="feeYes">Sim</button>
+          </div>
+        </div>
+        <div>
+          <label>Taxa administrativa (%)</label>
+          <input id="adminRate" type="number" min="0" step="0.01" value="0">
+          <div class="small">Aplicada somente sobre o custo base. Não altera os custos industriais armazenados na planilha.</div>
+        </div>
+      </div>
+    </div>
 
+    <div class="card">
       <h2>Custo estimado</h2>
-
       <div class="grid3">
-
-
-        <!-- UNIDADE -->
-
-        <div class="result">
-
-          <div class="small">
-            CUSTO POR UNIDADE
-          </div>
-
-          <div
-            class="value"
-            id="mainCost"
-          >
-            R$ 0,00
-          </div>
-
-        </div>
-
-
-        <!-- CAIXA -->
-
-        <div class="result">
-
-          <div class="small">
-            CUSTO POR CAIXA
-          </div>
-
-          <div
-            class="value"
-            id="boxCost"
-          >
-            R$ 0,00
-          </div>
-
-          <div class="small">
-            20 unidades
-          </div>
-
-        </div>
-
-
-        <!-- EMBALAGEM PRIMÁRIA -->
-
-        <div class="result">
-
-          <div class="small">
-            CUSTO POR EMBALAGEM PRIMÁRIA
-          </div>
-
-          <div
-            class="value"
-            id="primaryCost"
-          >
-            R$ 0,00
-          </div>
-
-          <div class="small">
-            10 caixas · 200 unidades
-          </div>
-
-        </div>
-
-
+        <div class="result"><div class="small">CUSTO POR UNIDADE</div><div class="value" id="mainCost">R$ 0,00</div></div>
+        <div class="result"><div class="small">CUSTO POR CAIXA</div><div class="value" id="boxCost">R$ 0,00</div><div class="small">20 unidades</div></div>
+        <div class="result"><div class="small">CUSTO POR EMBALAGEM PRIMÁRIA</div><div class="value" id="primaryCost">R$ 0,00</div><div class="small">10 caixas · 200 unidades</div></div>
       </div>
-
+      <div class="grid3" style="margin-top:14px">
+        <div class="kpi"><div class="l">Custo industrial/base</div><div class="v" id="baseCost">R$ 0,00</div></div>
+        <div class="kpi"><div class="l">Taxas administrativas</div><div class="v" id="feeCost">R$ 0,00</div></div>
+        <div class="kpi"><div class="l">Custo final considerado</div><div class="v" id="finalCost">R$ 0,00</div></div>
+      </div>
     </div>
-
-
-    <!-- CENÁRIO -->
 
     <div class="card">
-
       <div class="grid3">
-
-        <div class="kpi">
-
-          <div class="l">
-            CENÁRIO
-          </div>
-
-          <div
-            class="v"
-            id="scenario"
-          >
-            —
-          </div>
-
-        </div>
-
-
-        <div class="kpi">
-
-          <div class="l">
-            TRAJETÓRIA
-          </div>
-
-          <div
-            class="v"
-            id="trajectory"
-            style="font-size:16px"
-          >
-            —
-          </div>
-
-        </div>
-
-
-        <div class="kpi">
-
-          <div class="l">
-            DEGRADAÇÃO
-          </div>
-
-          <div
-            class="v"
-            id="degradation"
-          >
-            0%
-          </div>
-
-        </div>
-
+        <div class="kpi"><div class="l">Cenário</div><div class="v" id="scenario">—</div></div>
+        <div class="kpi"><div class="l">Trajetória</div><div class="v" id="trajectory" style="font-size:16px">—</div></div>
+        <div class="kpi"><div class="l">Volume 5 anos</div><div class="v" id="fiveYearVolume">0</div><div class="small">Bfoam</div></div>
       </div>
-
-
-      <!-- GRÁFICO -->
-
-      <div style="margin-top:14px">
-
-        <canvas
-          id="chart"
-          width="1100"
-          height="260"
-        >
-        </canvas>
-
-      </div>
-
-
-      <!-- RESUMO -->
-
-      <div
-        style="margin-top:12px;overflow:auto"
-      >
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Período
-              </th>
-
-              <th>
-                Volume
-              </th>
-
-              <th>
-                Faixa
-              </th>
-
-              <th>
-                Custo por unidade
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody id="summary">
-          </tbody>
-
-        </table>
-
-      </div>
-
+      <div style="margin-top:14px"><canvas id="chart" width="1100" height="260"></canvas></div>
+      <div style="margin-top:12px;overflow:auto"><table><thead><tr><th>Período</th><th>Volume</th><th>Custo/un</th></tr></thead><tbody id="summary"></tbody></table></div>
     </div>
-
-
-    <!-- COMPOSIÇÃO -->
 
     <div class="card">
-
-      <h2>
-        Composição do custo
-      </h2>
-
-      <div style="overflow:auto">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Componente
-              </th>
-
-              <th>
-                Qtd.
-              </th>
-
-              <th>
-                Custo unitário
-              </th>
-
-              <th>
-                Total
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody id="composition">
-          </tbody>
-
-        </table>
-
-      </div>
-
+      <h2>Composição do custo</h2>
+      <div style="overflow:auto"><table><thead><tr><th>Componente</th><th>Quantidade</th><th>Custo unitário</th><th>Total/Bfoam</th></tr></thead><tbody id="composition"></tbody></table></div>
     </div>
-
-
   </div>
-
 </div>
 
-
-<!-- MODAL DE SENHA -->
-
-<div
-  class="modal hidden"
-  id="modal"
->
-
+<div class="modal hidden" id="modal">
   <div class="modal-box">
-
-    <h3>
-      Carregar planilha
-    </h3>
-
-    <p class="small">
-
-      Digite a senha para habilitar o carregamento
-      da nova planilha.
-
-    </p>
-
-    <input
-      id="password"
-      class="password"
-      type="password"
-      placeholder="Senha"
-    >
-
-    <div
-      id="passError"
-      class="small"
-      style="color:#b42318;min-height:18px"
-    >
-    </div>
-
-    <div class="actions">
-
-      <button
-        class="btn secondary"
-        id="cancelBtn"
-      >
-        Cancelar
-      </button>
-
-      <button
-        class="btn primary"
-        id="passBtn"
-      >
-        Continuar
-      </button>
-
-    </div>
-
+    <h3>Carregar planilha</h3>
+    <p class="small">Digite a senha para carregar uma nova planilha.</p>
+    <input id="password" class="password" type="password" placeholder="Senha">
+    <div id="passError" class="small" style="color:#b42318;min-height:18px"></div>
+    <div class="actions"><button class="btn secondary" id="cancelBtn">Cancelar</button><button class="btn primary" id="passBtn">Continuar</button></div>
   </div>
-
 </div>
-
-
-<input
-  type="file"
-  id="fileInput"
-  accept=".xlsx,.xls"
-  class="hidden"
->
-
+<input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden">
 
 <script>
-
 const APP_SHEET_NAME = "APP_DATA";
-
-/* SENHA DO APLICATIVO */
 const PASSWORD = "msb19";
+const STORAGE_DATA = "bfoamAppDataV2";
+const STORAGE_FILE = "bfoamAppFileV2";
+let dataRows = [], currentMode = "quarterly", periods = [], selectedIndex = 0, feeEnabled = false;
 
-
-let dataRows = [];
-
-let fileName = "";
-
-let periods = [];
-
-let selectedIndex = 0;
-
-let currentMode = "quarterly";
-
-
-/* FUNÇÃO AUXILIAR */
-
-const $ = id =>
-  document.getElementById(id);
-
-
-/* FORMATAÇÃO DE DINHEIRO */
-
-const money = v =>
-  (Number(v) || 0).toLocaleString(
-    "pt-BR",
-    {
-      style:"currency",
-      currency:"BRL"
-    }
-  );
-
-
-/* CONVERSÃO NUMÉRICA */
-
-const num = v =>
-  Number(v) || 0;
-
-
-/* MODOS DE EVOLUÇÃO */
-
-function setEvolutionMode(mode){
-
-  currentMode = mode;
-
-  selectedIndex = 0;
-
-
-  $("quarterlyBtn")
-    .classList
-    .toggle(
-      "active",
-      mode === "quarterly"
-    );
-
-
-  $("annualBtn")
-    .classList
-    .toggle(
-      "active",
-      mode === "annual"
-    );
-
-
-  $("quarterlyPanel")
-    .classList
-    .toggle(
-      "hidden",
-      mode !== "quarterly"
-    );
-
-
-  $("annualPanel")
-    .classList
-    .toggle(
-      "hidden",
-      mode !== "annual"
-    );
-
-
-  buildPeriods();
-
-  renderAll();
-
-}
-
-
-/* ABRIR MODAL */
-
-$("loadBtn").onclick = () => {
-
-  $("modal")
-    .classList
-    .remove("hidden");
-
-  $("password").value = "";
-
-  $("passError").textContent = "";
-
-  setTimeout(
-    () => $("password").focus(),
-    50
-  );
-
+const $ = id => document.getElementById(id);
+const num = v => {
+  if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+  if (typeof v !== "string") return 0;
+  const s=v.trim().replace(/\./g,"").replace(",",".");
+  const n=Number(s);
+  return Number.isFinite(n)?n:0;
 };
-
-
-/* CANCELAR */
-
-$("cancelBtn").onclick = () => {
-
-  $("modal")
-    .classList
-    .add("hidden");
-
+const validNum = v => {
+  if (typeof v==="number") return Number.isFinite(v);
+  if (typeof v!=="string") return false;
+  const s=v.trim().toUpperCase();
+  return s!=="" && s!=="NA" && s!=="A DEFINIR" && !s.includes("#VALUE") && !s.includes("#REF") && !s.includes("#DIV/0");
 };
-
-
-/* VALIDAR SENHA */
-
-$("passBtn").onclick = () => {
-
-  if(
-    $("password").value !== PASSWORD
-  ){
-
-    $("passError").textContent =
-      "Senha incorreta.";
-
-    return;
-
-  }
-
-
-  $("modal")
-    .classList
-    .add("hidden");
-
-
-  $("fileInput").click();
-
+const money = v => (Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const fmt = v => (Number(v)||0).toLocaleString("pt-BR",{maximumFractionDigits:2});
+const rowsBySection = s => dataRows.filter(r => String(r.SECTION||"").toUpperCase()===s.toUpperCase());
+const get = (section,id, fallback=null) => {
+  const r=dataRows.find(x=>String(x.SECTION||"").toUpperCase()===section.toUpperCase() && String(x.ID||"").toUpperCase()===id.toUpperCase());
+  return r ? r.VALUE : fallback;
 };
-
-
-/* ENTER NA SENHA */
-
-$("password").addEventListener(
-  "keydown",
-  e => {
-
-    if(e.key === "Enter"){
-
-      $("passBtn").click();
-
-    }
-
-  }
-);
-
-
-/* CARREGAMENTO DA PLANILHA */
-
-$("fileInput").addEventListener(
-  "change",
-  async e => {
-
-    const file =
-      e.target.files[0];
-
-    if(!file)
-      return;
-
-
-    try{
-
-      const buf =
-        await file.arrayBuffer();
-
-
-      const wb =
-        XLSX.read(
-          buf,
-          {
-            type:"array"
-          }
-        );
-
-
-      /* ÚLTIMA ABA */
-
-      const lastName =
-        wb.SheetNames[
-          wb.SheetNames.length - 1
-        ];
-
-
-      /* CONFERÊNCIA APP_DATA */
-
-      if(
-        lastName !== APP_SHEET_NAME
-      ){
-
-        alert(
-          `Planilha recusada.\n\n` +
-          `A última aba encontrada foi "${lastName}".\n` +
-          `A última aba precisa se chamar "${APP_SHEET_NAME}".`
-        );
-
-
-        e.target.value = "";
-
-        return;
-
-      }
-
-
-      const ws =
-        wb.Sheets[lastName];
-
-
-      const json =
-        XLSX.utils.sheet_to_json(
-          ws,
-          {
-            defval:""
-          }
-        );
-
-
-      if(!json.length){
-
-        alert(
-          "A aba APP_DATA está vazia."
-        );
-
-        return;
-
-      }
-
-
-      dataRows = json;
-
-      fileName = file.name;
-
-
-      $("status").textContent =
-        `Planilha carregada: ${fileName} | Aba lida: ${lastName}`;
-
-
-      $("status").className =
-        "status ok";
-
-
-      $("appArea")
-        .classList
-        .remove("hidden");
-
-
-      buildPeriods();
-
-      renderAll();
-
-
-    }catch(err){
-
-      console.error(err);
-
-      alert(
-        "Não foi possível ler a planilha."
-      );
-
-    }finally{
-
-      e.target.value = "";
-
-    }
-
-  }
-);
-
-
-/* BOTÕES DE EVOLUÇÃO */
-
-$("quarterlyBtn").onclick =
-  () => setEvolutionMode("quarterly");
-
-
-$("annualBtn").onclick =
-  () => setEvolutionMode("annual");
-
-
-/* LOCALIZAR LINHA */
-
-function row(
-  section,
-  id,
-  parameter = null
-){
-
-  return dataRows.find(
-    r =>
-      String(
-        r.SECTION || ""
-      ).toUpperCase()
-      ===
-      section.toUpperCase()
-
-      &&
-
-      String(
-        r.ID || ""
-      ).toUpperCase()
-      ===
-      id.toUpperCase()
-
-      &&
-
-      (
-        parameter === null
-        ||
-        String(
-          r.PARAMETER || ""
-        ).toUpperCase()
-        ===
-        parameter.toUpperCase()
-      )
-  );
-
-}
-
-
-/* LOCALIZAR VÁRIAS LINHAS */
-
-function rows(section){
-
-  return dataRows.filter(
-    r =>
-      String(
-        r.SECTION || ""
-      ).toUpperCase()
-      ===
-      section.toUpperCase()
-  );
-
-}
-
-
-/* PARÂMETRO */
-
-function param(
-  section,
-  id,
-  parameter,
-  fallback = 0
-){
-
-  const r =
-    row(
-      section,
-      id,
-      parameter
-    );
-
-
-  return r
-    ? num(r.VALUE)
-    : fallback;
-
-}
-
-
-/* FAIXA DE VOLUME */
-
-function volumeBand(q){
-
-  const bs =
-    rows("VOLUME_BAND")
-      .filter(
-        r =>
-          r.ACTIVE !== 0
-          &&
-          r.ACTIVE !== "0"
-      );
-
-
-  const found =
-    bs.find(
-      r =>
-        q >= num(r.MIN_QTY)
-        &&
-        q <= num(r.MAX_QTY)
-    );
-
-
-  if(found){
-
-    return String(
-      found.ID
-    ).toUpperCase();
-
-  }
-
-
-  if(q <= 1000)
-    return "BAIXA";
-
-
-  if(q <= 5000)
-    return "MEDIA";
-
-
-  return "ALTA";
-
-}
-
-
-/* NOME DA FAIXA */
-
-function bandLabel(b){
-
-  return {
-
-    BAIXA:"Baixa",
-
-    MEDIA:"Média",
-
-    ALTA:"Alta"
-
-  }[b] || b;
-
-}
-
-
-/* REGRA DE OPÇÃO */
-
-function ruleOption(
-  item,
-  band
-){
-
-  const rs =
-    rows("RULE")
-      .filter(
-        r =>
-          String(
-            r.ITEM || ""
-          ).toUpperCase()
-          ===
-          item.toUpperCase()
-      );
-
-
-  const r =
-    rs.find(
-      x =>
-        String(
-          x.OPTION || ""
-        ).toUpperCase()
-        .includes(band)
-    );
-
-
-  return r
-    ? String(r.OPTION)
-    : null;
-
-}
-
-
-/* CUSTO */
-
-function getCost(
-  section,
-  id,
-  fallback = 0
-){
-
-  const r =
-    row(
-      section,
-      id,
-      "UNIT_VARIABLE_COST"
-    );
-
-
-  return r
-    ? num(r.VALUE)
-    : fallback;
-
-}
-
-
-/* CUSTO DO FILTRO */
-
-function filterCost(option){
-
-  const id =
-
-    option ===
-    "PP terceirizado (polietileno)"
-
-      ? "PP_TERCEIRIZADO"
-
-      :
-
-    option ===
-    "PP fabricação própria"
-
-      ? "PP_PROPRIO"
-
-      :
-
-    option ===
-    "Malha de inox fabricação própria"
-
-      ? "INOX_PROPRIO"
-
-      :
-
-    null;
-
-
-  return id
-    ? getCost(
-        "FILTRO",
-        id,
-        0
-      )
-    : 0;
-
-}
-
-
-/* IDENTIFICAÇÃO DO CENÁRIO */
-
-function identifyScenario(vols){
-
-  const bands =
-    vols.map(
-      volumeBand
-    );
-
-
-  const compact = [];
-
-
-  bands.forEach(
-    b => {
-
-      if(
-        compact[
-          compact.length - 1
-        ] !== b
-      ){
-
-        compact.push(b);
-
-      }
-
-    }
-  );
-
-
-  const key =
-    compact.join(">");
-
-
-  const map = {
-
-    "BAIXA":"CEN_A",
-
-    "MEDIA":"CEN_B",
-
-    "ALTA":"CEN_C",
-
-    "BAIXA>MEDIA":"CEN_D",
-
-    "BAIXA>ALTA":"CEN_E",
-
-    "MEDIA>BAIXA":"CEN_F",
-
-    "MEDIA>ALTA":"CEN_G",
-
-    "ALTA>MEDIA":"CEN_H",
-
-    "ALTA>BAIXA":"CEN_I",
-
-    "BAIXA>MEDIA>ALTA":"CEN_J",
-
-    "ALTA>MEDIA>BAIXA":"CEN_K"
-
-  };
-
-
-  const id =
-    map[key] || "—";
-
-
-  const r =
-    rows("SCENARIO")
-      .find(
-        x =>
-          String(
-            x.ID
-          ).toUpperCase()
-          === id
-      );
-
-
-  return {
-
-    id,
-
-    trajectory:
-      r
-        ? String(
-            r.VALUE
-            ||
-            r.OPTION
-            ||
-            r.NOTES
-            ||
-            ""
-          )
-        :
-
-        compact
-          .map(bandLabel)
-          .join(" → ")
-
-  };
-
-}
-
-
-/* DEGRADAÇÃO */
-
-function degradationFactor(
-  yearIndex
-){
-
-  const rate =
-    param(
-      "FINANCE",
-      "DEGRADATION_RATE",
-      "DEGRADATION_RATE",
-      0
-    ) / 100;
-
-
-  return Math.pow(
-    1 + rate,
-    Math.max(
-      0,
-      yearIndex
-    )
-  );
-
-}
-
-
-/* CÁLCULO */
-
-function calc(
-  q,
-  yearIndex = 0
-){
-
-  const band =
-    volumeBand(q);
-
-
-  const weld =
-    ruleOption(
-      "SOLDA",
-      band
-    )
-    ||
-    ruleOption(
-      "SOLDA_ULTRASSONICA",
-      band
-    )
-    ||
-    "Automática";
-
-
-  const filter =
-    ruleOption(
-      "FILTRO",
-      band
-    )
-    ||
-    "PP terceirizado (polietileno)";
-
-
-  const body =
-    getCost(
-      "INJECAO",
-      "INJ_CORPO",
-      0
-    );
-
-
-  const appl =
-    getCost(
-      "INJECAO",
-      "INJ_APLICADOR",
-      0
-    );
-
-
-  const packaging =
-    getCost(
-      "CUSTO_OPERACIONAL",
-      "EMBALAGEM",
-      0
-    );
-
-
-  const operational =
-    getCost(
-      "CUSTO_OPERACIONAL",
-      "OPERACIONAL",
-      0
-    );
-
-
-  const fixed =
-    param(
-      "CUSTO_OPERACIONAL",
-      "OPEX_FIXO",
-      "FIXED_OPEX_YEAR",
-      0
-    );
-
-
-  const capex =
-    param(
-      "FINANCE",
-      "CAPEX",
-      "CAPEX",
-      0
-    );
-
-
-  const life =
-    param(
-      "FINANCE",
-      "CAPEX",
-      "USEFUL_LIFE_YEARS",
-      5
-    ) || 5;
-
-
-  let weldCost = 0;
-
-
-  const wr =
-    rows("SOLDA")
-      .find(
-        r =>
-
-          String(
-            r.OPTION || ""
-          ).toUpperCase()
-
-          ===
-
-          String(
-            weld
-          ).toUpperCase()
-
-          &&
-
-          String(
-            r.PARAMETER || ""
-          ).toUpperCase()
-
-          ===
-
-          "UNIT_VARIABLE_COST"
-      );
-
-
-  if(wr){
-
-    weldCost =
-      num(wr.VALUE);
-
-  }
-
-
-  const annualizedCapex =
-    capex / life;
-
-
-  const fixedPerUnit =
-    q > 0
-
-      ?
-
-      (
-        fixed
-        +
-        annualizedCapex
-      ) / q
-
-      :
-
-      0;
-
-
-  const base =
-
-    2 * body
-
-    +
-
-    2 * appl
-
-    +
-
-    filterCost(filter)
-
-    +
-
-    weldCost
-
-    +
-
-    packaging
-
-    +
-
-    operational
-
-    +
-
-    fixedPerUnit;
-
-
-  return {
-
-    total:
-      base *
-      degradationFactor(
-        yearIndex
-      ),
-
-    band,
-
-    weld,
-
-    filter,
-
-    body,
-
-    appl,
-
-    filterCost:
-      filterCost(filter),
-
-    weldCost,
-
-    packaging,
-
-    operational,
-
-    fixedPerUnit,
-
-    capex,
-
-    fixed,
-
-    life
-
-  };
-
-}
-
-
-/* CONSTRUIR PERÍODOS */
+const getNum = (section,id,fallback=0) => validNum(get(section,id,null)) ? num(get(section,id,0)) : fallback;
 
 function buildPeriods(){
-
-  const mode =
-    currentMode;
-
-
-  const defaults =
-
-    mode === "quarterly"
-
-      ?
-
-      [
-        1000,
-        2500,
-        5000,
-        7500,
-        10000
-      ]
-
-      :
-
-      [
-        5000,
-        10000,
-        15000,
-        20000,
-        25000
-      ];
-
-
-  const names =
-
-    mode === "quarterly"
-
-      ?
-
-      [
-        "1º trimestre",
-        "2º trimestre",
-        "3º trimestre",
-        "4º trimestre",
-        "Após o 1º ano"
-      ]
-
-      :
-
-      [
-        "Ano 1",
-        "Ano 2",
-        "Ano 3",
-        "Ano 4",
-        "Ano 5"
-      ];
-
-
-  periods =
-    names.map(
-      (name,i) => ({
-        name,
-        qty:defaults[i]
-      })
-    );
-
-
-  $("quarterlyPanel")
-    .classList
-    .toggle(
-      "hidden",
-      mode !== "quarterly"
-    );
-
-
-  $("annualPanel")
-    .classList
-    .toggle(
-      "hidden",
-      mode !== "annual"
-    );
-
-
-  const panel =
-
-    mode === "quarterly"
-
-      ?
-
-      $("quarterlyPanel")
-
-      :
-
-      $("annualPanel");
-
-
-  panel.innerHTML = "";
-
-
-  periods.forEach(
-    (p,i) => {
-
-      const card =
-        document.createElement(
-          "div"
-        );
-
-
-      card.className =
-        "slider-card";
-
-
-      const top =
-        document.createElement(
-          "div"
-        );
-
-
-      top.className =
-        "slider-top";
-
-
-      top.innerHTML =
-
-        `<b>${p.name}</b>
-         <span
-           class="slider-value"
-           id="sv${i}"
-         >
-           ${p.qty.toLocaleString("pt-BR")}
-         </span>`;
-
-
-      const range =
-        document.createElement(
-          "input"
-        );
-
-
-      range.type =
-        "range";
-
-
-      range.min =
-        0;
-
-
-      range.max =
-        100000;
-
-
-      range.step =
-        100;
-
-
-      range.value =
-        p.qty;
-
-
-      range.oninput = () => {
-
-        periods[i].qty =
-          num(range.value);
-
-
-        $("sv" + i)
-          .textContent =
-          periods[i]
-            .qty
-            .toLocaleString(
-              "pt-BR"
-            );
-
-
-        selectedIndex =
-          i;
-
-
-        renderAll();
-
-      };
-
-
-      card.appendChild(top);
-
-      card.appendChild(range);
-
-
-      const hint =
-        document.createElement(
-          "div"
-        );
-
-
-      hint.className =
-        "small";
-
-
-      hint.textContent =
-        "Arraste para definir o volume";
-
-
-      card.appendChild(hint);
-
-
-      panel.appendChild(card);
-
-    }
-  );
-
+  const names=currentMode==="quarterly"
+    ? ["1º trimestre","2º trimestre","3º trimestre","4º trimestre","Após o 1º ano"]
+    : ["Ano 1","Ano 2","Ano 3","Ano 4","Ano 5"];
+  const defaults=currentMode==="quarterly" ? [1000,2500,5000,7500,10000] : [5000,10000,15000,20000,25000];
+  periods=names.map((name,i)=>({name,qty:defaults[i]}));
+  const panel=currentMode==="quarterly"?$("quarterlyPanel"):$("annualPanel");
+  panel.innerHTML="";
+  periods.forEach((p,i)=>{
+    const d=document.createElement("div"); d.className="slider-card";
+    d.innerHTML=`<div class="slider-top"><b>${p.name}</b><span class="slider-value" id="sv${i}">${fmt(p.qty)}</span></div>
+      <input type="range" min="0" max="100000" step="100" value="${p.qty}" id="sl${i}">
+      <div class="small">Volume de Bfoam no período</div>`;
+    d.querySelector("input").oninput=e=>{periods[i].qty=num(e.target.value);selectedIndex=i;$("sv"+i).textContent=fmt(periods[i].qty);renderAll();};
+    panel.appendChild(d);
+  });
 }
+function setMode(mode){
+  currentMode=mode;selectedIndex=0;
+  $("quarterlyBtn").classList.toggle("active",mode==="quarterly");
+  $("annualBtn").classList.toggle("active",mode==="annual");
+  $("quarterlyPanel").classList.toggle("hidden",mode!=="quarterly");
+  $("annualPanel").classList.toggle("hidden",mode!=="annual");
+  buildPeriods();renderAll();
+}
+$("quarterlyBtn").onclick=()=>setMode("quarterly");
+$("annualBtn").onclick=()=>setMode("annual");
 
+$("loadBtn").onclick=()=>{$("modal").classList.remove("hidden");$("password").value="";$("passError").textContent="";setTimeout(()=>$("password").focus(),50)};
+$("cancelBtn").onclick=()=>$("modal").classList.add("hidden");
+$("passBtn").onclick=()=>{
+  if($("password").value!==PASSWORD){$("passError").textContent="Senha incorreta.";return;}
+  $("modal").classList.add("hidden");$("fileInput").click();
+};
+$("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("passBtn").click()});
+$("feeNo").onclick=()=>{feeEnabled=false;$("feeNo").classList.add("active");$("feeYes").classList.remove("active");renderAll()};
+$("feeYes").onclick=()=>{feeEnabled=true;$("feeYes").classList.add("active");$("feeNo").classList.remove("active");renderAll()};
+$("adminRate").oninput=renderAll;
 
-/* ATUALIZAR TELA */
+$("fileInput").addEventListener("change",async e=>{
+  const file=e.target.files[0]; if(!file)return;
+  try{
+    const wb=XLSX.read(await file.arrayBuffer(),{type:"array",cellDates:true});
+    const last=wb.SheetNames[wb.SheetNames.length-1];
+    if(last!==APP_SHEET_NAME){alert(`Planilha recusada.\n\nA última aba é "${last}".\nEla precisa se chamar "${APP_SHEET_NAME}".`);return;}
+    const ws=wb.Sheets[last];
+    const json=XLSX.utils.sheet_to_json(ws,{defval:""});
+    if(!json.length){alert("A APP_DATA está vazia.");return;}
+    dataRows=json;
+    localStorage.setItem(STORAGE_DATA,JSON.stringify(dataRows));
+    localStorage.setItem(STORAGE_FILE,file.name);
+    initialize(file.name);
+  }catch(err){console.error(err);alert("Não foi possível ler a planilha.");}
+  finally{e.target.value=""}
+});
+
+function initialize(name){
+  $("status").textContent=`Planilha carregada: ${name} | Aba lida: APP_DATA`;
+  $("status").className="status ok";
+  $("appArea").classList.remove("hidden");
+  checkData();
+  buildPeriods();
+  renderAll();
+}
+function loadSaved(){
+  try{
+    const raw=localStorage.getItem(STORAGE_DATA);
+    if(!raw)return;
+    dataRows=JSON.parse(raw);
+    initialize(localStorage.getItem(STORAGE_FILE)||"planilha salva no navegador");
+  }catch(e){console.warn(e)}
+}
+function checkData(){
+  const required=[
+    ["FILTRO","F001"],["FILTRO","F007"],["FILTRO","F008"],["FILTRO","F021"],
+    ["INJECAO","I001"],["INJECAO","I004"],["APLICADOR","A006"],["APLICADOR","A020"],
+    ["UNIAO","U001"],["UNIAO","U007"],["PREMISSAS","P007"]
+  ];
+  const missing=required.filter(([s,id])=>!validNum(get(s,id)) && get(s,id)!=="INTERNAL");
+  const appExternal=getNum("APLICADOR","A005",0);
+  const msg=[];
+  if(appExternal<=0)msg.push(`<span class="badge badge-green">Aplicador externo sem valor → aplicativo usará fabricação 3D</span>`);
+  if(missing.length)msg.push(`<span class="badge badge-red">Dados críticos sem valor: ${missing.map(x=>x[0]+"/"+x[1]).join(", ")}</span>`);
+  else msg.push(`<span class="badge badge-green">Estrutura principal da APP_DATA encontrada.</span>`);
+  $("dataCheck").innerHTML=msg.join(" ");
+}
+function scenarioInfo(){
+  const bands=periods.map(p=>p.qty<=1000?"BAIXA":p.qty<=5000?"MEDIA":"ALTA");
+  const compact=[];bands.forEach(b=>{if(compact.at(-1)!==b)compact.push(b)});
+  const key=compact.join(">");
+  const map={"BAIXA":"A","MEDIA":"B","ALTA":"C","BAIXA>MEDIA":"D","BAIXA>ALTA":"E","MEDIA>BAIXA":"F","MEDIA>ALTA":"G","ALTA>MEDIA":"H","ALTA>BAIXA":"I","BAIXA>MEDIA>ALTA":"J","ALTA>MEDIA>BAIXA":"K"};
+  return {id:map[key]||"—",trajectory:compact.map(x=>x[0]+x.slice(1).toLowerCase()).join(" → ")};
+}
+function fiveYearVolume(){
+  // No modo anual: os 5 pontos representam Ano 1 a Ano 5.
+  // No modo trimestral: os 4 trimestres formam o Ano 1 e
+  // "Após o 1º ano" representa o volume anual de cada um dos anos 2–5.
+  if(currentMode==="annual"){
+    return periods.reduce((a,p)=>a+Math.max(0,p.qty),0);
+  }
+  const firstYear=periods.slice(0,4).reduce((a,p)=>a+Math.max(0,p.qty),0);
+  const afterFirstYear=Math.max(0,periods[4]?.qty||0);
+  return firstYear + afterFirstYear*4;
+}
+function costModel(qty5){
+  const bodies=getNum("BOM","B017",2);
+  const filters=getNum("BOM","B016",1);
+  const applicators=getNum("BOM","B018",2);
+  const operatorHour=getNum("PREMISSAS","P007",0);
+  const automation=Math.max(getNum("PREMISSAS","P013",1),0.0001);
+
+  // Corpo / injeção externa
+  const injTreatment=getNum("INJECAO","I001",0);
+  const injFreight=getNum("INJECAO","I003",0);
+  const injCapex=getNum("INJECAO","I004",0);
+  const bodyCapexPerPiece=qty5>0 ? injCapex/(qty5*bodies) : 0;
+  const bodyUnit=injTreatment+injFreight+bodyCapexPerPiece;
+
+  // Filtro
+  const fExt=getNum("FILTRO","F001",0)+getNum("FILTRO","F002",0)+getNum("FILTRO","F005",0);
+  const fIntVariable=getNum("FILTRO","F008",0)+getNum("FILTRO","F011",0)+getNum("FILTRO","F014",0);
+  const fCapex=getNum("FILTRO","F017",0);
+  const fInt=fIntVariable+(qty5>0?fCapex/(qty5*filters):0);
+  const filterExternal=fExt>0;
+  const filterUnit=filterExternal?fExt:fInt;
+
+  // Aplicador
+  const aExt=getNum("APLICADOR","A005",0);
+  const aMaterial=getNum("APLICADOR","A006",0);
+  const aOp=getNum("APLICADOR","A013",0);
+  const aMachine=getNum("APLICADOR","A015",0);
+  const aBench=getNum("APLICADOR","A016",0);
+  const aInternal=aMaterial+aOp+aMachine+(qty5>0?aBench/(qty5*applicators):0);
+  const appExternal=aExt>0;
+  const appUnit=appExternal?aExt:aInternal;
+
+  // União
+  const uExt=getNum("UNIAO","U003",0);
+  const uMold=getNum("UNIAO","U004",0);
+  const uHours=getNum("UNIAO","U005",0);
+  const uMachine=getNum("UNIAO","U006",0);
+  const uInt=(qty5>0?uMold/qty5:0)+uHours*operatorHour+uHours*uMachine;
+  const unionExternal=uExt>0;
+  const unionUnit=unionExternal?uExt:uInt;
+
+  // Embalagem
+  const packaging=rowsBySection("EMBALAGEM").reduce((sum,r)=>{
+    return sum + (String(r.PARAMETER||"").toUpperCase()==="COST_PER_PIECE" ? getRowNum(r) : 0);
+  },0);
+
+  const base=bodyUnit*bodies + filterUnit*filters + appUnit*applicators + unionUnit + packaging;
+  const feeRate=feeEnabled?Math.max(num($("adminRate").value),0)/100:0;
+  const fee=base*feeRate;
+  return {
+    bodyUnit,bodyTotal:bodyUnit*bodies,filterUnit,filterTotal:filterUnit*filters,
+    appUnit,appTotal:appUnit*applicators,unionUnit,packaging,base,fee,final:base+fee,
+    filterExternal,appExternal,unionExternal,
+    qty5
+  };
+}
+function getRowNum(r){return validNum(r.VALUE)?num(r.VALUE):0}
 
 function renderAll(){
-
-  if(!periods.length)
-    return;
-
-
-  const results =
-    periods.map(
-      (p,i) =>
-        calc(
-          p.qty,
-          i
-        )
-    );
-
-
-  const r =
-    results[
-      selectedIndex
-    ];
-
-
-  $("selectedPeriod")
-    .textContent =
-    periods[
-      selectedIndex
-    ].name;
-
-
-  $("selectedQty")
-    .textContent =
-    periods[
-      selectedIndex
-    ]
-    .qty
-    .toLocaleString(
-      "pt-BR"
-    );
-
-
-  /* CUSTO UNITÁRIO */
-
-  $("mainCost")
-    .textContent =
-    money(r.total);
-
-
-  /* CUSTO DA CAIXA */
-
-  $("boxCost")
-    .textContent =
-    money(
-      r.total * 20
-    );
-
-
-  /* CUSTO DA EMBALAGEM PRIMÁRIA */
-
-  $("primaryCost")
-    .textContent =
-    money(
-      r.total * 200
-    );
-
-
-  /* CENÁRIO */
-
-  const sc =
-    identifyScenario(
-      periods.map(
-        x => x.qty
-      )
-    );
-
-
-  $("scenario")
-    .textContent =
-    sc.id;
-
-
-  $("trajectory")
-    .textContent =
-    sc.trajectory;
-
-
-  /* DEGRADAÇÃO */
-
-  const rate =
-    param(
-      "FINANCE",
-      "DEGRADATION_RATE",
-      "DEGRADATION_RATE",
-      0
-    );
-
-
-  $("degradation")
-    .textContent =
-    `${rate.toLocaleString("pt-BR")}%/ano`;
-
-
-  /* TABELA DE RESUMO */
-
-  $("summary")
-    .innerHTML =
-
-    periods.map(
-      (p,i) =>
-
-        `<tr>
-
-          <td>
-            ${p.name}
-          </td>
-
-          <td>
-            ${p.qty.toLocaleString("pt-BR")}
-          </td>
-
-          <td>
-            ${bandLabel(
-              results[i].band
-            )}
-          </td>
-
-          <td>
-            ${money(
-              results[i].total
-            )}
-          </td>
-
-        </tr>`
-
-    ).join("");
-
-
-  /* COMPOSIÇÃO */
-
-  $("composition")
-    .innerHTML =
-
-    [
-
-      [
-        "Componente A injetado",
-        2,
-        r.body,
-        2 * r.body
-      ],
-
-      [
-        "Componente B injetado",
-        2,
-        r.appl,
-        2 * r.appl
-      ],
-
-      [
-        "Filtro",
-        1,
-        r.filterCost,
-        r.filterCost
-      ],
-
-      [
-        "Solda ultrassônica",
-        1,
-        r.weldCost,
-        r.weldCost
-      ],
-
-      [
-        "Embalagem",
-        1,
-        r.packaging,
-        r.packaging
-      ],
-
-      [
-        "Custos operacionais",
-        1,
-        r.operational,
-        r.operational
-      ],
-
-      [
-        "OPEX + CAPEX anualizado",
-        1,
-        r.fixedPerUnit,
-        r.fixedPerUnit
-      ]
-
-    ]
-
-    .map(
-      x =>
-
-        `<tr>
-
-          <td>
-            ${x[0]}
-          </td>
-
-          <td>
-            ${x[1]}
-          </td>
-
-          <td>
-            ${money(x[2])}
-          </td>
-
-          <td>
-            ${money(x[3])}
-          </td>
-
-        </tr>`
-
-    )
-
-    .join("");
-
-
-  drawChart(results);
-
+  if(!periods.length||!dataRows.length)return;
+  const q5=fiveYearVolume();
+  const r=costModel(q5);
+  $("selectedPeriod").textContent=periods[selectedIndex].name;
+  $("selectedQty").textContent=fmt(periods[selectedIndex].qty);
+  $("fiveYearVolume").textContent=fmt(q5);
+
+  $("filterChoice").textContent=r.filterExternal?"Externo — PP":"Interno — malha metálica";
+  $("filterReason").textContent=r.filterExternal?"Alternativa externa possui custo cadastrado.":"Alternativa externa sem custo; fabricação interna ativada.";
+  $("appChoice").textContent=r.appExternal?"Externo — injeção":"Interno — impressão 3D";
+  $("appReason").textContent=r.appExternal?"Alternativa externa possui custo cadastrado.":"Fornecedor externo sem valor; fabricação 3D ativada.";
+  $("unionChoice").textContent=r.unionExternal?"Externa — união":"Interna — união ultrassônica";
+  $("unionReason").textContent=r.unionExternal?"Alternativa externa possui custo cadastrado.":"Alternativa externa sem custo; união interna ativada.";
+
+  $("mainCost").textContent=money(r.final);
+  $("boxCost").textContent=money(r.final*20);
+  $("primaryCost").textContent=money(r.final*200);
+  $("baseCost").textContent=money(r.base);
+  $("feeCost").textContent=money(r.fee);
+  $("finalCost").textContent=money(r.final);
+
+  const sc=scenarioInfo();
+  $("scenario").textContent=sc.id;
+  $("trajectory").textContent=sc.trajectory;
+
+  $("summary").innerHTML=periods.map(p=>{
+    const model=costModel(fiveYearVolume());
+    return `<tr><td>${p.name}</td><td>${fmt(p.qty)}</td><td>${money(model.final)}</td></tr>`;
+  }).join("");
+
+  $("composition").innerHTML=[
+    ["Corpo — injeção",getNum("BOM","B017",2),r.bodyUnit,r.bodyTotal],
+    ["Filtro — "+(r.filterExternal?"externo PP":"interno malha metálica"),getNum("BOM","B016",1),r.filterUnit,r.filterTotal],
+    ["Aplicador — "+(r.appExternal?"externo":"impressão 3D"),getNum("BOM","B018",2),r.appUnit,r.appTotal],
+    ["União ultrassônica",1,r.unionUnit,r.unionUnit],
+    ["Embalagem",1,r.packaging,r.packaging]
+  ].map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td>${money(x[2])}</td><td>${money(x[3])}</td></tr>`).join("");
+
+  drawChart();
 }
-
-
-/* GRÁFICO */
-
-function drawChart(results){
-
-  const c =
-    $("chart");
-
-
-  const ctx =
-    c.getContext("2d");
-
-
-  const w =
-    c.width =
-    c.clientWidth * 2;
-
-
-  const h =
-    c.height =
-    260 * 2;
-
-
-  ctx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-  ctx.scale(
-    2,
-    2
-  );
-
-
-  const W =
-    c.clientWidth;
-
-
-  const H =
-    260;
-
-
-  const pad = {
-
-    l:55,
-
-    r:20,
-
-    t:25,
-
-    b:45
-
-  };
-
-
-  const vals =
-    results.map(
-      x => x.total
-    );
-
-
-  const max =
-    Math.max(
-      ...vals,
-      1
-    ) * 1.2;
-
-
-  /* LINHAS HORIZONTAIS */
-
-  ctx.strokeStyle =
-    "#dfe5ee";
-
-
-  ctx.lineWidth =
-    1;
-
-
-  for(
-    let i=0;
-    i<=4;
-    i++
-  ){
-
-    let y =
-
-      pad.t
-
-      +
-
-      (
-        H
-        -
-        pad.t
-        -
-        pad.b
-      )
-      *
-      i
-      /
-      4;
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      pad.l,
-      y
-    );
-
-    ctx.lineTo(
-      W-pad.r,
-      y
-    );
-
-    ctx.stroke();
-
-
-    ctx.fillStyle =
-      "#687386";
-
-
-    ctx.font =
-      "11px Arial";
-
-
-    ctx.fillText(
-      money(
-        max *
-        (
-          1-i/4
-        )
-      ),
-      5,
-      y+4
-    );
-
-  }
-
-
-  /* POSIÇÃO DOS PONTOS */
-
-  const xs =
-    results.map(
-      (_,i) =>
-        pad.l
-        +
-        (
-          W
-          -
-          pad.l
-          -
-          pad.r
-        )
-        *
-        (
-          i /
-          (
-            results.length-1
-            ||
-            1
-          )
-        )
-    );
-
-
-  /* LINHA DO GRÁFICO */
-
-  ctx.strokeStyle =
-    "#145da0";
-
-
-  ctx.lineWidth =
-    3;
-
-
-  ctx.beginPath();
-
-
-  xs.forEach(
-    (x,i) => {
-
-      let y =
-
-        pad.t
-
-        +
-
-        (
-          H
-          -
-          pad.t
-          -
-          pad.b
-        )
-
-        *
-
-        (
-          1
-          -
-          vals[i]
-          /
-          max
-        );
-
-
-      if(i){
-
-        ctx.lineTo(
-          x,
-          y
-        );
-
-      }else{
-
-        ctx.moveTo(
-          x,
-          y
-        );
-
-      }
-
-    }
-  );
-
-
-  ctx.stroke();
-
-
-  /* PONTOS E TEXTOS */
-
-  results.forEach(
-    (r,i) => {
-
-      let y =
-
-        pad.t
-
-        +
-
-        (
-          H
-          -
-          pad.t
-          -
-          pad.b
-        )
-
-        *
-
-        (
-          1
-          -
-          r.total
-          /
-          max
-        );
-
-
-      ctx.fillStyle =
-        "#145da0";
-
-
-      ctx.beginPath();
-
-
-      ctx.arc(
-        xs[i],
-        y,
-        5,
-        0,
-        Math.PI * 2
-      );
-
-
-      ctx.fill();
-
-
-      ctx.fillStyle =
-        "#172033";
-
-
-      ctx.font =
-        "11px Arial";
-
-
-      ctx.textAlign =
-        "center";
-
-
-      ctx.fillText(
-        periods[i].name,
-        xs[i],
-        H-22
-      );
-
-
-      ctx.fillText(
-        money(r.total),
-        xs[i],
-        y-10
-      );
-
-    }
-  );
-
+function drawChart(){
+  const c=$("chart"),ctx=c.getContext("2d"),W=c.clientWidth||1100,H=260;
+  c.width=W*2;c.height=H*2;ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,W,H);
+  const vals=periods.map(()=>costModel(fiveYearVolume()).final),max=Math.max(...vals,1)*1.2;
+  const p={l:60,r:20,t:22,b:45};
+  ctx.strokeStyle="#dfe5ee";ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=p.t+(H-p.t-p.b)*i/4;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(W-p.r,y);ctx.stroke();ctx.fillStyle="#687386";ctx.font="11px Arial";ctx.fillText(money(max*(1-i/4)),5,y+4)}
+  const xs=periods.map((_,i)=>p.l+(W-p.l-p.r)*(i/Math.max(periods.length-1,1)));
+  ctx.strokeStyle="#145da0";ctx.lineWidth=3;ctx.beginPath();
+  vals.forEach((v,i)=>{const y=p.t+(H-p.t-p.b)*(1-v/max);i?ctx.lineTo(xs[i],y):ctx.moveTo(xs[i],y)});ctx.stroke();
+  vals.forEach((v,i)=>{const y=p.t+(H-p.t-p.b)*(1-v/max);ctx.fillStyle="#145da0";ctx.beginPath();ctx.arc(xs[i],y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#172033";ctx.font="11px Arial";ctx.textAlign="center";ctx.fillText(periods[i].name,xs[i],H-22);ctx.fillText(money(v),xs[i],y-10)});
 }
-
+loadSaved();
 </script>
-
 </body>
 </html>
