@@ -3,963 +3,779 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Bfoam — Calculadora de Custo</title>
+<title>Bfoam — Calculadora de Custos</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
-
 :root{
-    --bg:#f4f7fb;
-    --card:#ffffff;
-    --ink:#172033;
-    --muted:#687386;
-    --line:#dfe5ee;
-    --primary:#145da0;
-    --primary2:#0d4678;
-    --ok:#16794a;
-    --warn:#9a6700;
-    --danger:#b42318;
+  --bg:#f4f7fb;
+  --card:#fff;
+  --ink:#172033;
+  --muted:#687386;
+  --line:#dfe5ee;
+  --primary:#145da0;
+  --primary2:#0d4678;
+  --ok:#16794a;
+  --warn:#9a6700
 }
 
 *{
-    box-sizing:border-box;
+  box-sizing:border-box
 }
 
 body{
-    margin:0;
-    background:var(--bg);
-    font-family:Inter,Segoe UI,Arial,sans-serif;
-    color:var(--ink);
+  margin:0;
+  background:var(--bg);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  color:var(--ink)
 }
 
-/* =========================
-   CABEÇALHO
-========================= */
-
 header{
-    background:linear-gradient(135deg,#0d4678,#1976b9);
-    color:#fff;
-    padding:20px 28px;
-    position:relative;
+  background:linear-gradient(135deg,#0d4678,#1976b9);
+  color:#fff;
+  padding:20px 28px;
+  position:relative
 }
 
 .header-inner{
-    max-width:1180px;
-    margin:auto;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
+  max-width:1180px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px
 }
 
 .brand h1{
-    margin:0;
-    font-size:25px;
+  margin:0;
+  font-size:25px
 }
 
 .brand p{
-    margin:5px 0 0;
-    opacity:.82;
-    font-size:13px;
+  margin:5px 0 0;
+  opacity:.82;
+  font-size:13px
 }
 
 .load-btn{
-    border:1px solid rgba(255,255,255,.4);
-    background:rgba(255,255,255,.12);
-    color:#fff;
-    border-radius:10px;
-    padding:10px 14px;
-    cursor:pointer;
-    font-weight:700;
+  border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  border-radius:10px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-weight:700
 }
 
 .load-btn:hover{
-    background:rgba(255,255,255,.22);
+  background:rgba(255,255,255,.22)
 }
 
-/* =========================
-   CONTAINER
-========================= */
-
 .container{
-    max-width:1180px;
-    margin:24px auto;
-    padding:0 18px;
+  max-width:1180px;
+  margin:24px auto;
+  padding:0 18px
 }
 
 .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:15px;
-    padding:20px;
-    margin-bottom:18px;
-    box-shadow:0 5px 18px rgba(25,45,75,.05);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:20px;
+  margin-bottom:18px;
+  box-shadow:0 5px 18px rgba(25,45,75,.05)
 }
 
 h2{
-    font-size:17px;
-    margin:0 0 15px;
+  font-size:17px;
+  margin:0 0 15px
 }
 
 .grid{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:14px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px
 }
 
 .grid3{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:14px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px
 }
-
-/* =========================
-   FORMULÁRIOS
-========================= */
 
 label{
-    font-size:12px;
-    color:var(--muted);
-    font-weight:700;
-    display:block;
-    margin-bottom:6px;
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+  display:block;
+  margin-bottom:6px
 }
 
-select{
-    width:100%;
-    padding:11px;
-    border:1px solid var(--line);
-    border-radius:9px;
-    background:#fff;
-    font-size:14px;
+/* BOTÕES DE EVOLUÇÃO */
+
+.mode-buttons{
+  display:flex;
+  gap:10px;
+  width:100%;
+}
+
+.mode-btn{
+  flex:1;
+  padding:13px 18px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#f7f9fc;
+  color:#344054;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s
+}
+
+.mode-btn.active{
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary)
+}
+
+.mode-btn:hover:not(.active){
+  background:#eef3f8
 }
 
 .slider-card{
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px
 }
 
 .slider-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center
 }
 
 .slider-value{
-    font-weight:800;
-    color:var(--primary);
+  font-weight:800;
+  color:var(--primary)
 }
 
 input[type=range]{
-    width:100%;
-    margin:14px 0 4px;
-    accent-color:var(--primary);
+  width:100%;
+  margin:14px 0 4px;
+  accent-color:var(--primary)
 }
 
 .small{
-    font-size:11px;
-    color:var(--muted);
+  font-size:11px;
+  color:var(--muted)
 }
 
-/* =========================
-   RESULTADOS
-========================= */
-
 .result{
-    background:linear-gradient(135deg,#eef7ff,#f8fbff);
-    border:1px solid #cfe5fa;
-    border-radius:13px;
-    padding:18px;
+  background:linear-gradient(135deg,#eef7ff,#f8fbff);
+  border:1px solid #cfe5fa;
+  border-radius:13px;
+  padding:18px
 }
 
 .result .value{
-    font-size:32px;
-    font-weight:900;
-    color:var(--primary2);
+  font-size:32px;
+  font-weight:900;
+  color:var(--primary2)
 }
 
 .kpi{
-    border:1px solid var(--line);
-    border-radius:11px;
-    padding:14px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:14px
 }
 
 .kpi .v{
-    font-size:20px;
-    font-weight:800;
-    margin-top:5px;
+  font-size:20px;
+  font-weight:800;
+  margin-top:5px
 }
 
 .kpi .l{
-    font-size:11px;
-    color:var(--muted);
+  font-size:11px;
+  color:var(--muted)
 }
-
-/* =========================
-   CONFIGURAÇÃO
-========================= */
-
-.config{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-
-.config div{
-    padding:13px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    background:#fafbfd;
-}
-
-.config strong{
-    display:block;
-    font-size:12px;
-    color:var(--muted);
-    margin-bottom:5px;
-}
-
-/* =========================
-   TABELAS
-========================= */
 
 table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:13px;
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px
 }
 
-th,
-td{
-    padding:9px;
-    border-bottom:1px solid var(--line);
-    text-align:left;
+th,td{
+  padding:9px;
+  border-bottom:1px solid var(--line);
+  text-align:left
 }
 
 th{
-    color:var(--muted);
-    font-size:11px;
-    text-transform:uppercase;
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase
 }
 
-/* =========================
-   STATUS
-========================= */
-
 .status{
-    font-size:12px;
-    padding:8px 10px;
-    border-radius:8px;
-    background:#fff7df;
-    color:var(--warn);
-    display:inline-block;
+  font-size:12px;
+  padding:8px 10px;
+  border-radius:8px;
+  background:#fff7df;
+  color:var(--warn);
+  display:inline-block
 }
 
 .status.ok{
-    background:#e9f8f0;
-    color:var(--ok);
+  background:#e9f8f0;
+  color:var(--ok)
 }
-
-/* =========================
-   GRÁFICO
-========================= */
 
 canvas{
-    width:100%;
-    height:260px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    background:#fff;
-}
-
-/* =========================
-   MODAL
-========================= */
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(10,20,35,.55);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    z-index:10;
-}
-
-.modal-box{
-    background:#fff;
-    width:min(400px,100%);
-    border-radius:15px;
-    padding:24px;
-    box-shadow:0 20px 70px rgba(0,0,0,.25);
-}
-
-.modal-box h3{
-    margin-top:0;
-}
-
-.password{
-    width:100%;
-    padding:12px;
-    border:1px solid var(--line);
-    border-radius:9px;
-    font-size:15px;
-    margin:10px 0;
-}
-
-.actions{
-    display:flex;
-    justify-content:flex-end;
-    gap:8px;
-}
-
-.btn{
-    padding:10px 14px;
-    border:0;
-    border-radius:9px;
-    cursor:pointer;
-    font-weight:700;
-}
-
-.primary{
-    background:var(--primary);
-    color:#fff;
-}
-
-.secondary{
-    background:#eef2f7;
-    color:#344054;
+  width:100%;
+  height:260px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff
 }
 
 .hidden{
-    display:none!important;
+  display:none!important
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(10,20,35,.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:10
+}
+
+.modal-box{
+  background:#fff;
+  width:min(400px,100%);
+  border-radius:15px;
+  padding:24px;
+  box-shadow:0 20px 70px rgba(0,0,0,.25)
+}
+
+.modal-box h3{
+  margin-top:0
+}
+
+.password{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  font-size:15px;
+  margin:10px 0
+}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px
+}
+
+.btn{
+  padding:10px 14px;
+  border:0;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:700
+}
+
+.primary{
+  background:var(--primary);
+  color:#fff
+}
+
+.secondary{
+  background:#eef2f7;
+  color:#344054
 }
 
 .empty{
-    padding:22px;
-    text-align:center;
-    color:var(--muted);
-    font-size:13px;
+  padding:22px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px
 }
-
-/* =========================
-   RESPONSIVO
-========================= */
 
 @media(max-width:760px){
 
-    .grid,
-    .grid3,
-    .config{
-        grid-template-columns:1fr;
-    }
+  .grid,
+  .grid3{
+    grid-template-columns:1fr
+  }
 
-    .header-inner{
-        align-items:flex-start;
-    }
+  .header-inner{
+    align-items:flex-start
+  }
 
-    .brand h1{
-        font-size:21px;
-    }
+  .brand h1{
+    font-size:21px
+  }
+
+  .mode-buttons{
+    flex-direction:column
+  }
 
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- =========================================================
-     CABEÇALHO
-========================================================= -->
-
 <header>
 
-    <div class="header-inner">
+  <div class="header-inner">
 
-        <div class="brand">
+    <div class="brand">
 
-            <h1>
-                Bfoam — Calculadora de Custo
-            </h1>
+      <h1>Bfoam — Calculadora de Custo</h1>
 
-            <p>
-                Modelo de cálculo alimentado pela aba APP_DATA da planilha.
-            </p>
-
-        </div>
-
-        <button
-            class="load-btn"
-            id="loadBtn"
-            title="Carregar planilha">
-
-            ⬆ Carregar
-
-        </button>
+      <p>
+        Modelo de cálculo alimentado pela aba APP_DATA da planilha.
+      </p>
 
     </div>
+
+    <button
+      class="load-btn"
+      id="loadBtn"
+      title="Carregar planilha"
+    >
+      ⬆ Carregar
+    </button>
+
+  </div>
 
 </header>
 
 
-<!-- =========================================================
-     CONTEÚDO
-========================================================= -->
-
 <div class="container">
 
-    <!-- STATUS DA PLANILHA -->
+  <!-- FONTE DE DADOS -->
+
+  <div class="card">
+
+    <h2>Fonte de dados</h2>
+
+    <span
+      id="status"
+      class="status"
+    >
+      Nenhuma planilha carregada
+    </span>
+
+    <div
+      class="small"
+      style="margin-top:8px"
+    >
+      A aplicação lê exclusivamente a última aba da planilha carregada.
+      A aba deve se chamar <b>APP_DATA</b>.
+    </div>
+
+  </div>
+
+
+  <div id="appArea" class="hidden">
+
+
+    <!-- EVOLUÇÃO -->
 
     <div class="card">
 
-        <h2>
-            Fonte de dados
-        </h2>
+      <h2>Evolução do volume de produção</h2>
 
-        <span
-            id="status"
-            class="status">
+      <label>Modo de evolução</label>
 
-            Nenhuma planilha carregada
+      <div
+        class="mode-buttons"
+        role="group"
+        aria-label="Modo de evolução"
+      >
 
+        <button
+          type="button"
+          class="mode-btn active"
+          id="quarterlyBtn"
+        >
+          Evolução trimestral — 1º ano
+        </button>
+
+        <button
+          type="button"
+          class="mode-btn"
+          id="annualBtn"
+        >
+          Evolução anual
+        </button>
+
+      </div>
+
+
+      <div
+        class="result"
+        style="padding:11px 14px;margin-top:12px"
+      >
+
+        <b id="selectedPeriod">
+          1º trimestre
+        </b>
+
+        —
+
+        <span id="selectedQty">
+          0
         </span>
 
-        <div
-            class="small"
-            style="margin-top:8px">
+        unidades
 
-            A aplicação lê exclusivamente a última aba da
-            planilha carregada. A aba deve se chamar
-            <b>APP_DATA</b>.
+      </div>
 
-        </div>
+
+      <!-- TRIMESTRAL -->
+
+      <div
+        id="quarterlyPanel"
+        class="grid3"
+        style="margin-top:15px"
+      >
+      </div>
+
+
+      <!-- ANUAL -->
+
+      <div
+        id="annualPanel"
+        class="grid3 hidden"
+        style="margin-top:15px"
+      >
+      </div>
 
     </div>
 
 
-    <!-- =====================================================
-         ÁREA PRINCIPAL DO APLICATIVO
-    ====================================================== -->
+    <!-- CUSTOS -->
 
-    <div
-        id="appArea"
-        class="hidden">
+    <div class="card">
 
+      <h2>Custo estimado</h2>
 
-        <!-- =================================================
-             EVOLUÇÃO DO VOLUME
-        ================================================== -->
-
-        <div class="card">
-
-            <h2>
-                Evolução do volume de produção
-            </h2>
-
-            <div class="grid">
-
-                <div>
-
-                    <label>
-                        Modo de evolução
-                    </label>
-
-                    <select id="evolutionMode">
-
-                        <option value="quarterly">
-                            Evolução trimestral — 1º ano
-                        </option>
-
-                        <option value="annual">
-                            Evolução anual
-                        </option>
-
-                    </select>
-
-                </div>
+      <div class="grid3">
 
 
-                <div>
+        <!-- UNIDADE -->
 
-                    <label>
-                        Período selecionado
-                    </label>
+        <div class="result">
 
-                    <div
-                        class="result"
-                        style="padding:11px 14px">
+          <div class="small">
+            CUSTO POR UNIDADE
+          </div>
 
-                        <b id="selectedPeriod">
-                            1º trimestre
-                        </b>
-
-                        —
-
-                        <span id="selectedQty">
-                            0
-                        </span>
-
-                        unidades
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- TRIMESTRAL -->
-
-            <div
-                id="quarterlyPanel"
-                class="grid3"
-                style="margin-top:15px">
-
-            </div>
-
-
-            <!-- ANUAL -->
-
-            <div
-                id="annualPanel"
-                class="grid3 hidden"
-                style="margin-top:15px">
-
-            </div>
+          <div
+            class="value"
+            id="mainCost"
+          >
+            R$ 0,00
+          </div>
 
         </div>
 
 
-        <!-- =================================================
-             CUSTO PRINCIPAL
-        ================================================== -->
+        <!-- CAIXA -->
 
-        <div class="card">
+        <div class="result">
 
-            <h2>
-                Custo estimado
-            </h2>
+          <div class="small">
+            CUSTO POR CAIXA
+          </div>
 
-            <div class="result">
+          <div
+            class="value"
+            id="boxCost"
+          >
+            R$ 0,00
+          </div>
 
-                <div class="small">
-                    CUSTO ESTIMADO / BFOAM
-                </div>
-
-                <div
-                    class="value"
-                    id="mainCost">
-
-                    R$ 0,00
-
-                </div>
-
-                <div
-                    class="small"
-                    id="costNote">
-
-                    Selecione um período.
-
-                </div>
-
-            </div>
+          <div class="small">
+            20 unidades
+          </div>
 
         </div>
 
 
-        <!-- =================================================
-             CONFIGURAÇÃO
-        ================================================== -->
+        <!-- EMBALAGEM PRIMÁRIA -->
 
-        <div class="card">
+        <div class="result">
 
-            <h2>
-                Configuração selecionada automaticamente
-            </h2>
+          <div class="small">
+            CUSTO POR EMBALAGEM PRIMÁRIA
+          </div>
 
-            <div class="config">
+          <div
+            class="value"
+            id="primaryCost"
+          >
+            R$ 0,00
+          </div>
 
-                <div>
-
-                    <strong>
-                        INJEÇÃO
-                    </strong>
-
-                    <span>
-                        Terceirizada
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <strong>
-                        SOLDA ULTRASSÔNICA
-                    </strong>
-
-                    <span id="welding">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <strong>
-                        FILTRO
-                    </strong>
-
-                    <span id="filter">
-                        —
-                    </span>
-
-                </div>
-
-            </div>
+          <div class="small">
+            10 caixas · 200 unidades
+          </div>
 
         </div>
 
 
-        <!-- =================================================
-             INVESTIMENTO
-        ================================================== -->
-
-        <div class="card">
-
-            <h2>
-                Investimento e estrutura
-            </h2>
-
-            <div class="grid3">
-
-                <div class="kpi">
-
-                    <div class="l">
-                        CAPEX
-                    </div>
-
-                    <div
-                        class="v"
-                        id="capex">
-
-                        R$ 0,00
-
-                    </div>
-
-                </div>
-
-
-                <div class="kpi">
-
-                    <div class="l">
-                        OPEX FIXO ANUAL
-                    </div>
-
-                    <div
-                        class="v"
-                        id="opex">
-
-                        R$ 0,00
-
-                    </div>
-
-                </div>
-
-
-                <div class="kpi">
-
-                    <div class="l">
-                        VIDA ÚTIL
-                    </div>
-
-                    <div
-                        class="v"
-                        id="life">
-
-                        0 anos
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             CENÁRIO
-        ================================================== -->
-
-        <div class="card">
-
-            <h2>
-                Cenário identificado automaticamente
-            </h2>
-
-            <div class="grid3">
-
-                <div class="kpi">
-
-                    <div class="l">
-                        CENÁRIO
-                    </div>
-
-                    <div
-                        class="v"
-                        id="scenario">
-
-                        —
-
-                    </div>
-
-                </div>
-
-
-                <div class="kpi">
-
-                    <div class="l">
-                        TRAJETÓRIA
-                    </div>
-
-                    <div
-                        class="v"
-                        id="trajectory"
-                        style="font-size:16px">
-
-                        —
-
-                    </div>
-
-                </div>
-
-
-                <div class="kpi">
-
-                    <div class="l">
-                        DEGRADAÇÃO
-                    </div>
-
-                    <div
-                        class="v"
-                        id="degradation">
-
-                        0%
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div style="margin-top:14px">
-
-                <canvas
-                    id="chart"
-                    width="1100"
-                    height="260">
-
-                </canvas>
-
-            </div>
-
-
-            <div
-                style="margin-top:12px;overflow:auto">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Período
-                            </th>
-
-                            <th>
-                                Volume
-                            </th>
-
-                            <th>
-                                Faixa
-                            </th>
-
-                            <th>
-                                Custo/Bfoam
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody
-                        id="summary">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             COMPOSIÇÃO
-        ================================================== -->
-
-        <div class="card">
-
-            <h2>
-                Composição do custo
-            </h2>
-
-            <div style="overflow:auto">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Componente
-                            </th>
-
-                            <th>
-                                Qtd.
-                            </th>
-
-                            <th>
-                                Custo unitário
-                            </th>
-
-                            <th>
-                                Total/Bfoam
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody
-                        id="composition">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
+      </div>
 
     </div>
+
+
+    <!-- CENÁRIO -->
+
+    <div class="card">
+
+      <div class="grid3">
+
+        <div class="kpi">
+
+          <div class="l">
+            CENÁRIO
+          </div>
+
+          <div
+            class="v"
+            id="scenario"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+          <div class="l">
+            TRAJETÓRIA
+          </div>
+
+          <div
+            class="v"
+            id="trajectory"
+            style="font-size:16px"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+          <div class="l">
+            DEGRADAÇÃO
+          </div>
+
+          <div
+            class="v"
+            id="degradation"
+          >
+            0%
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- GRÁFICO -->
+
+      <div style="margin-top:14px">
+
+        <canvas
+          id="chart"
+          width="1100"
+          height="260"
+        >
+        </canvas>
+
+      </div>
+
+
+      <!-- RESUMO -->
+
+      <div
+        style="margin-top:12px;overflow:auto"
+      >
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Período
+              </th>
+
+              <th>
+                Volume
+              </th>
+
+              <th>
+                Faixa
+              </th>
+
+              <th>
+                Custo por unidade
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="summary">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- COMPOSIÇÃO -->
+
+    <div class="card">
+
+      <h2>
+        Composição do custo
+      </h2>
+
+      <div style="overflow:auto">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Componente
+              </th>
+
+              <th>
+                Qtd.
+              </th>
+
+              <th>
+                Custo unitário
+              </th>
+
+              <th>
+                Total
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="composition">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+  </div>
 
 </div>
 
 
-<!-- =========================================================
-     MODAL DE SENHA
-========================================================= -->
+<!-- MODAL DE SENHA -->
 
 <div
-    class="modal hidden"
-    id="modal">
+  class="modal hidden"
+  id="modal"
+>
 
-    <div class="modal-box">
+  <div class="modal-box">
 
-        <h3>
-            Carregar planilha
-        </h3>
+    <h3>
+      Carregar planilha
+    </h3>
 
-        <p class="small">
+    <p class="small">
 
-            Digite a senha para habilitar o carregamento
-            da nova planilha.
+      Digite a senha para habilitar o carregamento
+      da nova planilha.
 
-        </p>
+    </p>
 
-        <input
-            id="password"
-            class="password"
-            type="password"
-            placeholder="Senha">
+    <input
+      id="password"
+      class="password"
+      type="password"
+      placeholder="Senha"
+    >
 
-        <div
-            id="passError"
-            class="small"
-            style="color:#b42318;min-height:18px">
+    <div
+      id="passError"
+      class="small"
+      style="color:#b42318;min-height:18px"
+    >
+    </div>
 
-        </div>
+    <div class="actions">
 
-        <div class="actions">
+      <button
+        class="btn secondary"
+        id="cancelBtn"
+      >
+        Cancelar
+      </button>
 
-            <button
-                class="btn secondary"
-                id="cancelBtn">
-
-                Cancelar
-
-            </button>
-
-            <button
-                class="btn primary"
-                id="passBtn">
-
-                Continuar
-
-            </button>
-
-        </div>
+      <button
+        class="btn primary"
+        id="passBtn"
+      >
+        Continuar
+      </button>
 
     </div>
+
+  </div>
 
 </div>
 
 
-<!-- INPUT DA PLANILHA -->
-
 <input
-    type="file"
-    id="fileInput"
-    accept=".xlsx,.xls"
-    class="hidden">
+  type="file"
+  id="fileInput"
+  accept=".xlsx,.xls"
+  class="hidden"
+>
 
 
 <script>
 
-/* ==========================================================
-   CONFIGURAÇÕES PRINCIPAIS
-========================================================== */
-
 const APP_SHEET_NAME = "APP_DATA";
 
+/* SENHA DO APLICATIVO */
 const PASSWORD = "msb19";
 
-
-/*
-    Chaves utilizadas no armazenamento local
-*/
-
-const STORAGE_DATA = "bfoamData";
-
-const STORAGE_FILENAME = "bfoamFileName";
-
-const STORAGE_DATE = "bfoamLoadedAt";
-
-
-/* ==========================================================
-   VARIÁVEIS GLOBAIS
-========================================================== */
 
 let dataRows = [];
 
@@ -969,85 +785,134 @@ let periods = [];
 
 let selectedIndex = 0;
 
+let currentMode = "quarterly";
 
-/* ==========================================================
-   FUNÇÕES AUXILIARES
-========================================================== */
+
+/* FUNÇÃO AUXILIAR */
 
 const $ = id =>
-    document.getElementById(id);
+  document.getElementById(id);
 
 
-const money = value => {
+/* FORMATAÇÃO DE DINHEIRO */
 
-    return (Number(value) || 0)
-        .toLocaleString(
-            "pt-BR",
-            {
-                style:"currency",
-                currency:"BRL"
-            }
-        );
-
-};
+const money = v =>
+  (Number(v) || 0).toLocaleString(
+    "pt-BR",
+    {
+      style:"currency",
+      currency:"BRL"
+    }
+  );
 
 
-const num = value =>
-    Number(value) || 0;
+/* CONVERSÃO NUMÉRICA */
+
+const num = v =>
+  Number(v) || 0;
 
 
-/* ==========================================================
-   ABRIR MODAL
-========================================================== */
+/* MODOS DE EVOLUÇÃO */
+
+function setEvolutionMode(mode){
+
+  currentMode = mode;
+
+  selectedIndex = 0;
+
+
+  $("quarterlyBtn")
+    .classList
+    .toggle(
+      "active",
+      mode === "quarterly"
+    );
+
+
+  $("annualBtn")
+    .classList
+    .toggle(
+      "active",
+      mode === "annual"
+    );
+
+
+  $("quarterlyPanel")
+    .classList
+    .toggle(
+      "hidden",
+      mode !== "quarterly"
+    );
+
+
+  $("annualPanel")
+    .classList
+    .toggle(
+      "hidden",
+      mode !== "annual"
+    );
+
+
+  buildPeriods();
+
+  renderAll();
+
+}
+
+
+/* ABRIR MODAL */
 
 $("loadBtn").onclick = () => {
 
-    $("modal").classList.remove("hidden");
+  $("modal")
+    .classList
+    .remove("hidden");
 
-    $("password").value = "";
+  $("password").value = "";
 
-    $("passError").textContent = "";
+  $("passError").textContent = "";
 
-    setTimeout(
-        () => $("password").focus(),
-        50
-    );
+  setTimeout(
+    () => $("password").focus(),
+    50
+  );
 
 };
 
 
-/* ==========================================================
-   CANCELAR
-========================================================== */
+/* CANCELAR */
 
 $("cancelBtn").onclick = () => {
 
-    $("modal").classList.add("hidden");
+  $("modal")
+    .classList
+    .add("hidden");
 
 };
 
 
-/* ==========================================================
-   SENHA
-========================================================== */
+/* VALIDAR SENHA */
 
 $("passBtn").onclick = () => {
 
-    if(
-        $("password").value !== PASSWORD
-    ){
+  if(
+    $("password").value !== PASSWORD
+  ){
 
-        $("passError").textContent =
-            "Senha incorreta.";
+    $("passError").textContent =
+      "Senha incorreta.";
 
-        return;
+    return;
 
-    }
+  }
 
 
-    $("modal").classList.add("hidden");
+  $("modal")
+    .classList
+    .add("hidden");
 
-    $("fileInput").click();
+
+  $("fileInput").click();
 
 };
 
@@ -1055,1898 +920,1492 @@ $("passBtn").onclick = () => {
 /* ENTER NA SENHA */
 
 $("password").addEventListener(
-    "keydown",
-    event => {
+  "keydown",
+  e => {
 
-        if(event.key === "Enter"){
+    if(e.key === "Enter"){
 
-            $("passBtn").click();
-
-        }
+      $("passBtn").click();
 
     }
+
+  }
 );
 
 
-/* ==========================================================
-   CARREGAMENTO DA PLANILHA
-========================================================== */
+/* CARREGAMENTO DA PLANILHA */
 
 $("fileInput").addEventListener(
-    "change",
-    async event => {
+  "change",
+  async e => {
 
-        const file =
-            event.target.files[0];
+    const file =
+      e.target.files[0];
 
-        if(!file)
-            return;
+    if(!file)
+      return;
 
-
-        try{
-
-            const buffer =
-                await file.arrayBuffer();
-
-
-            const workbook =
-                XLSX.read(
-                    buffer,
-                    {
-                        type:"array"
-                    }
-                );
-
-
-            /*
-                IMPORTANTE:
-
-                O aplicativo pega somente
-                a ÚLTIMA aba.
-            */
-
-            const lastSheetName =
-                workbook.SheetNames[
-                    workbook.SheetNames.length - 1
-                ];
-
-
-            /*
-                Confere se a última aba
-                é APP_DATA.
-            */
-
-            if(
-                lastSheetName !== APP_SHEET_NAME
-            ){
-
-                alert(
-                    `Planilha recusada.
-
-A última aba encontrada foi "${lastSheetName}".
-
-A última aba precisa se chamar "${APP_SHEET_NAME}".`
-                );
-
-                event.target.value = "";
-
-                return;
-
-            }
-
-
-            const worksheet =
-                workbook.Sheets[
-                    lastSheetName
-                ];
-
-
-            const json =
-                XLSX.utils.sheet_to_json(
-                    worksheet,
-                    {
-                        defval:""
-                    }
-                );
-
-
-            if(!json.length){
-
-                alert(
-                    "A aba APP_DATA está vazia."
-                );
-
-                return;
-
-            }
-
-
-            /*
-                ============================================
-                NOVA PLANILHA
-
-                A partir deste momento a nova planilha
-                substitui a anterior.
-                ============================================
-            */
-
-            dataRows = json;
-
-            fileName = file.name;
-
-
-            /*
-                Remove a antiga
-            */
-
-            localStorage.removeItem(
-                STORAGE_DATA
-            );
-
-            localStorage.removeItem(
-                STORAGE_FILENAME
-            );
-
-            localStorage.removeItem(
-                STORAGE_DATE
-            );
-
-
-            /*
-                Salva a nova
-            */
-
-            localStorage.setItem(
-                STORAGE_DATA,
-                JSON.stringify(dataRows)
-            );
-
-
-            localStorage.setItem(
-                STORAGE_FILENAME,
-                fileName
-            );
-
-
-            localStorage.setItem(
-                STORAGE_DATE,
-                new Date().toISOString()
-            );
-
-
-            /*
-                Atualiza interface
-            */
-
-            updateStatus();
-
-
-            $("appArea")
-                .classList
-                .remove("hidden");
-
-
-            buildPeriods();
-
-            renderAll();
-
-
-        }
-
-        catch(error){
-
-            console.error(error);
-
-            alert(
-                "Não foi possível ler a planilha."
-            );
-
-        }
-
-        finally{
-
-            /*
-                Permite selecionar novamente
-                até a mesma planilha.
-            */
-
-            event.target.value = "";
-
-        }
-
-    }
-);
-
-
-/* ==========================================================
-   RECUPERAR PLANILHA SALVA
-========================================================== */
-
-function loadSavedSpreadsheet(){
 
     try{
 
-        const savedData =
-            localStorage.getItem(
-                STORAGE_DATA
-            );
+      const buf =
+        await file.arrayBuffer();
 
 
-        /*
-            Não existe planilha salva.
-        */
-
-        if(!savedData){
-
-            return false;
-
-        }
-
-
-        /*
-            Recupera dados
-        */
-
-        dataRows =
-            JSON.parse(
-                savedData
-            );
-
-
-        fileName =
-            localStorage.getItem(
-                STORAGE_FILENAME
-            )
-            ||
-            "Planilha salva";
-
-
-        /*
-            Verificação de segurança
-        */
-
-        if(
-            !Array.isArray(dataRows)
-            ||
-            dataRows.length === 0
-        ){
-
-            localStorage.removeItem(
-                STORAGE_DATA
-            );
-
-            localStorage.removeItem(
-                STORAGE_FILENAME
-            );
-
-            localStorage.removeItem(
-                STORAGE_DATE
-            );
-
-            return false;
-
-        }
-
-
-        /*
-            Atualiza interface
-        */
-
-        updateStatus();
-
-
-        $("appArea")
-            .classList
-            .remove("hidden");
-
-
-        buildPeriods();
-
-        renderAll();
-
-
-        return true;
-
-    }
-
-    catch(error){
-
-        console.error(
-            "Erro ao recuperar planilha:",
-            error
-        );
-
-        return false;
-
-    }
-
-}
-
-
-/* ==========================================================
-   STATUS DA PLANILHA
-========================================================== */
-
-function updateStatus(){
-
-    const savedDate =
-        localStorage.getItem(
-            STORAGE_DATE
+      const wb =
+        XLSX.read(
+          buf,
+          {
+            type:"array"
+          }
         );
 
 
-    let text =
-        `Planilha carregada: ${fileName} | Aba lida: ${APP_SHEET_NAME}`;
+      /* ÚLTIMA ABA */
+
+      const lastName =
+        wb.SheetNames[
+          wb.SheetNames.length - 1
+        ];
 
 
-    if(savedDate){
+      /* CONFERÊNCIA APP_DATA */
 
-        const date =
-            new Date(savedDate);
+      if(
+        lastName !== APP_SHEET_NAME
+      ){
 
-
-        if(!isNaN(date)){
-
-            text +=
-                ` | Salva em ${date.toLocaleString("pt-BR")}`;
-
-        }
-
-    }
+        alert(
+          `Planilha recusada.\n\n` +
+          `A última aba encontrada foi "${lastName}".\n` +
+          `A última aba precisa se chamar "${APP_SHEET_NAME}".`
+        );
 
 
-    $("status").textContent =
-        text;
+        e.target.value = "";
+
+        return;
+
+      }
 
 
-    $("status").className =
+      const ws =
+        wb.Sheets[lastName];
+
+
+      const json =
+        XLSX.utils.sheet_to_json(
+          ws,
+          {
+            defval:""
+          }
+        );
+
+
+      if(!json.length){
+
+        alert(
+          "A aba APP_DATA está vazia."
+        );
+
+        return;
+
+      }
+
+
+      dataRows = json;
+
+      fileName = file.name;
+
+
+      $("status").textContent =
+        `Planilha carregada: ${fileName} | Aba lida: ${lastName}`;
+
+
+      $("status").className =
         "status ok";
 
-}
+
+      $("appArea")
+        .classList
+        .remove("hidden");
 
 
-/* ==========================================================
-   BUSCAR LINHA
-========================================================== */
+      buildPeriods();
+
+      renderAll();
+
+
+    }catch(err){
+
+      console.error(err);
+
+      alert(
+        "Não foi possível ler a planilha."
+      );
+
+    }finally{
+
+      e.target.value = "";
+
+    }
+
+  }
+);
+
+
+/* BOTÕES DE EVOLUÇÃO */
+
+$("quarterlyBtn").onclick =
+  () => setEvolutionMode("quarterly");
+
+
+$("annualBtn").onclick =
+  () => setEvolutionMode("annual");
+
+
+/* LOCALIZAR LINHA */
 
 function row(
-    section,
-    id,
-    parameter = null
+  section,
+  id,
+  parameter = null
 ){
 
-    return dataRows.find(
-        r =>
+  return dataRows.find(
+    r =>
+      String(
+        r.SECTION || ""
+      ).toUpperCase()
+      ===
+      section.toUpperCase()
 
+      &&
+
+      String(
+        r.ID || ""
+      ).toUpperCase()
+      ===
+      id.toUpperCase()
+
+      &&
+
+      (
+        parameter === null
+        ||
         String(
-            r.SECTION || ""
+          r.PARAMETER || ""
         ).toUpperCase()
         ===
-        section.toUpperCase()
-
-        &&
-
-        String(
-            r.ID || ""
-        ).toUpperCase()
-        ===
-        id.toUpperCase()
-
-        &&
-
-        (
-            parameter === null
-
-            ||
-
-            String(
-                r.PARAMETER || ""
-            ).toUpperCase()
-            ===
-            parameter.toUpperCase()
-        )
-
-    );
+        parameter.toUpperCase()
+      )
+  );
 
 }
 
 
-/* ==========================================================
-   BUSCAR TODAS AS LINHAS DE UMA SEÇÃO
-========================================================== */
+/* LOCALIZAR VÁRIAS LINHAS */
 
 function rows(section){
 
-    return dataRows.filter(
-        r =>
-
-        String(
-            r.SECTION || ""
-        ).toUpperCase()
-        ===
-        section.toUpperCase()
-    );
+  return dataRows.filter(
+    r =>
+      String(
+        r.SECTION || ""
+      ).toUpperCase()
+      ===
+      section.toUpperCase()
+  );
 
 }
 
 
-/* ==========================================================
-   PARÂMETRO
-========================================================== */
+/* PARÂMETRO */
 
 function param(
-    section,
-    id,
-    parameter,
-    fallback = 0
+  section,
+  id,
+  parameter,
+  fallback = 0
 ){
 
-    const r =
-        row(
-            section,
-            id,
-            parameter
-        );
+  const r =
+    row(
+      section,
+      id,
+      parameter
+    );
 
 
-    return r
-        ? num(r.VALUE)
-        : fallback;
+  return r
+    ? num(r.VALUE)
+    : fallback;
 
 }
 
 
-/* ==========================================================
-   FAIXA DE VOLUME
-========================================================== */
+/* FAIXA DE VOLUME */
 
 function volumeBand(q){
 
-    const bands =
-        rows("VOLUME_BAND")
-        .filter(
-            r =>
-                r.ACTIVE !== 0
-                &&
-                r.ACTIVE !== "0"
-        );
+  const bs =
+    rows("VOLUME_BAND")
+      .filter(
+        r =>
+          r.ACTIVE !== 0
+          &&
+          r.ACTIVE !== "0"
+      );
 
 
-    const found =
-        bands.find(
-            r =>
-
-            q >= num(r.MIN_QTY)
-            &&
-            q <= num(r.MAX_QTY)
-        );
-
-
-    if(found){
-
-        return String(
-            found.ID
-        ).toUpperCase();
-
-    }
+  const found =
+    bs.find(
+      r =>
+        q >= num(r.MIN_QTY)
+        &&
+        q <= num(r.MAX_QTY)
+    );
 
 
-    /*
-        Fallback
-    */
+  if(found){
 
-    if(q <= 1000)
-        return "BAIXA";
+    return String(
+      found.ID
+    ).toUpperCase();
 
-
-    if(q <= 5000)
-        return "MEDIA";
+  }
 
 
-    return "ALTA";
+  if(q <= 1000)
+    return "BAIXA";
+
+
+  if(q <= 5000)
+    return "MEDIA";
+
+
+  return "ALTA";
 
 }
 
 
-/* ==========================================================
-   NOME DA FAIXA
-========================================================== */
+/* NOME DA FAIXA */
 
-function bandLabel(band){
+function bandLabel(b){
 
-    return {
+  return {
 
-        BAIXA:"Baixa",
+    BAIXA:"Baixa",
 
-        MEDIA:"Média",
+    MEDIA:"Média",
 
-        ALTA:"Alta"
+    ALTA:"Alta"
 
-    }[band]
-    || band;
+  }[b] || b;
 
 }
 
 
-/* ==========================================================
-   REGRAS
-========================================================== */
+/* REGRA DE OPÇÃO */
 
 function ruleOption(
-    item,
-    band
+  item,
+  band
 ){
 
-    const rules =
-        rows("RULE")
-        .filter(
-            r =>
-                String(
-                    r.ITEM || ""
-                ).toUpperCase()
-                ===
-                item.toUpperCase()
-        );
+  const rs =
+    rows("RULE")
+      .filter(
+        r =>
+          String(
+            r.ITEM || ""
+          ).toUpperCase()
+          ===
+          item.toUpperCase()
+      );
 
 
-    const found =
-        rules.find(
-            r =>
-
-            String(
-                r.OPTION || ""
-            )
-            .toUpperCase()
-            .includes(
-                band
-            )
-        );
+  const r =
+    rs.find(
+      x =>
+        String(
+          x.OPTION || ""
+        ).toUpperCase()
+        .includes(band)
+    );
 
 
-    return found
-        ? String(found.OPTION)
-        : null;
+  return r
+    ? String(r.OPTION)
+    : null;
 
 }
 
 
-/* ==========================================================
-   CUSTO
-========================================================== */
+/* CUSTO */
 
 function getCost(
-    section,
-    id,
-    fallback = 0
+  section,
+  id,
+  fallback = 0
 ){
 
-    const r =
-        row(
-            section,
-            id,
-            "UNIT_VARIABLE_COST"
-        );
+  const r =
+    row(
+      section,
+      id,
+      "UNIT_VARIABLE_COST"
+    );
 
 
-    return r
-        ? num(r.VALUE)
-        : fallback;
+  return r
+    ? num(r.VALUE)
+    : fallback;
 
 }
 
 
-/* ==========================================================
-   CUSTO DO FILTRO
-========================================================== */
+/* CUSTO DO FILTRO */
 
 function filterCost(option){
 
-    let id = null;
+  const id =
+
+    option ===
+    "PP terceirizado (polietileno)"
+
+      ? "PP_TERCEIRIZADO"
+
+      :
+
+    option ===
+    "PP fabricação própria"
+
+      ? "PP_PROPRIO"
+
+      :
+
+    option ===
+    "Malha de inox fabricação própria"
+
+      ? "INOX_PROPRIO"
+
+      :
+
+    null;
 
 
-    if(
-        option ===
-        "PP terceirizado (polietileno)"
-    ){
-
-        id =
-            "PP_TERCEIRIZADO";
-
-    }
-
-
-    else if(
-        option ===
-        "PP fabricação própria"
-    ){
-
-        id =
-            "PP_PROPRIO";
-
-    }
-
-
-    else if(
-        option ===
-        "Malha de inox fabricação própria"
-    ){
-
-        id =
-            "INOX_PROPRIO";
-
-    }
-
-
-    if(!id)
-        return 0;
-
-
-    return getCost(
+  return id
+    ? getCost(
         "FILTRO",
         id,
         0
-    );
+      )
+    : 0;
 
 }
 
 
-/* ==========================================================
-   IDENTIFICAR CENÁRIO
-========================================================== */
+/* IDENTIFICAÇÃO DO CENÁRIO */
 
-function identifyScenario(volumes){
+function identifyScenario(vols){
 
-    const bands =
-        volumes.map(
-            volumeBand
-        );
-
-
-    const compact = [];
-
-
-    bands.forEach(
-        band => {
-
-            if(
-                compact[
-                    compact.length - 1
-                ]
-                !==
-                band
-            ){
-
-                compact.push(
-                    band
-                );
-
-            }
-
-        }
+  const bands =
+    vols.map(
+      volumeBand
     );
 
 
-    const key =
-        compact.join(">");
+  const compact = [];
 
 
-    const map = {
+  bands.forEach(
+    b => {
 
-        "BAIXA":
-            "CEN_A",
+      if(
+        compact[
+          compact.length - 1
+        ] !== b
+      ){
 
-        "MEDIA":
-            "CEN_B",
+        compact.push(b);
 
-        "ALTA":
-            "CEN_C",
-
-        "BAIXA>MEDIA":
-            "CEN_D",
-
-        "BAIXA>ALTA":
-            "CEN_E",
-
-        "MEDIA>BAIXA":
-            "CEN_F",
-
-        "MEDIA>ALTA":
-            "CEN_G",
-
-        "ALTA>MEDIA":
-            "CEN_H",
-
-        "ALTA>BAIXA":
-            "CEN_I",
-
-        "BAIXA>MEDIA>ALTA":
-            "CEN_J",
-
-        "ALTA>MEDIA>BAIXA":
-            "CEN_K"
-
-    };
-
-
-    const id =
-        map[key]
-        ||
-        "—";
-
-
-    const scenario =
-        rows("SCENARIO")
-        .find(
-            x =>
-                String(x.ID)
-                .toUpperCase()
-                ===
-                id
-        );
-
-
-    return {
-
-        id,
-
-        trajectory:
-            scenario
-            ?
-            String(
-                scenario.VALUE
-                ||
-                scenario.OPTION
-                ||
-                scenario.NOTES
-                ||
-                ""
-            )
-            :
-            compact
-                .map(
-                    bandLabel
-                )
-                .join(" → ")
-
-    };
-
-}
-
-
-/* ==========================================================
-   DEGRADAÇÃO
-========================================================== */
-
-function degradationFactor(
-    yearIndex
-){
-
-    const rate =
-        param(
-            "FINANCE",
-            "DEGRADATION_RATE",
-            "DEGRADATION_RATE",
-            0
-        ) / 100;
-
-
-    return Math.pow(
-        1 + rate,
-        Math.max(
-            0,
-            yearIndex
-        )
-    );
-
-}
-
-
-/* ==========================================================
-   CÁLCULO PRINCIPAL
-========================================================== */
-
-function calc(
-    q,
-    yearIndex = 0
-){
-
-    const band =
-        volumeBand(q);
-
-
-    const weld =
-        ruleOption(
-            "SOLDA",
-            band
-        )
-        ||
-
-        ruleOption(
-            "SOLDA_ULTRASSONICA",
-            band
-        )
-        ||
-
-        "Automática";
-
-
-    const filter =
-        ruleOption(
-            "FILTRO",
-            band
-        )
-        ||
-
-        "PP terceirizado (polietileno)";
-
-
-    const body =
-        getCost(
-            "INJECAO",
-            "INJ_CORPO",
-            0
-        );
-
-
-    const appl =
-        getCost(
-            "INJECAO",
-            "INJ_APLICADOR",
-            0
-        );
-
-
-    const packaging =
-        getCost(
-            "CUSTO_OPERACIONAL",
-            "EMBALAGEM",
-            0
-        );
-
-
-    const operational =
-        getCost(
-            "CUSTO_OPERACIONAL",
-            "OPERACIONAL",
-            0
-        );
-
-
-    const fixed =
-        param(
-            "CUSTO_OPERACIONAL",
-            "OPEX_FIXO",
-            "FIXED_OPEX_YEAR",
-            0
-        );
-
-
-    const capex =
-        param(
-            "FINANCE",
-            "CAPEX",
-            "CAPEX",
-            0
-        );
-
-
-    const life =
-        param(
-            "FINANCE",
-            "CAPEX",
-            "USEFUL_LIFE_YEARS",
-            5
-        )
-        || 5;
-
-
-    let weldCost = 0;
-
-
-    const weldingRow =
-        rows("SOLDA")
-        .find(
-            r =>
-
-            String(
-                r.OPTION || ""
-            ).toUpperCase()
-            ===
-            String(
-                weld
-            ).toUpperCase()
-
-            &&
-
-            String(
-                r.PARAMETER || ""
-            ).toUpperCase()
-            ===
-            "UNIT_VARIABLE_COST"
-        );
-
-
-    if(weldingRow){
-
-        weldCost =
-            num(
-                weldingRow.VALUE
-            );
+      }
 
     }
+  );
 
 
-    const annualizedCapex =
-        capex / life;
+  const key =
+    compact.join(">");
 
 
-    const fixedPerUnit =
-        q > 0
+  const map = {
 
-        ?
+    "BAIXA":"CEN_A",
 
-        (
-            fixed
-            +
-            annualizedCapex
-        ) / q
+    "MEDIA":"CEN_B",
 
+    "ALTA":"CEN_C",
+
+    "BAIXA>MEDIA":"CEN_D",
+
+    "BAIXA>ALTA":"CEN_E",
+
+    "MEDIA>BAIXA":"CEN_F",
+
+    "MEDIA>ALTA":"CEN_G",
+
+    "ALTA>MEDIA":"CEN_H",
+
+    "ALTA>BAIXA":"CEN_I",
+
+    "BAIXA>MEDIA>ALTA":"CEN_J",
+
+    "ALTA>MEDIA>BAIXA":"CEN_K"
+
+  };
+
+
+  const id =
+    map[key] || "—";
+
+
+  const r =
+    rows("SCENARIO")
+      .find(
+        x =>
+          String(
+            x.ID
+          ).toUpperCase()
+          === id
+      );
+
+
+  return {
+
+    id,
+
+    trajectory:
+      r
+        ? String(
+            r.VALUE
+            ||
+            r.OPTION
+            ||
+            r.NOTES
+            ||
+            ""
+          )
         :
 
-        0;
+        compact
+          .map(bandLabel)
+          .join(" → ")
 
-
-    const base =
-
-        2 * body
-
-        +
-
-        2 * appl
-
-        +
-
-        filterCost(filter)
-
-        +
-
-        weldCost
-
-        +
-
-        packaging
-
-        +
-
-        operational
-
-        +
-
-        fixedPerUnit;
-
-
-    const total =
-        base
-        *
-        degradationFactor(
-            yearIndex
-        );
-
-
-    return {
-
-        total,
-
-        band,
-
-        weld,
-
-        filter,
-
-        body,
-
-        appl,
-
-        filterCost:
-            filterCost(filter),
-
-        weldCost,
-
-        packaging,
-
-        operational,
-
-        fixedPerUnit,
-
-        capex,
-
-        fixed,
-
-        life
-
-    };
+  };
 
 }
 
 
-/* ==========================================================
-   CONSTRUIR PERÍODOS
-========================================================== */
+/* DEGRADAÇÃO */
+
+function degradationFactor(
+  yearIndex
+){
+
+  const rate =
+    param(
+      "FINANCE",
+      "DEGRADATION_RATE",
+      "DEGRADATION_RATE",
+      0
+    ) / 100;
+
+
+  return Math.pow(
+    1 + rate,
+    Math.max(
+      0,
+      yearIndex
+    )
+  );
+
+}
+
+
+/* CÁLCULO */
+
+function calc(
+  q,
+  yearIndex = 0
+){
+
+  const band =
+    volumeBand(q);
+
+
+  const weld =
+    ruleOption(
+      "SOLDA",
+      band
+    )
+    ||
+    ruleOption(
+      "SOLDA_ULTRASSONICA",
+      band
+    )
+    ||
+    "Automática";
+
+
+  const filter =
+    ruleOption(
+      "FILTRO",
+      band
+    )
+    ||
+    "PP terceirizado (polietileno)";
+
+
+  const body =
+    getCost(
+      "INJECAO",
+      "INJ_CORPO",
+      0
+    );
+
+
+  const appl =
+    getCost(
+      "INJECAO",
+      "INJ_APLICADOR",
+      0
+    );
+
+
+  const packaging =
+    getCost(
+      "CUSTO_OPERACIONAL",
+      "EMBALAGEM",
+      0
+    );
+
+
+  const operational =
+    getCost(
+      "CUSTO_OPERACIONAL",
+      "OPERACIONAL",
+      0
+    );
+
+
+  const fixed =
+    param(
+      "CUSTO_OPERACIONAL",
+      "OPEX_FIXO",
+      "FIXED_OPEX_YEAR",
+      0
+    );
+
+
+  const capex =
+    param(
+      "FINANCE",
+      "CAPEX",
+      "CAPEX",
+      0
+    );
+
+
+  const life =
+    param(
+      "FINANCE",
+      "CAPEX",
+      "USEFUL_LIFE_YEARS",
+      5
+    ) || 5;
+
+
+  let weldCost = 0;
+
+
+  const wr =
+    rows("SOLDA")
+      .find(
+        r =>
+
+          String(
+            r.OPTION || ""
+          ).toUpperCase()
+
+          ===
+
+          String(
+            weld
+          ).toUpperCase()
+
+          &&
+
+          String(
+            r.PARAMETER || ""
+          ).toUpperCase()
+
+          ===
+
+          "UNIT_VARIABLE_COST"
+      );
+
+
+  if(wr){
+
+    weldCost =
+      num(wr.VALUE);
+
+  }
+
+
+  const annualizedCapex =
+    capex / life;
+
+
+  const fixedPerUnit =
+    q > 0
+
+      ?
+
+      (
+        fixed
+        +
+        annualizedCapex
+      ) / q
+
+      :
+
+      0;
+
+
+  const base =
+
+    2 * body
+
+    +
+
+    2 * appl
+
+    +
+
+    filterCost(filter)
+
+    +
+
+    weldCost
+
+    +
+
+    packaging
+
+    +
+
+    operational
+
+    +
+
+    fixedPerUnit;
+
+
+  return {
+
+    total:
+      base *
+      degradationFactor(
+        yearIndex
+      ),
+
+    band,
+
+    weld,
+
+    filter,
+
+    body,
+
+    appl,
+
+    filterCost:
+      filterCost(filter),
+
+    weldCost,
+
+    packaging,
+
+    operational,
+
+    fixedPerUnit,
+
+    capex,
+
+    fixed,
+
+    life
+
+  };
+
+}
+
+
+/* CONSTRUIR PERÍODOS */
 
 function buildPeriods(){
 
-    const mode =
-        $("evolutionMode").value;
+  const mode =
+    currentMode;
 
 
-    const defaults =
+  const defaults =
 
-        mode === "quarterly"
+    mode === "quarterly"
 
-        ?
+      ?
 
-        [
-            1000,
-            2500,
-            5000,
-            7500,
-            10000
-        ]
+      [
+        1000,
+        2500,
+        5000,
+        7500,
+        10000
+      ]
 
-        :
+      :
 
-        [
-            5000,
-            10000,
-            15000,
-            20000,
-            25000
-        ];
+      [
+        5000,
+        10000,
+        15000,
+        20000,
+        25000
+      ];
 
 
-    const names =
+  const names =
 
-        mode === "quarterly"
+    mode === "quarterly"
 
-        ?
+      ?
 
-        [
-            "1º trimestre",
-            "2º trimestre",
-            "3º trimestre",
-            "4º trimestre",
-            "Após o 1º ano"
-        ]
+      [
+        "1º trimestre",
+        "2º trimestre",
+        "3º trimestre",
+        "4º trimestre",
+        "Após o 1º ano"
+      ]
 
-        :
+      :
 
-        [
-            "Ano 1",
-            "Ano 2",
-            "Ano 3",
-            "Ano 4",
-            "Ano 5"
-        ];
+      [
+        "Ano 1",
+        "Ano 2",
+        "Ano 3",
+        "Ano 4",
+        "Ano 5"
+      ];
 
 
-    periods =
-        names.map(
-            (
-                name,
-                index
-            ) => ({
-
-                name,
-
-                qty:
-                    defaults[index]
-
-            })
-        );
-
-
-    const panel =
-
-        mode === "quarterly"
-
-        ?
-
-        $("quarterlyPanel")
-
-        :
-
-        $("annualPanel");
-
-
-    $("quarterlyPanel")
-        .classList.toggle(
-            "hidden",
-            mode !== "quarterly"
-        );
-
-
-    $("annualPanel")
-        .classList.toggle(
-            "hidden",
-            mode !== "annual"
-        );
-
-
-    panel.innerHTML = "";
-
-
-    periods.forEach(
-        (
-            period,
-            index
-        ) => {
-
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "slider-card";
-
-
-            const top =
-                document.createElement(
-                    "div"
-                );
-
-
-            top.className =
-                "slider-top";
-
-
-            top.innerHTML = `
-
-                <b>
-                    ${period.name}
-                </b>
-
-                <span
-                    class="slider-value"
-                    id="sv${index}">
-
-                    ${period.qty.toLocaleString("pt-BR")}
-
-                </span>
-
-            `;
-
-
-            const range =
-                document.createElement(
-                    "input"
-                );
-
-
-            range.type =
-                "range";
-
-
-            range.min =
-                0;
-
-
-            range.max =
-                100000;
-
-
-            range.step =
-                100;
-
-
-            range.value =
-                period.qty;
-
-
-            range.oninput =
-                () => {
-
-                    periods[index].qty =
-                        num(
-                            range.value
-                        );
-
-
-                    $("sv" + index)
-                        .textContent =
-                        periods[index]
-                            .qty
-                            .toLocaleString(
-                                "pt-BR"
-                            );
-
-
-                    selectedIndex =
-                        index;
-
-
-                    renderAll();
-
-                };
-
-
-            card.appendChild(
-                top
-            );
-
-
-            card.appendChild(
-                range
-            );
-
-
-            const hint =
-                document.createElement(
-                    "div"
-                );
-
-
-            hint.className =
-                "small";
-
-
-            hint.textContent =
-                "Arraste para definir o volume";
-
-
-            card.appendChild(
-                hint
-            );
-
-
-            panel.appendChild(
-                card
-            );
-
-        }
+  periods =
+    names.map(
+      (name,i) => ({
+        name,
+        qty:defaults[i]
+      })
     );
+
+
+  $("quarterlyPanel")
+    .classList
+    .toggle(
+      "hidden",
+      mode !== "quarterly"
+    );
+
+
+  $("annualPanel")
+    .classList
+    .toggle(
+      "hidden",
+      mode !== "annual"
+    );
+
+
+  const panel =
+
+    mode === "quarterly"
+
+      ?
+
+      $("quarterlyPanel")
+
+      :
+
+      $("annualPanel");
+
+
+  panel.innerHTML = "";
+
+
+  periods.forEach(
+    (p,i) => {
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "slider-card";
+
+
+      const top =
+        document.createElement(
+          "div"
+        );
+
+
+      top.className =
+        "slider-top";
+
+
+      top.innerHTML =
+
+        `<b>${p.name}</b>
+         <span
+           class="slider-value"
+           id="sv${i}"
+         >
+           ${p.qty.toLocaleString("pt-BR")}
+         </span>`;
+
+
+      const range =
+        document.createElement(
+          "input"
+        );
+
+
+      range.type =
+        "range";
+
+
+      range.min =
+        0;
+
+
+      range.max =
+        100000;
+
+
+      range.step =
+        100;
+
+
+      range.value =
+        p.qty;
+
+
+      range.oninput = () => {
+
+        periods[i].qty =
+          num(range.value);
+
+
+        $("sv" + i)
+          .textContent =
+          periods[i]
+            .qty
+            .toLocaleString(
+              "pt-BR"
+            );
+
+
+        selectedIndex =
+          i;
+
+
+        renderAll();
+
+      };
+
+
+      card.appendChild(top);
+
+      card.appendChild(range);
+
+
+      const hint =
+        document.createElement(
+          "div"
+        );
+
+
+      hint.className =
+        "small";
+
+
+      hint.textContent =
+        "Arraste para definir o volume";
+
+
+      card.appendChild(hint);
+
+
+      panel.appendChild(card);
+
+    }
+  );
 
 }
 
 
-/* ==========================================================
-   RENDERIZAR APLICAÇÃO
-========================================================== */
+/* ATUALIZAR TELA */
 
 function renderAll(){
 
-    if(!periods.length)
-        return;
+  if(!periods.length)
+    return;
 
 
-    const results =
-        periods.map(
-            (
-                period,
-                index
-            ) =>
-                calc(
-                    period.qty,
-                    index
-                )
-        );
+  const results =
+    periods.map(
+      (p,i) =>
+        calc(
+          p.qty,
+          i
+        )
+    );
 
 
-    const result =
-        results[
-            selectedIndex
-        ];
+  const r =
+    results[
+      selectedIndex
+    ];
 
 
-    $("selectedPeriod")
-        .textContent =
-        periods[
-            selectedIndex
-        ].name;
+  $("selectedPeriod")
+    .textContent =
+    periods[
+      selectedIndex
+    ].name;
 
 
-    $("selectedQty")
-        .textContent =
-        periods[
-            selectedIndex
-        ].qty
-        .toLocaleString(
-            "pt-BR"
-        );
+  $("selectedQty")
+    .textContent =
+    periods[
+      selectedIndex
+    ]
+    .qty
+    .toLocaleString(
+      "pt-BR"
+    );
 
 
-    $("mainCost")
-        .textContent =
-        money(
-            result.total
-        );
+  /* CUSTO UNITÁRIO */
+
+  $("mainCost")
+    .textContent =
+    money(r.total);
 
 
-    $("costNote")
-        .textContent =
-        `Volume: ${
-            periods[selectedIndex]
-            .qty
-            .toLocaleString("pt-BR")
-        } | Faixa: ${
-            bandLabel(
-                result.band
-            )
-        }`;
+  /* CUSTO DA CAIXA */
+
+  $("boxCost")
+    .textContent =
+    money(
+      r.total * 20
+    );
 
 
-    $("welding")
-        .textContent =
-        result.weld;
+  /* CUSTO DA EMBALAGEM PRIMÁRIA */
+
+  $("primaryCost")
+    .textContent =
+    money(
+      r.total * 200
+    );
 
 
-    $("filter")
-        .textContent =
-        result.filter;
+  /* CENÁRIO */
+
+  const sc =
+    identifyScenario(
+      periods.map(
+        x => x.qty
+      )
+    );
 
 
-    $("capex")
-        .textContent =
-        money(
-            result.capex
-        );
+  $("scenario")
+    .textContent =
+    sc.id;
 
 
-    $("opex")
-        .textContent =
-        money(
-            result.fixed
-        );
+  $("trajectory")
+    .textContent =
+    sc.trajectory;
 
 
-    $("life")
-        .textContent =
-        `${result.life} anos`;
+  /* DEGRADAÇÃO */
+
+  const rate =
+    param(
+      "FINANCE",
+      "DEGRADATION_RATE",
+      "DEGRADATION_RATE",
+      0
+    );
 
 
-    const scenario =
-        identifyScenario(
-            periods.map(
-                period =>
-                    period.qty
-            )
-        );
+  $("degradation")
+    .textContent =
+    `${rate.toLocaleString("pt-BR")}%/ano`;
 
 
-    $("scenario")
-        .textContent =
-        scenario.id;
+  /* TABELA DE RESUMO */
+
+  $("summary")
+    .innerHTML =
+
+    periods.map(
+      (p,i) =>
+
+        `<tr>
+
+          <td>
+            ${p.name}
+          </td>
+
+          <td>
+            ${p.qty.toLocaleString("pt-BR")}
+          </td>
+
+          <td>
+            ${bandLabel(
+              results[i].band
+            )}
+          </td>
+
+          <td>
+            ${money(
+              results[i].total
+            )}
+          </td>
+
+        </tr>`
+
+    ).join("");
 
 
-    $("trajectory")
-        .textContent =
-        scenario.trajectory;
+  /* COMPOSIÇÃO */
 
+  $("composition")
+    .innerHTML =
 
-    const rate =
-        param(
-            "FINANCE",
-            "DEGRADATION_RATE",
-            "DEGRADATION_RATE",
-            0
-        );
+    [
 
+      [
+        "Componente A injetado",
+        2,
+        r.body,
+        2 * r.body
+      ],
 
-    $("degradation")
-        .textContent =
-        `${rate.toLocaleString("pt-BR")}%/ano`;
+      [
+        "Componente B injetado",
+        2,
+        r.appl,
+        2 * r.appl
+      ],
 
+      [
+        "Filtro",
+        1,
+        r.filterCost,
+        r.filterCost
+      ],
 
-    /*
-        Tabela de resumo
-    */
+      [
+        "Solda ultrassônica",
+        1,
+        r.weldCost,
+        r.weldCost
+      ],
 
-    $("summary").innerHTML =
+      [
+        "Embalagem",
+        1,
+        r.packaging,
+        r.packaging
+      ],
 
-        periods.map(
-            (
-                period,
-                index
-            ) => `
+      [
+        "Custos operacionais",
+        1,
+        r.operational,
+        r.operational
+      ],
 
-                <tr>
-
-                    <td>
-                        ${period.name}
-                    </td>
-
-                    <td>
-                        ${period.qty.toLocaleString("pt-BR")}
-                    </td>
-
-                    <td>
-                        ${bandLabel(
-                            results[index].band
-                        )}
-                    </td>
-
-                    <td>
-                        ${money(
-                            results[index].total
-                        )}
-                    </td>
-
-                </tr>
-
-            `
-        ).join("");
-
-
-    /*
-        Composição
-    */
-
-    $("composition").innerHTML = [
-
-        [
-            "Componente A injetado",
-            2,
-            result.body,
-            2 * result.body
-        ],
-
-        [
-            "Componente B injetado",
-            2,
-            result.appl,
-            2 * result.appl
-        ],
-
-        [
-            "Filtro",
-            1,
-            result.filterCost,
-            result.filterCost
-        ],
-
-        [
-            "Solda ultrassônica",
-            1,
-            result.weldCost,
-            result.weldCost
-        ],
-
-        [
-            "Embalagem",
-            1,
-            result.packaging,
-            result.packaging
-        ],
-
-        [
-            "Custos operacionais",
-            1,
-            result.operational,
-            result.operational
-        ],
-
-        [
-            "OPEX + CAPEX anualizado",
-            1,
-            result.fixedPerUnit,
-            result.fixedPerUnit
-        ]
+      [
+        "OPEX + CAPEX anualizado",
+        1,
+        r.fixedPerUnit,
+        r.fixedPerUnit
+      ]
 
     ]
 
     .map(
-        item => `
+      x =>
 
-            <tr>
+        `<tr>
 
-                <td>
-                    ${item[0]}
-                </td>
+          <td>
+            ${x[0]}
+          </td>
 
-                <td>
-                    ${item[1]}
-                </td>
+          <td>
+            ${x[1]}
+          </td>
 
-                <td>
-                    ${money(item[2])}
-                </td>
+          <td>
+            ${money(x[2])}
+          </td>
 
-                <td>
-                    ${money(item[3])}
-                </td>
+          <td>
+            ${money(x[3])}
+          </td>
 
-            </tr>
+        </tr>`
 
-        `
     )
+
     .join("");
 
 
-    drawChart(
-        results
-    );
+  drawChart(results);
 
 }
 
 
-/* ==========================================================
-   GRÁFICO
-========================================================== */
+/* GRÁFICO */
 
 function drawChart(results){
 
-    const canvas =
-        $("chart");
+  const c =
+    $("chart");
 
 
-    const ctx =
-        canvas.getContext(
-            "2d"
-        );
+  const ctx =
+    c.getContext("2d");
 
 
-    const width =
-        canvas.clientWidth;
+  const w =
+    c.width =
+    c.clientWidth * 2;
 
 
-    const height =
-        260;
+  const h =
+    c.height =
+    260 * 2;
 
 
-    canvas.width =
-        width * 2;
+  ctx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
 
 
-    canvas.height =
-        height * 2;
+  ctx.scale(
+    2,
+    2
+  );
 
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
+  const W =
+    c.clientWidth;
+
+
+  const H =
+    260;
+
+
+  const pad = {
+
+    l:55,
+
+    r:20,
+
+    t:25,
+
+    b:45
+
+  };
+
+
+  const vals =
+    results.map(
+      x => x.total
     );
 
 
-    ctx.scale(
-        2,
-        2
-    );
+  const max =
+    Math.max(
+      ...vals,
+      1
+    ) * 1.2;
 
 
-    const W =
-        width;
+  /* LINHAS HORIZONTAIS */
+
+  ctx.strokeStyle =
+    "#dfe5ee";
 
 
-    const H =
-        height;
+  ctx.lineWidth =
+    1;
 
 
-    const pad = {
+  for(
+    let i=0;
+    i<=4;
+    i++
+  ){
 
-        l:55,
+    let y =
 
-        r:20,
+      pad.t
 
-        t:25,
+      +
 
-        b:45
-
-    };
-
-
-    const values =
-        results.map(
-            result =>
-                result.total
-        );
-
-
-    const max =
-        Math.max(
-            ...values,
-            1
-        )
-        *
-        1.2;
-
-
-    /*
-        Linhas horizontais
-    */
-
-    ctx.strokeStyle =
-        "#dfe5ee";
-
-
-    ctx.lineWidth =
-        1;
-
-
-    for(
-        let i = 0;
-        i <= 4;
-        i++
-    ){
-
-        const y =
-
-            pad.t
-            +
-
-            (
-                H
-                -
-                pad.t
-                -
-                pad.b
-            )
-            *
-            i
-            /
-            4;
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            pad.l,
-            y
-        );
-
-        ctx.lineTo(
-            W - pad.r,
-            y
-        );
-
-        ctx.stroke();
-
-
-        ctx.fillStyle =
-            "#687386";
-
-
-        ctx.font =
-            "11px Arial";
-
-
-        ctx.fillText(
-            money(
-                max *
-                (
-                    1 - i / 4
-                )
-            ),
-            5,
-            y + 4
-        );
-
-    }
-
-
-    /*
-        Posições X
-    */
-
-    const xs =
-        results.map(
-            (
-                result,
-                index
-            ) =>
-
-                pad.l
-                +
-
-                (
-                    W
-                    -
-                    pad.l
-                    -
-                    pad.r
-                )
-                *
-                (
-                    index
-                    /
-                    (
-                        results.length - 1
-                        ||
-                        1
-                    )
-                )
-
-        );
-
-
-    /*
-        Linha
-    */
-
-    ctx.strokeStyle =
-        "#145da0";
-
-
-    ctx.lineWidth =
-        3;
+      (
+        H
+        -
+        pad.t
+        -
+        pad.b
+      )
+      *
+      i
+      /
+      4;
 
 
     ctx.beginPath();
 
-
-    xs.forEach(
-        (
-            x,
-            index
-        ) => {
-
-            const y =
-
-                pad.t
-                +
-
-                (
-                    H
-                    -
-                    pad.t
-                    -
-                    pad.b
-                )
-                *
-                (
-                    1
-                    -
-                    values[index]
-                    /
-                    max
-                );
-
-
-            if(index === 0){
-
-                ctx.moveTo(
-                    x,
-                    y
-                );
-
-            }
-
-            else{
-
-                ctx.lineTo(
-                    x,
-                    y
-                );
-
-            }
-
-        }
+    ctx.moveTo(
+      pad.l,
+      y
     );
 
+    ctx.lineTo(
+      W-pad.r,
+      y
+    );
 
     ctx.stroke();
 
 
-    /*
-        Pontos
-    */
+    ctx.fillStyle =
+      "#687386";
 
-    results.forEach(
+
+    ctx.font =
+      "11px Arial";
+
+
+    ctx.fillText(
+      money(
+        max *
         (
-            result,
-            index
-        ) => {
-
-            const y =
-
-                pad.t
-                +
-
-                (
-                    H
-                    -
-                    pad.t
-                    -
-                    pad.b
-                )
-                *
-                (
-                    1
-                    -
-                    result.total
-                    /
-                    max
-                );
-
-
-            ctx.fillStyle =
-                "#145da0";
-
-
-            ctx.beginPath();
-
-
-            ctx.arc(
-                xs[index],
-                y,
-                5,
-                0,
-                Math.PI * 2
-            );
-
-
-            ctx.fill();
-
-
-            ctx.fillStyle =
-                "#172033";
-
-
-            ctx.font =
-                "11px Arial";
-
-
-            ctx.textAlign =
-                "center";
-
-
-            ctx.fillText(
-                periods[index].name,
-                xs[index],
-                H - 22
-            );
-
-
-            ctx.fillText(
-                money(
-                    result.total
-                ),
-                xs[index],
-                y - 10
-            );
-
-        }
+          1-i/4
+        )
+      ),
+      5,
+      y+4
     );
 
-}
+  }
 
 
-/* ==========================================================
-   TROCA DE MODO
-========================================================== */
+  /* POSIÇÃO DOS PONTOS */
 
-$("evolutionMode").onchange =
-    () => {
+  const xs =
+    results.map(
+      (_,i) =>
+        pad.l
+        +
+        (
+          W
+          -
+          pad.l
+          -
+          pad.r
+        )
+        *
+        (
+          i /
+          (
+            results.length-1
+            ||
+            1
+          )
+        )
+    );
 
-        selectedIndex = 0;
 
-        buildPeriods();
+  /* LINHA DO GRÁFICO */
 
-        renderAll();
-
-    };
+  ctx.strokeStyle =
+    "#145da0";
 
 
-/* ==========================================================
-   INICIALIZAÇÃO
-========================================================== */
+  ctx.lineWidth =
+    3;
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
 
-        /*
-            Tenta recuperar automaticamente
-            a última planilha.
-        */
+  ctx.beginPath();
 
-        loadSavedSpreadsheet();
+
+  xs.forEach(
+    (x,i) => {
+
+      let y =
+
+        pad.t
+
+        +
+
+        (
+          H
+          -
+          pad.t
+          -
+          pad.b
+        )
+
+        *
+
+        (
+          1
+          -
+          vals[i]
+          /
+          max
+        );
+
+
+      if(i){
+
+        ctx.lineTo(
+          x,
+          y
+        );
+
+      }else{
+
+        ctx.moveTo(
+          x,
+          y
+        );
+
+      }
 
     }
-);
+  );
+
+
+  ctx.stroke();
+
+
+  /* PONTOS E TEXTOS */
+
+  results.forEach(
+    (r,i) => {
+
+      let y =
+
+        pad.t
+
+        +
+
+        (
+          H
+          -
+          pad.t
+          -
+          pad.b
+        )
+
+        *
+
+        (
+          1
+          -
+          r.total
+          /
+          max
+        );
+
+
+      ctx.fillStyle =
+        "#145da0";
+
+
+      ctx.beginPath();
+
+
+      ctx.arc(
+        xs[i],
+        y,
+        5,
+        0,
+        Math.PI * 2
+      );
+
+
+      ctx.fill();
+
+
+      ctx.fillStyle =
+        "#172033";
+
+
+      ctx.font =
+        "11px Arial";
+
+
+      ctx.textAlign =
+        "center";
+
+
+      ctx.fillText(
+        periods[i].name,
+        xs[i],
+        H-22
+      );
+
+
+      ctx.fillText(
+        money(r.total),
+        xs[i],
+        y-10
+      );
+
+    }
+  );
+
+}
 
 </script>
 
