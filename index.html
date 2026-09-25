@@ -47,6 +47,13 @@ details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;backgr
 details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primary2)}
 .assump{font-size:12px;color:var(--muted);line-height:1.7;margin-top:8px}
 @media(max-width:760px){.grid2,.grid3,.grid5{grid-template-columns:1fr}.mode-buttons{flex-direction:column}}
+.modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal-box{background:#fff;border-radius:16px;padding:26px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-box h3{margin:0 0 6px}
+.modal-box input{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;font-size:16px;margin:12px 0 6px;letter-spacing:1px}
+.modal-box button{width:100%;padding:11px;border:none;border-radius:9px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;font-size:14px}
+.modal-err{color:var(--red);font-size:12.5px;min-height:16px;margin-bottom:2px}
+.hidden{display:none}
 </style>
 </head>
 <body>
@@ -65,6 +72,16 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
 </div></header>
 <input type="file" id="fileInterna" accept=".xlsx" class="hidden" style="display:none">
 <input type="file" id="fileExterna" accept=".xlsx" class="hidden" style="display:none">
+
+<div id="pwModal" class="modal-bg hidden">
+  <div class="modal-box">
+    <h3>Senha necessária</h3>
+    <div class="small">Digite a senha para carregar as planilhas de custo.</div>
+    <input id="pwInput" type="password" placeholder="Senha" autocomplete="off">
+    <div class="modal-err" id="pwErr"></div>
+    <button id="pwOk">Entrar</button>
+  </div>
+</div>
 
 <div class="container">
 
@@ -87,12 +104,15 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
           <label>Quantidade vendida no Ano 1 (un)</label>
           <input id="inQty1" type="number" min="0" step="1" value="1000">
         </div>
-        <div>
-          <label>Crescimento/retração ao ano — Anos 2 a 6 (%)</label>
-          <input id="inGrowth" type="number" step="0.1" value="50">
-        </div>
       </div>
-      <div class="small" style="margin-top:10px">Use valor negativo em "crescimento" para simular retração de vendas.</div>
+      <div class="small" style="margin:14px 0 6px">Crescimento (ou retração, com valor negativo) de cada ano em relação ao anterior — pode ser diferente ano a ano:</div>
+      <div class="grid5">
+        <div><label>Ano 2 (%)</label><input id="inG2" type="number" step="0.1" value="50"></div>
+        <div><label>Ano 3 (%)</label><input id="inG3" type="number" step="0.1" value="50"></div>
+        <div><label>Ano 4 (%)</label><input id="inG4" type="number" step="0.1" value="50"></div>
+        <div><label>Ano 5 (%)</label><input id="inG5" type="number" step="0.1" value="50"></div>
+        <div><label>Ano 6 (%)</label><input id="inG6" type="number" step="0.1" value="50"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -129,6 +149,41 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
 ========================================================= */
 
 let EXTERNA = null, INTERNA = null;
+
+/* ============ SENHA PARA CARREGAR AS PLANILHAS ============
+   Senha: MSB19. Fica salva no navegador (localStorage) depois
+   de digitada corretamente uma vez, então não pergunta de novo
+   nesse mesmo navegador/computador. */
+const PW_KEY = "bfoam_pw_ok_v1";
+const PASSWORD = "MSB19";
+let pwPendingAction = null;
+
+function isAuthorized(){
+  return localStorage.getItem(PW_KEY) === "1";
+}
+function requireAuth(action){
+  if(isAuthorized()){ action(); return; }
+  pwPendingAction = action;
+  document.getElementById('pwErr').textContent = "";
+  document.getElementById('pwInput').value = "";
+  document.getElementById('pwModal').classList.remove('hidden');
+  document.getElementById('pwInput').focus();
+}
+function tryPassword(){
+  const v = (document.getElementById('pwInput').value || "").trim();
+  if(v.toUpperCase() === PASSWORD){
+    localStorage.setItem(PW_KEY, "1");
+    document.getElementById('pwModal').classList.add('hidden');
+    const action = pwPendingAction; pwPendingAction = null;
+    if(action) action();
+  }else{
+    document.getElementById('pwErr').textContent = "Senha incorreta. Tente novamente.";
+    document.getElementById('pwInput').value = "";
+    document.getElementById('pwInput').focus();
+  }
+}
+document.getElementById('pwOk').onclick = tryPassword;
+document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==="Enter") tryPassword(); });
 
 function cellNum(wb, sheet, addr, fallback){
   const ws = wb.Sheets[sheet];
@@ -239,14 +294,14 @@ function checkBothLoaded(){
     document.getElementById('appContent').classList.remove('hidden');
     document.getElementById('inPrice').value = EXTERNA.defaults.price;
     document.getElementById('inQty1').value = EXTERNA.defaults.qty1;
-    document.getElementById('inGrowth').value = EXTERNA.defaults.growth*100;
+    ['inG2','inG3','inG4','inG5','inG6'].forEach(id=>document.getElementById(id).value = xround(EXTERNA.defaults.growth*100,2));
     renderAssumptions();
     renderAll();
   }
 }
 
-loadIntBtn.onclick = ()=>{ fileInterna.value=""; fileInterna.click(); };
-loadExtBtn.onclick = ()=>{ fileExterna.value=""; fileExterna.click(); };
+loadIntBtn.onclick = ()=> requireAuth(()=>{ fileInterna.value=""; fileInterna.click(); });
+loadExtBtn.onclick = ()=> requireAuth(()=>{ fileExterna.value=""; fileExterna.click(); });
 
 fileInterna.onchange = async ()=>{
   const f = fileInterna.files[0];
@@ -319,7 +374,7 @@ function computeModel(ds, inputs){
   const headcount={}, salario={}, gastoFixo={};
   const EBITDA={}, LAIR={}, IR={}, CSLL={}, lucro={};
 
-  for(let y=1;y<=6;y++) qty[y] = y===1 ? qty1 : qty[y-1]*(1+growth);
+  for(let y=1;y<=6;y++) qty[y] = y===1 ? qty1 : qty[y-1]*(1+growth[y-2]);
 
   for(let y=1;y<=6;y++){
     rev[y]=qty[y]*price;
@@ -431,7 +486,7 @@ function getInputs(){
   return {
     price: parseFloat(document.getElementById('inPrice').value)||0,
     qty1: parseFloat(document.getElementById('inQty1').value)||0,
-    growth: (parseFloat(document.getElementById('inGrowth').value)||0)/100
+    growth: [2,3,4,5,6].map(y=>(parseFloat(document.getElementById('inG'+y).value)||0)/100)
   };
 }
 
@@ -548,7 +603,7 @@ function renderComparative(){
   const html=`
     <div class="card">
       <h2>Comparativo — mesmo cenário de mercado, duas estruturas de custo</h2>
-      <div class="small" style="margin-bottom:14px">Com preço de ${moneyD(inputs.price)}, ${numFmt(inputs.qty1)} unidades no Ano 1 e crescimento de ${(inputs.growth*100).toLocaleString('pt-BR')}% ao ano, a opção com maior VPL é <b>${better}</b>.</div>
+      <div class="small" style="margin-bottom:14px">Com preço de ${moneyD(inputs.price)}, ${numFmt(inputs.qty1)} unidades no Ano 1 e o crescimento informado ano a ano, a opção com maior VPL é <b>${better}</b>.</div>
       <div class="grid2">
         ${col(EXTERNA,rExt,'ext','E')}
         ${col(INTERNA,rInt,'int','I')}
@@ -585,7 +640,7 @@ function setActive(){
   document.getElementById('btnInt').classList.toggle('active',mode==="int");
   document.getElementById('btnComp').classList.toggle('active',mode==="comp");
 }
-['inPrice','inQty1','inGrowth'].forEach(id=>document.getElementById(id).addEventListener('input',renderAll));
+['inPrice','inQty1','inG2','inG3','inG4','inG5','inG6'].forEach(id=>document.getElementById(id).addEventListener('input',renderAll));
 
 function renderAssumptions(){
   document.getElementById('assumpBox').innerHTML=`
