@@ -78,6 +78,10 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
     <h3>Senha necessária</h3>
     <div class="small">Digite a senha para carregar as planilhas de custo.</div>
     <input id="pwInput" type="password" placeholder="Senha" autocomplete="off">
+    <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin:10px 0 2px;cursor:pointer">
+      <input id="pwKeep" type="checkbox" style="width:auto;margin:0">
+      Manter sempre ativado neste navegador (não pedir senha de novo)
+    </label>
     <div class="modal-err" id="pwErr"></div>
     <button id="pwOk">Entrar</button>
   </div>
@@ -112,6 +116,10 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
         <div><label>Ano 4 (%)</label><input id="inG4" type="number" step="0.1" value="50"></div>
         <div><label>Ano 5 (%)</label><input id="inG5" type="number" step="0.1" value="50"></div>
         <div><label>Ano 6 (%)</label><input id="inG6" type="number" step="0.1" value="50"></div>
+      </div>
+      <div class="small" style="margin:14px 0 6px">Coeficiente de custo — multiplica de uma vez CAPEX, custo unitário (insumos) e todo o OPEX (variável e fixo) das duas planilhas. Use 1 para não alterar nada; 1,10 simula 10% a mais de custo em tudo, por exemplo.</div>
+      <div class="grid3">
+        <div><label>Coeficiente de custo</label><input id="inCoef" type="number" min="0" step="0.01" value="1"></div>
       </div>
     </div>
 
@@ -157,9 +165,10 @@ let EXTERNA = null, INTERNA = null;
 const PW_KEY = "bfoam_pw_ok_v1";
 const PASSWORD = "MSB19";
 let pwPendingAction = null;
+let sessionAuthorized = false; // válido só enquanto a página estiver aberta, se a caixa "manter sempre ativado" não for marcada
 
 function isAuthorized(){
-  return localStorage.getItem(PW_KEY) === "1";
+  return sessionAuthorized || localStorage.getItem(PW_KEY) === "1";
 }
 function requireAuth(action){
   if(isAuthorized()){ action(); return; }
@@ -172,7 +181,10 @@ function requireAuth(action){
 function tryPassword(){
   const v = (document.getElementById('pwInput').value || "").trim();
   if(v.toUpperCase() === PASSWORD){
-    localStorage.setItem(PW_KEY, "1");
+    sessionAuthorized = true;
+    if(document.getElementById('pwKeep').checked){
+      localStorage.setItem(PW_KEY, "1");
+    }
     document.getElementById('pwModal').classList.add('hidden');
     const action = pwPendingAction; pwPendingAction = null;
     if(action) action();
@@ -483,10 +495,33 @@ function pctFmt(v){ if(!isFinite(v)) return "—"; return (v*100).toLocaleString
 function numFmt(v){ if(!isFinite(v)) return "—"; return Math.round(v).toLocaleString('pt-BR'); }
 
 function getInputs(){
+  const coefRaw = parseFloat(document.getElementById('inCoef').value);
   return {
     price: parseFloat(document.getElementById('inPrice').value)||0,
     qty1: parseFloat(document.getElementById('inQty1').value)||0,
-    growth: [2,3,4,5,6].map(y=>(parseFloat(document.getElementById('inG'+y).value)||0)/100)
+    growth: [2,3,4,5,6].map(y=>(parseFloat(document.getElementById('inG'+y).value)||0)/100),
+    coef: (isFinite(coefRaw) && coefRaw>=0) ? coefRaw : 1
+  };
+}
+
+/* Aplica o coeficiente de custo aos campos de custo da planilha (CAPEX, custo unitário/insumos e OPEX).
+   Não altera preço de venda, impostos, WACC nem os prazos de recebimento/estoque, que não são "custo". */
+function applyCostCoef(ds, coef){
+  if(coef===1) return ds;
+  return {
+    ...ds,
+    unitCost: ds.unitCost*coef,
+    capexInicial: ds.capexInicial*coef,
+    salarioBase: ds.salarioBase*coef,
+    opexVar:{
+      importUnit: ds.opexVar.importUnit*coef,
+      desembaracoUnit: ds.opexVar.desembaracoUnit*coef,
+      comissao: ds.opexVar.comissao*coef,
+      frete: ds.opexVar.frete*coef,
+      embalagem: ds.opexVar.embalagem*coef,
+      royalties: ds.opexVar.royalties*coef,
+      descontos: ds.opexVar.descontos*coef
+    }
   };
 }
 
@@ -508,19 +543,33 @@ function drawChart(canvas, cum, color){
   vals.forEach((v,i)=>{ const px=x(i), py=yv(v); if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); });
   ctx.stroke();
   // points + labels
-  ctx.fillStyle=color; ctx.font=(20)+"px Inter, Arial";
+  ctx.font=(20)+"px Inter, Arial";
   vals.forEach((v,i)=>{
     const px=x(i), py=yv(v);
+    ctx.fillStyle=color;
     ctx.beginPath(); ctx.arc(px,py,6,0,7); ctx.fill();
     ctx.fillStyle="#344054";
     ctx.fillText("Ano "+i, px-18, h-8);
-    ctx.fillStyle=color;
   });
+  // valor de cada ponto: acima do ponto se ele estiver na metade de baixo do gráfico, abaixo se estiver na metade de cima (evita cortar no topo)
+  ctx.font="700 18px Inter, Arial";
+  ctx.textAlign="center";
+  vals.forEach((v,i)=>{
+    const px=x(i), py=yv(v), above = py > (pad+(h-2*pad)/2);
+    ctx.fillStyle = v<0 ? "#b42318" : "#16794a";
+    ctx.fillText(moneyK(v), px, above? py-14 : py+26);
+  });
+  ctx.textAlign="left";
+}
+function moneyK(v){
+  const s = Math.abs(v)>=1000 ? (Math.abs(v)/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+"k" : Math.round(Math.abs(v)).toLocaleString('pt-BR');
+  return (v<0?"-R$ ":"R$ ")+s;
 }
 
 /* ========================= RENDER — VISÃO ÚNICA ========================= */
-function renderSingle(ds){
+function renderSingle(dsRaw){
   const inputs=getInputs();
+  const ds=applyCostCoef(dsRaw, inputs.coef);
   const r=computeModel(ds, inputs);
   const color = ds.label==="Externa" ? "#1976b9" : "#16794a";
 
@@ -555,6 +604,11 @@ function renderSingle(ds){
       <h2>Fluxo de caixa descontado acumulado (payback)</h2>
       <canvas id="chart_${ds.label}"></canvas>
       <div class="small" style="margin-top:8px">A curva cruza zero no ponto de payback. Custo unitário considerado: ${moneyD(ds.unitCost)}/un.</div>
+      <div class="small" style="margin-top:14px;font-weight:700;color:var(--ink)">Fluxo de caixa descontado acumulado, ano a ano (começa negativo, pelo investimento inicial, até ficar positivo):</div>
+      <ul style="margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:6px">
+        ${[0,1,2,3,4,5].map(y=>`<li style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 2px">
+          <span>Ano ${y}</span><b style="color:${r.cum[y]<0?'var(--red)':'var(--green)'}">${money(r.cum[y])}</b></li>`).join("")}
+      </ul>
     </div>
 
     <div class="card">
@@ -572,8 +626,9 @@ function renderSingle(ds){
 /* ========================= RENDER — COMPARATIVO ========================= */
 function renderComparative(){
   const inputs=getInputs();
-  const rExt=computeModel(EXTERNA, inputs);
-  const rInt=computeModel(INTERNA, inputs);
+  const extAdj=applyCostCoef(EXTERNA, inputs.coef), intAdj=applyCostCoef(INTERNA, inputs.coef);
+  const rExt=computeModel(extAdj, inputs);
+  const rInt=computeModel(intAdj, inputs);
 
   function col(ds,r,cls,letter){
     return `
@@ -593,6 +648,14 @@ function renderComparative(){
         <tr><td>Receita Ano 1</td><td>${money(r.rev[1])}</td></tr>
         <tr><td>Receita Ano 5</td><td>${money(r.rev[5])}</td></tr>
         <tr><td>EBITDA Ano 5</td><td>${money(r.EBITDA[5])}</td></tr>
+      </table>
+      <div class="small" style="margin:14px 0 4px;font-weight:700;color:var(--ink)">Fluxo de caixa descontado acumulado, ano a ano</div>
+      <div class="small" style="margin-bottom:6px">Começa negativo (investimento inicial) e vira positivo no ano do payback.</div>
+      <ul style="margin:0;padding-left:0;list-style:none;display:grid;gap:5px">
+        ${[0,1,2,3,4,5].map(y=>`<li style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:3px 2px;font-size:13px">
+          <span>Ano ${y}</span><b style="color:${r.cum[y]<0?'var(--red)':'var(--green)'}">${money(r.cum[y])}</b></li>`).join("")}
+      </ul>
+      <table style="margin-top:14px">
         <tr class="tot"><td>Lucro líquido Ano 5</td><td>${money(r.lucro[5])}</td></tr>
       </table>
     </div>`;
@@ -605,8 +668,8 @@ function renderComparative(){
       <h2>Comparativo — mesmo cenário de mercado, duas estruturas de custo</h2>
       <div class="small" style="margin-bottom:14px">Com preço de ${moneyD(inputs.price)}, ${numFmt(inputs.qty1)} unidades no Ano 1 e o crescimento informado ano a ano, a opção com maior VPL é <b>${better}</b>.</div>
       <div class="grid2">
-        ${col(EXTERNA,rExt,'ext','E')}
-        ${col(INTERNA,rInt,'int','I')}
+        ${col(extAdj,rExt,'ext','E')}
+        ${col(intAdj,rInt,'int','I')}
       </div>
     </div>
 
@@ -640,7 +703,7 @@ function setActive(){
   document.getElementById('btnInt').classList.toggle('active',mode==="int");
   document.getElementById('btnComp').classList.toggle('active',mode==="comp");
 }
-['inPrice','inQty1','inG2','inG3','inG4','inG5','inG6'].forEach(id=>document.getElementById(id).addEventListener('input',renderAll));
+['inPrice','inQty1','inG2','inG3','inG4','inG5','inG6','inCoef'].forEach(id=>document.getElementById(id).addEventListener('input',renderAll));
 
 function renderAssumptions(){
   document.getElementById('assumpBox').innerHTML=`
