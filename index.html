@@ -68,6 +68,7 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
       <button id="loadExtBtn" style="border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:11px 16px;cursor:pointer;font-weight:700">⬆ Carregar Externa</button>
     </div>
     <div id="loadStatus" class="small" style="color:#fff;opacity:.9;margin-top:8px">Nenhuma planilha carregada ainda.</div>
+    <div id="clearSaved" class="small hidden" style="color:#fff;opacity:.85;margin-top:4px;text-decoration:underline;cursor:pointer">Esquecer planilhas salvas neste navegador</div>
   </div>
 </div></header>
 <input type="file" id="fileInterna" accept=".xlsx" class="hidden" style="display:none">
@@ -290,16 +291,43 @@ function readWorkbookFile(file){
 const loadIntBtn = document.getElementById('loadIntBtn');
 const loadExtBtn = document.getElementById('loadExtBtn');
 const loadStatus = document.getElementById('loadStatus');
+const clearSavedEl = document.getElementById('clearSaved');
 const fileInterna = document.getElementById('fileInterna');
 const fileExterna = document.getElementById('fileExterna');
 
+/* ============ PLANILHAS FICAM SALVAS NESTE NAVEGADOR ============
+   Depois de lida, cada planilha (já convertida pra os números que o
+   app usa) é guardada no localStorage. Assim, ao atualizar a página
+   ou voltar depois, os dados continuam lá — sem precisar carregar de
+   novo — até você carregar uma planilha nova ou clicar em "esquecer".
+   Isso vale só neste navegador/computador: não sincroniza entre
+   aparelhos diferentes, porque o app não tem um servidor próprio. */
+const DS_KEY_INT = "bfoam_ds_interna_v1";
+const DS_KEY_EXT = "bfoam_ds_externa_v1";
+function saveDataset(key, ds){
+  try{ localStorage.setItem(key, JSON.stringify(ds)); }catch(e){ /* armazenamento indisponível: segue só na memória */ }
+}
+function loadDataset(key){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function clearSavedDatasets(){
+  try{ localStorage.removeItem(DS_KEY_INT); localStorage.removeItem(DS_KEY_EXT); }catch(e){}
+  INTERNA = null; EXTERNA = null;
+  document.getElementById('appContent').classList.add('hidden');
+  document.getElementById('emptyState').classList.remove('hidden');
+  updateLoadStatus();
+}
+clearSavedEl.onclick = clearSavedDatasets;
+
 function updateLoadStatus(){
-  if(INTERNA && EXTERNA) loadStatus.textContent = "✓ Interna e Externa carregadas";
+  if(INTERNA && EXTERNA) loadStatus.textContent = "✓ Interna e Externa carregadas (salvas neste navegador)";
   else if(INTERNA) loadStatus.textContent = "✓ Interna carregada — falta a Externa";
   else if(EXTERNA) loadStatus.textContent = "✓ Externa carregada — falta a Interna";
   else loadStatus.textContent = "Nenhuma planilha carregada ainda.";
+  clearSavedEl.classList.toggle('hidden', !(INTERNA || EXTERNA));
 }
 
+function __setBoth(){ INTERNA=loadDataset(DS_KEY_INT); EXTERNA=loadDataset(DS_KEY_EXT); updateLoadStatus(); checkBothLoaded(); }
 function checkBothLoaded(){
   if(INTERNA && EXTERNA){
     document.getElementById('emptyState').classList.add('hidden');
@@ -322,6 +350,7 @@ fileInterna.onchange = async ()=>{
   try{
     const wb = await readWorkbookFile(f);
     INTERNA = parseWorkbook(wb, "Interna");
+    saveDataset(DS_KEY_INT, INTERNA);
     updateLoadStatus();
     checkBothLoaded();
   }catch(err){
@@ -336,6 +365,7 @@ fileExterna.onchange = async ()=>{
   try{
     const wb = await readWorkbookFile(f);
     EXTERNA = parseWorkbook(wb, "Externa");
+    saveDataset(DS_KEY_EXT, EXTERNA);
     updateLoadStatus();
     checkBothLoaded();
   }catch(err){
@@ -688,6 +718,13 @@ function renderComparative(){
 
 /* ========================= CONTROLE DE MODO ========================= */
 let mode="ext";
+
+/* Restaura o que já foi salvo neste navegador (feito aqui, por último, porque
+   depende de funções e variáveis — como "mode" — declaradas acima). */
+INTERNA = loadDataset(DS_KEY_INT);
+EXTERNA = loadDataset(DS_KEY_EXT);
+updateLoadStatus();
+checkBothLoaded();
 function renderAll(){
   document.getElementById('singleView').classList.toggle('hidden', mode==="comp");
   document.getElementById('compView').classList.toggle('hidden', mode!=="comp");
