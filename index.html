@@ -57,17 +57,20 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
 .hidden{display:none}
 
 .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.top-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:750}.top-btn:hover{background:rgba(255,255,255,.22)}
-.auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d4678,#1976b9);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}.auth-box{background:#fff;width:min(420px,100%);border-radius:18px;padding:30px;box-shadow:0 25px 80px rgba(0,0,0,.28)}.auth-box h2{margin-bottom:6px}.auth-box input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;margin:10px 0}.auth-box button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--primary);color:#fff;font-weight:800;font-size:14px;cursor:pointer}.auth-err{color:var(--red);min-height:18px;font-size:12px;margin:4px 0 8px}.user-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:12px}.admin-card{border-left:4px solid #145da0}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.file-card{border:1px solid var(--line);border-radius:13px;padding:16px;background:#fff}.file-card h3{font-size:15px;margin-bottom:7px}.file-meta{font-size:12px;color:var(--muted);line-height:1.7}.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:750;font-size:12px}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.danger{color:var(--red)}.btn:disabled{opacity:.5;cursor:not-allowed}.history{margin-top:12px}.history table th,.history table td{text-align:left}.status-ok{color:var(--green);font-weight:800}.status-warn{color:#b54708;font-weight:800}.report-toolbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px}.report-capture{background:var(--bg)}
+.auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d4678,#1976b9);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}.auth-box{background:#fff;width:min(420px,100%);border-radius:18px;padding:30px;box-shadow:0 25px 80px rgba(0,0,0,.28)}.auth-logo{display:block;width:180px;max-width:75%;height:auto;margin:0 auto 20px;object-fit:contain}.password-wrap{position:relative;margin:10px 0}.password-wrap input{margin:0;padding-right:48px}.toggle-password{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:38px!important;height:38px!important;padding:0!important;border:0!important;background:transparent!important;color:#667085!important;font-size:19px!important;display:flex;align-items:center;justify-content:center;cursor:pointer}.toggle-password:hover{color:#145da0!important}.auth-box .login-note{display:none}.auth-box h2{margin-bottom:6px}.auth-box input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;margin:10px 0}.auth-box button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--primary);color:#fff;font-weight:800;font-size:14px;cursor:pointer}.auth-err{color:var(--red);min-height:18px;font-size:12px;margin:4px 0 8px}.user-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:12px}.admin-card{border-left:4px solid #145da0}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.file-card{border:1px solid var(--line);border-radius:13px;padding:16px;background:#fff}.file-card h3{font-size:15px;margin-bottom:7px}.file-meta{font-size:12px;color:var(--muted);line-height:1.7}.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:750;font-size:12px}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.danger{color:var(--red)}.btn:disabled{opacity:.5;cursor:not-allowed}.history{margin-top:12px}.history table th,.history table td{text-align:left}.status-ok{color:var(--green);font-weight:800}.status-warn{color:#b54708;font-weight:800}.report-toolbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px}.report-capture{background:var(--bg)}
 @media(max-width:760px){.admin-grid{grid-template-columns:1fr}.top-actions{justify-content:flex-start}}
 </style>
 </head><body><div id="authScreen" class="auth-screen">
   <div class="auth-box">
+    <img class="auth-logo" src="logo-msb.png" alt="MSB Medical System do Brasil">
     <h2>Bfoam — Acesso</h2>
-    <div class="small">Entre com a senha de acesso. O sistema identifica automaticamente o perfil de administrador ou usuário.</div>
-    <input id="loginPassword" type="password" placeholder="Senha" autocomplete="current-password">
+    <div class="small">Digite sua senha para acessar o aplicativo.</div>
+    <div class="password-wrap">
+      <input id="loginPassword" type="password" placeholder="Senha" autocomplete="current-password">
+      <button id="togglePassword" class="toggle-password" type="button" aria-label="Mostrar senha" title="Mostrar senha">◉</button>
+    </div>
     <div id="loginErr" class="auth-err"></div>
     <button id="loginBtn">Entrar</button>
-    <div class="small" style="margin-top:12px;text-align:center">Os arquivos e dados ficam centralizados no Supabase.</div>
   </div>
 </div>
 
@@ -520,12 +523,6 @@ function renderComparative(){
 /* ========================= CONTROLE DE MODO ========================= */
 let mode="ext";
 
-/* Restaura o que já foi salvo neste navegador (feito aqui, por último, porque
-   depende de funções e variáveis — como "mode" — declaradas acima). */
-INTERNA = loadDataset(DS_KEY_INT);
-EXTERNA = loadDataset(DS_KEY_EXT);
-updateLoadStatus();
-checkBothLoaded();
 function renderAll(){
   document.getElementById('singleView').classList.toggle('hidden', mode==="comp");
   document.getElementById('compView').classList.toggle('hidden', mode!=="comp");
@@ -602,14 +599,36 @@ async function getRole(user){
   return user.email===ADMIN_EMAIL?'admin':'user';
 }
 async function login(){
-  const pw=document.getElementById('loginPassword').value.trim();
+  const pw=document.getElementById('loginPassword').value;
   const errEl=document.getElementById('loginErr'); errEl.textContent='';
-  if(!pw){errEl.textContent='Digite a senha.';return;}
-  document.getElementById('loginBtn').disabled=true; document.getElementById('loginBtn').textContent='Entrando…';
-  let result=await supabaseClient.auth.signInWithPassword({email:ADMIN_EMAIL,password:pw});
-  if(result.error){ await supabaseClient.auth.signOut(); result=await supabaseClient.auth.signInWithPassword({email:USER_EMAIL,password:pw}); }
-  if(result.error){ errEl.textContent='Senha incorreta ou acesso não configurado.'; document.getElementById('loginBtn').disabled=false; document.getElementById('loginBtn').textContent='Entrar'; return; }
-  currentUser=result.data.user; currentRole=await getRole(currentUser); await enterApp();
+  if(!pw){errEl.textContent='Digite sua senha.';return;}
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true; btn.textContent='Entrando…';
+  try{
+    // O aplicativo usa o Auth do Supabase. Tentamos primeiro o administrador e,
+    // se a senha não corresponder, tentamos o usuário comum.
+    let result=await supabaseClient.auth.signInWithPassword({email:ADMIN_EMAIL,password:pw});
+    if(result.error){
+      await supabaseClient.auth.signOut();
+      result=await supabaseClient.auth.signInWithPassword({email:USER_EMAIL,password:pw});
+    }
+    if(result.error){
+      const msg=(result.error.message||'').toLowerCase();
+      if(msg.includes('email not confirmed')) errEl.textContent='Este usuário ainda não está confirmado no Supabase.';
+      else if(msg.includes('invalid login credentials')) errEl.textContent='Senha incorreta.';
+      else errEl.textContent='Não foi possível entrar. Verifique o usuário e a senha no Supabase.';
+      console.error('Erro de login Supabase:',result.error);
+      return;
+    }
+    currentUser=result.data.user;
+    currentRole=await getRole(currentUser);
+    await enterApp();
+  }catch(e){
+    console.error(e);
+    errEl.textContent='Não foi possível conectar ao sistema de acesso.';
+  }finally{
+    btn.disabled=false; btn.textContent='Entrar';
+  }
 }
 async function enterApp(){
   document.getElementById('authScreen').classList.add('hidden');
@@ -697,6 +716,15 @@ const downloadIntTopEl=document.getElementById('downloadIntTop'), downloadExtTop
 const downloadCurrentExcelEl=document.getElementById('downloadCurrentExcel'), exportPngEl=document.getElementById('exportPng');
 const fileInternaEl=document.getElementById('fileInterna'), fileExternaEl=document.getElementById('fileExterna');
 loginBtnEl.onclick=login; loginPasswordEl.addEventListener('keydown',e=>{if(e.key==='Enter')login();}); logoutBtnEl.onclick=logout;
+const togglePasswordEl=document.getElementById('togglePassword');
+togglePasswordEl.onclick=()=>{
+  const visible=loginPasswordEl.type==='text';
+  loginPasswordEl.type=visible?'password':'text';
+  togglePasswordEl.textContent=visible?'◉':'◉';
+  togglePasswordEl.style.opacity=visible?'0.65':'1';
+  togglePasswordEl.setAttribute('aria-label',visible?'Mostrar senha':'Ocultar senha');
+  togglePasswordEl.title=visible?'Mostrar senha':'Ocultar senha';
+};
 adminUploadIntEl.onclick=()=>fileInternaEl.click(); adminUploadExtEl.onclick=()=>fileExternaEl.click();
 fileInternaEl.onchange=e=>uploadOriginal('interna',e.target.files[0]).catch(err=>alert('Erro ao carregar Interna: '+err.message));
 fileExternaEl.onchange=e=>uploadOriginal('externa',e.target.files[0]).catch(err=>alert('Erro ao carregar Externa: '+err.message));
