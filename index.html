@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bfoam — Viabilidade: Produção Interna x Externa</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bfoam — Viabilidade do Projeto</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 :root{
   --bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#dfe5ee;
@@ -54,63 +55,86 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
 .modal-box button{width:100%;padding:11px;border:none;border-radius:9px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;font-size:14px}
 .modal-err{color:var(--red);font-size:12.5px;min-height:16px;margin-bottom:2px}
 .hidden{display:none}
-</style>
-</head>
-<body>
-<header><div class="header-inner" style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap">
-  <div class="brand">
-    <h1>Bfoam — Viabilidade do Projeto</h1>
-    <p>Produção Interna x Produção Externa — carregue as duas planilhas rev00 (F-PJ-028) para ler os dados com fórmulas vivas.</p>
-  </div>
-  <div style="text-align:right">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
-      <button id="loadIntBtn" style="border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:11px 16px;cursor:pointer;font-weight:700">⬆ Carregar Interna</button>
-      <button id="loadExtBtn" style="border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:11px 16px;cursor:pointer;font-weight:700">⬆ Carregar Externa</button>
-    </div>
-    <div id="loadStatus" class="small" style="color:#fff;opacity:.9;margin-top:8px">Nenhuma planilha carregada ainda.</div>
-    <div id="clearSaved" class="small hidden" style="color:#fff;opacity:.85;margin-top:4px;text-decoration:underline;cursor:pointer">Esquecer planilhas salvas neste navegador</div>
-  </div>
-</div></header>
-<input type="file" id="fileInterna" accept=".xlsx" class="hidden" style="display:none">
-<input type="file" id="fileExterna" accept=".xlsx" class="hidden" style="display:none">
 
-<div id="pwModal" class="modal-bg hidden">
-  <div class="modal-box">
-    <h3>Senha necessária</h3>
-    <div class="small">Digite a senha para carregar as planilhas de custo.</div>
-    <input id="pwInput" type="password" placeholder="Senha" autocomplete="off">
-    <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin:10px 0 2px;cursor:pointer">
-      <input id="pwKeep" type="checkbox" style="width:auto;margin:0">
-      Manter sempre ativado neste navegador (não pedir senha de novo)
-    </label>
-    <div class="modal-err" id="pwErr"></div>
-    <button id="pwOk">Entrar</button>
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.top-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:750}.top-btn:hover{background:rgba(255,255,255,.22)}
+.auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d4678,#1976b9);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}.auth-box{background:#fff;width:min(420px,100%);border-radius:18px;padding:30px;box-shadow:0 25px 80px rgba(0,0,0,.28)}.auth-box h2{margin-bottom:6px}.auth-box input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;margin:10px 0}.auth-box button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--primary);color:#fff;font-weight:800;font-size:14px;cursor:pointer}.auth-err{color:var(--red);min-height:18px;font-size:12px;margin:4px 0 8px}.user-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:12px}.admin-card{border-left:4px solid #145da0}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.file-card{border:1px solid var(--line);border-radius:13px;padding:16px;background:#fff}.file-card h3{font-size:15px;margin-bottom:7px}.file-meta{font-size:12px;color:var(--muted);line-height:1.7}.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:750;font-size:12px}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.danger{color:var(--red)}.btn:disabled{opacity:.5;cursor:not-allowed}.history{margin-top:12px}.history table th,.history table td{text-align:left}.status-ok{color:var(--green);font-weight:800}.status-warn{color:#b54708;font-weight:800}.report-toolbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px}.report-capture{background:var(--bg)}
+@media(max-width:760px){.admin-grid{grid-template-columns:1fr}.top-actions{justify-content:flex-start}}
+</style>
+</head><body><div id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <h2>Bfoam — Acesso</h2>
+    <div class="small">Entre com a senha de acesso. O sistema identifica automaticamente o perfil de administrador ou usuário.</div>
+    <input id="loginPassword" type="password" placeholder="Senha" autocomplete="current-password">
+    <div id="loginErr" class="auth-err"></div>
+    <button id="loginBtn">Entrar</button>
+    <div class="small" style="margin-top:12px;text-align:center">Os arquivos e dados ficam centralizados no Supabase.</div>
   </div>
 </div>
 
-<div class="container">
+<header><div class="header-inner" style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap">
+  <div class="brand">
+    <h1>Bfoam — Viabilidade do Projeto</h1>
+    <p>Produção Interna x Produção Externa — dados calculados a partir das planilhas originais armazenadas no Supabase.</p>
+  </div>
+  <div style="text-align:right">
+    <div class="top-actions">
+      <span id="userPill" class="user-pill">● não conectado</span>
+      <button id="downloadIntTop" class="top-btn hidden">⬇ Excel Interna</button>
+      <button id="downloadExtTop" class="top-btn hidden">⬇ Excel Externa</button>
+      <button id="pngTop" class="top-btn hidden">▣ Exportar PNG</button>
+      <button id="logoutBtn" class="top-btn hidden">Sair</button>
+    </div>
+    <div id="loadStatus" class="small" style="color:#fff;opacity:.9;margin-top:8px">Conectando ao Supabase…</div>
+  </div>
+</div></header>
 
-  <div id="emptyState" class="card" style="text-align:center;padding:40px 20px">
-    <h2 style="margin-bottom:8px">Nenhuma planilha carregada</h2>
-    <div class="small">Clique em "⬆ Carregar Interna" e "⬆ Carregar Externa" no topo, em qualquer ordem. Sempre que você alterar algo nas planilhas originais, é só carregar de novo para atualizar o aplicativo.</div>
+<div class="container">
+  <div id="adminPanel" class="card admin-card hidden">
+    <h2>Administração das planilhas</h2>
+    <div class="small" style="margin-bottom:14px">O administrador carrega o Excel original. O arquivo inteiro é salvo no Storage; o aplicativo lê uma cópia em memória para fazer os cálculos. O Excel não é reconstruído pelo aplicativo.</div>
+    <div class="admin-grid">
+      <div class="file-card">
+        <h3>Produção Interna</h3>
+        <div id="adminIntMeta" class="file-meta">Nenhuma versão carregada.</div>
+        <div class="action-row">
+          <button id="adminUploadInt" class="btn primary">⬆ Carregar Excel original</button>
+          <button id="adminDownloadInt" class="btn">⬇ Baixar Excel original</button>
+        </div>
+        <div id="historyInt" class="history"></div>
+      </div>
+      <div class="file-card">
+        <h3>Produção Externa</h3>
+        <div id="adminExtMeta" class="file-meta">Nenhuma versão carregada.</div>
+        <div class="action-row">
+          <button id="adminUploadExt" class="btn primary">⬆ Carregar Excel original</button>
+          <button id="adminDownloadExt" class="btn">⬇ Baixar Excel original</button>
+        </div>
+        <div id="historyExt" class="history"></div>
+      </div>
+    </div>
+    <input type="file" id="fileInterna" accept=".xlsx" class="hidden">
+    <input type="file" id="fileExterna" accept=".xlsx" class="hidden">
   </div>
 
-  <div id="appContent" class="hidden">
+  <div id="emptyState" class="card" style="text-align:center;padding:40px 20px">
+    <h2 style="margin-bottom:8px">Aguardando as duas planilhas</h2>
+    <div class="small">O administrador precisa ter uma versão Interna e uma versão Externa cadastradas no Supabase.</div>
+  </div>
+
+  <div id="appContent" class="hidden report-capture">
+    <div class="report-toolbar">
+      <button id="downloadCurrentExcel" class="btn">⬇ Baixar Excel original desta visão</button>
+      <button id="exportPng" class="btn primary">▣ Exportar viabilidade em PNG</button>
+    </div>
 
     <div class="card">
       <h2>Parâmetros de simulação</h2>
       <div class="small" style="margin-bottom:14px">Estes parâmetros são aplicados às duas estruturas de custo (interna e externa), para comparar o mesmo cenário de mercado.</div>
       <div class="grid3">
-        <div>
-          <label>Preço de venda (R$/un)</label>
-          <input id="inPrice" type="number" min="0" step="0.01" value="20">
-        </div>
-        <div>
-          <label>Quantidade vendida no Ano 1 (un)</label>
-          <input id="inQty1" type="number" min="0" step="1" value="1000">
-        </div>
+        <div><label>Preço de venda (R$/un)</label><input id="inPrice" type="number" min="0" step="0.01" value="20"></div>
+        <div><label>Quantidade vendida no Ano 1 (un)</label><input id="inQty1" type="number" min="0" step="1" value="1000"></div>
       </div>
-      <div class="small" style="margin:14px 0 6px">Crescimento (ou retração, com valor negativo) de cada ano em relação ao anterior — pode ser diferente ano a ano:</div>
+      <div class="small" style="margin:14px 0 6px">Crescimento (ou retração, com valor negativo) de cada ano em relação ao anterior:</div>
       <div class="grid5">
         <div><label>Ano 2 (%)</label><input id="inG2" type="number" step="0.1" value="50"></div>
         <div><label>Ano 3 (%)</label><input id="inG3" type="number" step="0.1" value="50"></div>
@@ -118,10 +142,8 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
         <div><label>Ano 5 (%)</label><input id="inG5" type="number" step="0.1" value="50"></div>
         <div><label>Ano 6 (%)</label><input id="inG6" type="number" step="0.1" value="50"></div>
       </div>
-      <div class="small" style="margin:14px 0 6px">Coeficiente de custo — multiplica de uma vez CAPEX, custo unitário (insumos) e todo o OPEX (variável e fixo) das duas planilhas. Use 1 para não alterar nada; 1,10 simula 10% a mais de custo em tudo, por exemplo.</div>
-      <div class="grid3">
-        <div><label>Coeficiente de custo</label><input id="inCoef" type="number" min="0" step="0.01" value="1"></div>
-      </div>
+      <div class="small" style="margin:14px 0 6px">Coeficiente de custo — multiplica CAPEX, custo unitário e OPEX das duas planilhas.</div>
+      <div class="grid3"><div><label>Coeficiente de custo</label><input id="inCoef" type="number" min="0" step="0.01" value="1"></div></div>
     </div>
 
     <div class="card">
@@ -136,247 +158,26 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
     <div id="compView" class="hidden"></div>
 
     <div class="card">
-      <details>
-        <summary>Premissas lidas da planilha (referência)</summary>
-        <div class="assump" id="assumpBox"></div>
-      </details>
+      <details><summary>Premissas lidas da planilha (referência)</summary><div class="assump" id="assumpBox"></div></details>
     </div>
-
   </div>
-
 </div>
-
 <script>
-/* =========================================================
-   LEITURA DAS PLANILHAS (.xlsx) — SheetJS
-   O usuário carrega a Interna e depois a Externa. Cada
-   workbook é lido nos mesmos endereços de célula usados
-   nas planilhas rev00 F-PJ-028 (Receita, Impostos, OPEX,
-   CAPEX, Financiamento, NCG, EV, Breakdown Processos e MOD,
-   Sumário de Custo Ideal). Se o usuário editar a planilha
-   original, basta carregar de novo para atualizar tudo.
-========================================================= */
-
+const SUPABASE_URL = "https://spbnkgqlnrtpttjuwsuz.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t5QJMKmPRDQExvnNIAOExA_PE6VIIyU";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const STORAGE_BUCKET = "bfoam";
+const ADMIN_EMAIL = "admin@msb.local";
+const USER_EMAIL = "biblioteca@msb.local";
+let currentUser = null, currentRole = null;
+let FILES = { interna:null, externa:null };
 let EXTERNA = null, INTERNA = null;
 
-/* ============ SENHA PARA CARREGAR AS PLANILHAS ============
-   Senha: MSB19. Fica salva no navegador (localStorage) depois
-   de digitada corretamente uma vez, então não pergunta de novo
-   nesse mesmo navegador/computador. */
-const PW_KEY = "bfoam_pw_ok_v1";
-const PASSWORD = "MSB19";
-let pwPendingAction = null;
-let sessionAuthorized = false; // válido só enquanto a página estiver aberta, se a caixa "manter sempre ativado" não for marcada
-
-function isAuthorized(){
-  return sessionAuthorized || localStorage.getItem(PW_KEY) === "1";
-}
-function requireAuth(action){
-  if(isAuthorized()){ action(); return; }
-  pwPendingAction = action;
-  document.getElementById('pwErr').textContent = "";
-  document.getElementById('pwInput').value = "";
-  document.getElementById('pwModal').classList.remove('hidden');
-  document.getElementById('pwInput').focus();
-}
-function tryPassword(){
-  const v = (document.getElementById('pwInput').value || "").trim();
-  if(v.toUpperCase() === PASSWORD){
-    sessionAuthorized = true;
-    if(document.getElementById('pwKeep').checked){
-      localStorage.setItem(PW_KEY, "1");
-    }
-    document.getElementById('pwModal').classList.add('hidden');
-    const action = pwPendingAction; pwPendingAction = null;
-    if(action) action();
-  }else{
-    document.getElementById('pwErr').textContent = "Senha incorreta. Tente novamente.";
-    document.getElementById('pwInput').value = "";
-    document.getElementById('pwInput').focus();
-  }
-}
-document.getElementById('pwOk').onclick = tryPassword;
-document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==="Enter") tryPassword(); });
-
-function cellNum(wb, sheet, addr, fallback){
-  const ws = wb.Sheets[sheet];
-  if(!ws) return fallback!==undefined?fallback:0;
-  const c = ws[addr];
-  const v = c ? c.v : undefined;
-  return (typeof v === "number" && isFinite(v)) ? v : (fallback!==undefined?fallback:0);
-}
-function cellStr(wb, sheet, addr, fallback){
-  const ws = wb.Sheets[sheet];
-  if(!ws) return fallback||"";
-  const c = ws[addr];
-  return c && c.v!==undefined ? String(c.v) : (fallback||"");
-}
-
-function parseWorkbook(wb, label){
-  const unitCost = cellNum(wb,'Sumário de Custo Ideal','J4');
-  const capexInicial = cellNum(wb,'CAPEX','I34');
-
-  const cols=['C','D','E','F','G','H','I','J','K','L','M','N','O'];
-  const processes=[];
-  cols.forEach(col=>{
-    const ws = wb.Sheets['Breakdown Processos e MOD'];
-    if(!ws) return;
-    const mod = ws[col+'6'] ? ws[col+'6'].v : undefined;
-    const cap = ws[col+'22'] ? ws[col+'22'].v : undefined;
-    const desc = ws[col+'3'] ? ws[col+'3'].v : '';
-    if(typeof mod==='number' && mod>0 && typeof cap==='number' && isFinite(cap) && cap>0){
-      processes.push({ nome: desc || ('Processo '+col), mod, cap });
-    }
-  });
-
-  const price = cellNum(wb,'Receita','D19',20);
-  const qty1 = cellNum(wb,'Receita','D12',0);
-  const growth = cellNum(wb,'Receita','E13',0);
-
-  const wacc = cellNum(wb,'EV','C10',0.20475);
-  const g = cellNum(wb,'EV','C11',0);
-  const devolucaoRate = cellNum(wb,'EV','C18',0);
-
-  const ipi = cellNum(wb,'Impostos','C16',0);
-  const icms = cellNum(wb,'Impostos','C17',0);
-  const pis = cellNum(wb,'Impostos','C18',0);
-  const cofins = cellNum(wb,'Impostos','C19',0);
-  const irRate = cellNum(wb,'Impostos','C22',0);
-  const csllRate = cellNum(wb,'Impostos','C23',0);
-
-  const importUnit = cellNum(wb,'OPEX','C17',0);
-  const desembaracoUnit = cellNum(wb,'OPEX','C18',0);
-  const comissao = cellNum(wb,'OPEX','C19',0);
-  const frete = cellNum(wb,'OPEX','C20',0);
-  const embalagem = cellNum(wb,'OPEX','C21',0);
-  const royalties = cellNum(wb,'OPEX','C22',0);
-  const descontos = cellNum(wb,'OPEX','C23',0);
-  const salarioBase = cellNum(wb,'OPEX','D28',1800);
-  const reajuste = cellNum(wb,'OPEX','D29',0.06);
-  const mesesVenda = cellNum(wb,'OPEX','D32',12);
-
-  const diasRecebimento = cellNum(wb,'NCG','D26',90);
-  const diasEstoque = cellNum(wb,'NCG','D27',60);
-  const diasPagamento = cellNum(wb,'NCG','D28',0);
-
-  return {
-    label,
-    unitCost, capexInicial, processes,
-    salarioBase, reajuste, inssRate:0.268, fgtsRate:0.08, mesesVenda,
-    devolucaoRate,
-    taxRates: { ipi, icms, pis, cofins },
-    irRate, csllRate,
-    opexVar: { importUnit, desembaracoUnit, comissao, frete, embalagem, royalties, descontos },
-    wacc, g,
-    diasRecebimento, diasEstoque, diasPagamento,
-    defaults: { price, qty1, growth }
-  };
-}
-
-function readWorkbookFile(file){
-  return new Promise((resolve, reject)=>{
-    const reader = new FileReader();
-    reader.onload = e=>{
-      try{
-        const data = new Uint8Array(e.target.result);
-        const wb = XLSX.read(data, {type:"array"});
-        resolve(wb);
-      }catch(err){ reject(err); }
-    };
-    reader.onerror = ()=>reject(new Error("Falha ao ler o arquivo"));
-    reader.readAsArrayBuffer(file);
-  });
-}
-
-const loadIntBtn = document.getElementById('loadIntBtn');
-const loadExtBtn = document.getElementById('loadExtBtn');
-const loadStatus = document.getElementById('loadStatus');
-const clearSavedEl = document.getElementById('clearSaved');
-const fileInterna = document.getElementById('fileInterna');
-const fileExterna = document.getElementById('fileExterna');
-
-/* ============ PLANILHAS FICAM SALVAS NESTE NAVEGADOR ============
-   Depois de lida, cada planilha (já convertida pra os números que o
-   app usa) é guardada no localStorage. Assim, ao atualizar a página
-   ou voltar depois, os dados continuam lá — sem precisar carregar de
-   novo — até você carregar uma planilha nova ou clicar em "esquecer".
-   Isso vale só neste navegador/computador: não sincroniza entre
-   aparelhos diferentes, porque o app não tem um servidor próprio. */
-const DS_KEY_INT = "bfoam_ds_interna_v1";
-const DS_KEY_EXT = "bfoam_ds_externa_v1";
-function saveDataset(key, ds){
-  try{ localStorage.setItem(key, JSON.stringify(ds)); }catch(e){ /* armazenamento indisponível: segue só na memória */ }
-}
-function loadDataset(key){
-  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
-}
-function clearSavedDatasets(){
-  try{ localStorage.removeItem(DS_KEY_INT); localStorage.removeItem(DS_KEY_EXT); }catch(e){}
-  INTERNA = null; EXTERNA = null;
-  document.getElementById('appContent').classList.add('hidden');
-  document.getElementById('emptyState').classList.remove('hidden');
-  updateLoadStatus();
-}
-clearSavedEl.onclick = clearSavedDatasets;
-
-function updateLoadStatus(){
-  if(INTERNA && EXTERNA) loadStatus.textContent = "✓ Interna e Externa carregadas (salvas neste navegador)";
-  else if(INTERNA) loadStatus.textContent = "✓ Interna carregada — falta a Externa";
-  else if(EXTERNA) loadStatus.textContent = "✓ Externa carregada — falta a Interna";
-  else loadStatus.textContent = "Nenhuma planilha carregada ainda.";
-  clearSavedEl.classList.toggle('hidden', !(INTERNA || EXTERNA));
-}
-
-function __setBoth(){ INTERNA=loadDataset(DS_KEY_INT); EXTERNA=loadDataset(DS_KEY_EXT); updateLoadStatus(); checkBothLoaded(); }
-function checkBothLoaded(){
-  if(INTERNA && EXTERNA){
-    document.getElementById('emptyState').classList.add('hidden');
-    document.getElementById('appContent').classList.remove('hidden');
-    document.getElementById('inPrice').value = EXTERNA.defaults.price;
-    document.getElementById('inQty1').value = EXTERNA.defaults.qty1;
-    ['inG2','inG3','inG4','inG5','inG6'].forEach(id=>document.getElementById(id).value = xround(EXTERNA.defaults.growth*100,2));
-    renderAssumptions();
-    renderAll();
-  }
-}
-
-loadIntBtn.onclick = ()=> requireAuth(()=>{ fileInterna.value=""; fileInterna.click(); });
-loadExtBtn.onclick = ()=> requireAuth(()=>{ fileExterna.value=""; fileExterna.click(); });
-
-fileInterna.onchange = async ()=>{
-  const f = fileInterna.files[0];
-  if(!f) return;
-  loadStatus.textContent = "Lendo planilha Interna…";
-  try{
-    const wb = await readWorkbookFile(f);
-    INTERNA = parseWorkbook(wb, "Interna");
-    saveDataset(DS_KEY_INT, INTERNA);
-    updateLoadStatus();
-    checkBothLoaded();
-  }catch(err){
-    loadStatus.textContent = "Erro ao ler a planilha Interna: "+err.message;
-  }
-};
-
-fileExterna.onchange = async ()=>{
-  const f = fileExterna.files[0];
-  if(!f) return;
-  loadStatus.textContent = "Lendo planilha Externa…";
-  try{
-    const wb = await readWorkbookFile(f);
-    EXTERNA = parseWorkbook(wb, "Externa");
-    saveDataset(DS_KEY_EXT, EXTERNA);
-    updateLoadStatus();
-    checkBothLoaded();
-  }catch(err){
-    loadStatus.textContent = "Erro ao ler a planilha Externa: "+err.message;
-  }
-};
-
-/* =========================================================
-   MOTOR DE CÁLCULO — replica Receita → Impostos → OPEX →
-   NCG → EV (fluxo de caixa descontado, VPL, payback, TIR, TIRM)
-========================================================= */
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function fmtDate(v){return v?new Date(v).toLocaleString('pt-BR'):'';}
+function fileSize(n){if(!n)return ''; const u=['B','KB','MB','GB']; let i=0,x=n; while(x>=1024&&i<u.length-1){x/=1024;i++;} return `${x.toFixed(i?1:0)} ${u[i]}`;}
+function roleLabel(){return currentRole==='admin'?'Administrador':'Usuário';}
+function setStatus(msg){document.getElementById('loadStatus').textContent=msg;}
 
 function xround(v,d){ d=d||0; const f=Math.pow(10,d); return Math.sign(v)*Math.round(Math.abs(v)*f)/f; }
 
@@ -696,7 +497,7 @@ function renderComparative(){
   const html=`
     <div class="card">
       <h2>Comparativo — mesmo cenário de mercado, duas estruturas de custo</h2>
-      <div class="small" style="margin-bottom:14px">Com preço de ${moneyD(inputs.price)}, ${numFmt(inputs.qty1)} unidades no Ano 1 e o crescimento informado ano a ano, a opção com maior VPL é <b>${better}</b>.</div>
+      <div class="small" style="margin-bottom:14px">Com preço de ${moneyD(inputs.price)}, ${numFmt(inputs.qty1)} unidades no Ano 1 e o crescimento informado ano a ano, o maior VPL calculado neste cenário é o da estrutura <b>${better}</b>.</div>
       <div class="grid2">
         ${col(extAdj,rExt,'ext','E')}
         ${col(intAdj,rInt,'int','I')}
@@ -764,6 +565,146 @@ function renderAssumptions(){
   `;
 }
 
-</script>
-</body>
-</html>
+
+function currentMeta(type){ return FILES[type] || null; }
+function updateTopButtons(){
+  document.getElementById('downloadIntTop').classList.toggle('hidden',!FILES.interna);
+  document.getElementById('downloadExtTop').classList.toggle('hidden',!FILES.externa);
+  document.getElementById('pngTop').classList.toggle('hidden',!(INTERNA&&EXTERNA));
+  document.getElementById('downloadCurrentExcel').disabled = mode==='int' ? !FILES.interna : mode==='ext' ? !FILES.externa : !(FILES.interna&&FILES.externa);
+}
+function setAppReady(){
+  const ready=!!(INTERNA&&EXTERNA);
+  document.getElementById('emptyState').classList.toggle('hidden',ready);
+  document.getElementById('appContent').classList.toggle('hidden',!ready);
+  if(ready){
+    const base=EXTERNA.defaults||INTERNA.defaults||{};
+    document.getElementById('inPrice').value=base.price??20;
+    document.getElementById('inQty1').value=base.qty1??1000;
+    ['inG2','inG3','inG4','inG5','inG6'].forEach(id=>document.getElementById(id).value=xround((base.growth??0)*100,2));
+    renderAssumptions(); renderAll();
+  }
+  updateTopButtons();
+}
+async function loadCurrentFiles(){
+  const {data:i,error:ie}=await supabaseClient.from('bfoam_interna').select('*').eq('is_current',true).order('created_at',{ascending:false}).limit(1).maybeSingle();
+  if(ie) throw ie;
+  const {data:e,error:ee}=await supabaseClient.from('bfoam_externa').select('*').eq('is_current',true).order('created_at',{ascending:false}).limit(1).maybeSingle();
+  if(ee) throw ee;
+  FILES.interna=i; FILES.externa=e;
+  INTERNA=i?.dataset||null; EXTERNA=e?.dataset||null;
+  if(i||e) setStatus(`Interna: ${i?i.file_name:'pendente'} · Externa: ${e?e.file_name:'pendente'}`); else setStatus('Nenhuma planilha cadastrada ainda.');
+  setAppReady();
+}
+async function getRole(user){
+  const {data:p,error}=await supabaseClient.from('profiles').select('role').eq('id',user.id).maybeSingle();
+  if(!error && p?.role) return p.role;
+  return user.email===ADMIN_EMAIL?'admin':'user';
+}
+async function login(){
+  const pw=document.getElementById('loginPassword').value.trim();
+  const errEl=document.getElementById('loginErr'); errEl.textContent='';
+  if(!pw){errEl.textContent='Digite a senha.';return;}
+  document.getElementById('loginBtn').disabled=true; document.getElementById('loginBtn').textContent='Entrando…';
+  let result=await supabaseClient.auth.signInWithPassword({email:ADMIN_EMAIL,password:pw});
+  if(result.error){ await supabaseClient.auth.signOut(); result=await supabaseClient.auth.signInWithPassword({email:USER_EMAIL,password:pw}); }
+  if(result.error){ errEl.textContent='Senha incorreta ou acesso não configurado.'; document.getElementById('loginBtn').disabled=false; document.getElementById('loginBtn').textContent='Entrar'; return; }
+  currentUser=result.data.user; currentRole=await getRole(currentUser); await enterApp();
+}
+async function enterApp(){
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('userPill').textContent=`● ${roleLabel()}`;
+  document.getElementById('logoutBtn').classList.remove('hidden');
+  document.getElementById('adminPanel').classList.toggle('hidden',currentRole!=='admin');
+  if(currentRole==='admin') await loadHistory();
+  try{await loadCurrentFiles();}catch(e){setStatus('Erro ao carregar dados do Supabase: '+e.message);}
+}
+async function logout(){await supabaseClient.auth.signOut(); location.reload();}
+
+async function uploadOriginal(type,file){
+  if(currentRole!=='admin') throw new Error('Apenas o administrador pode carregar planilhas.');
+  if(!file) return;
+  setStatus(`Lendo ${type==='interna'?'Interna':'Externa'}…`);
+  const wb=await readWorkbookFile(file);
+  const ds=parseWorkbook(wb,type==='interna'?'Interna':'Externa');
+  const table=type==='interna'?'bfoam_interna':'bfoam_externa';
+  const folder=type;
+  const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const path=`${folder}/${new Date().toISOString().replace(/[:.]/g,'-')}-${crypto.randomUUID()}-${safe}`;
+  const {error:upErr}=await supabaseClient.storage.from(STORAGE_BUCKET).upload(path,file,{contentType:file.type||'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',upsert:false});
+  if(upErr) throw upErr;
+  const {data:oldRows,error:oldErr}=await supabaseClient.from(table).select('id').eq('is_current',true);
+  if(oldErr) throw oldErr;
+  if(oldRows?.length){const {error:uerr}=await supabaseClient.from(table).update({is_current:false}).eq('is_current',true); if(uerr) throw uerr;}
+  const {data:versions,error:vErr}=await supabaseClient.from(table).select('version').order('version',{ascending:false}).limit(1);
+  if(vErr) throw vErr;
+  const nextVersion=(versions?.[0]?.version||0)+1;
+  const {data:row,error:insErr}=await supabaseClient.from(table).insert({version:nextVersion,file_name:file.name,storage_path:path,dataset:ds,uploaded_by:currentUser.id,file_size:file.size,is_current:true}).select().single();
+  if(insErr) throw insErr;
+  FILES[type]=row; if(type==='interna') INTERNA=ds; else EXTERNA=ds;
+  await loadCurrentFiles();
+  await loadHistory();
+  setStatus(`✓ ${type==='interna'?'Interna':'Externa'} atualizada com o Excel original salvo no Supabase.`);
+}
+
+async function downloadOriginal(type){
+  const f=FILES[type]; if(!f){alert('Não existe planilha cadastrada.');return;}
+  setStatus('Baixando Excel original…');
+  const {data,error}=await supabaseClient.storage.from(STORAGE_BUCKET).download(f.storage_path);
+  if(error){alert('Erro ao baixar o Excel original: '+error.message);return;}
+  const url=URL.createObjectURL(data); const a=document.createElement('a'); a.href=url; a.download=f.file_name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  setStatus(`✓ Download concluído: ${f.file_name}`);
+}
+async function deleteVersion(type,id){
+  if(currentRole!=='admin') return;
+  if(!confirm('Excluir esta versão do histórico? O arquivo original também será removido do Storage.')) return;
+  const table=type==='interna'?'bfoam_interna':'bfoam_externa';
+  const {data:row,error:re}=await supabaseClient.from(table).select('storage_path,is_current').eq('id',id).single();
+  if(re){alert(re.message);return;}
+  if(row.is_current){alert('A versão atual não pode ser excluída. Carregue uma nova versão primeiro.');return;}
+  const {error:de}=await supabaseClient.from(table).delete().eq('id',id); if(de){alert(de.message);return;}
+  const {error:se}=await supabaseClient.storage.from(STORAGE_BUCKET).remove([row.storage_path]); if(se){console.warn(se);}
+  await loadHistory(); await loadCurrentFiles();
+}
+async function loadHistory(){
+  if(currentRole!=='admin') return;
+  for(const type of ['interna','externa']){
+    const table=type==='interna'?'bfoam_interna':'bfoam_externa';
+    const {data,error}=await supabaseClient.from(table).select('id,version,file_name,file_size,created_at,is_current,storage_path').order('version',{ascending:false});
+    if(error){document.getElementById('history'+(type==='interna'?'Int':'Ext')).innerHTML='<div class="small">Erro: '+esc(error.message)+'</div>';continue;}
+    const current=data?.find(x=>x.is_current); document.getElementById(type==='interna'?'adminIntMeta':'adminExtMeta').innerHTML=current?`<span class="status-ok">Versão ${current.version} atual</span><br><b>${esc(current.file_name)}</b><br>${fmtDate(current.created_at)} · ${fileSize(current.file_size)}`:'Nenhuma versão atual.';
+    const hist=document.getElementById(type==='interna'?'historyInt':'historyExt');
+    hist.innerHTML=data?.length?`<details><summary>Histórico (${data.length} versões)</summary><div style="overflow:auto;margin-top:8px"><table><thead><tr><th>Versão</th><th>Arquivo original</th><th>Data</th><th>Tamanho</th><th></th></tr></thead><tbody>${data.map(x=>`<tr><td>v${x.version} ${x.is_current?'<b>(atual)</b>':''}</td><td>${esc(x.file_name)}</td><td>${fmtDate(x.created_at)}</td><td>${fileSize(x.file_size)}</td><td><button class="btn" onclick="downloadHistory('${type}',${x.id})">Baixar</button>${x.is_current?'':' <button class="btn danger" onclick="deleteVersion(\'${type}\',${x.id})">Excluir</button>'}</td></tr>`).join('')}</tbody></table></div></details>`:'<div class="small">Sem histórico.</div>';
+  }
+}
+async function downloadHistory(type,id){
+  const table=type==='interna'?'bfoam_interna':'bfoam_externa'; const {data,error}=await supabaseClient.from(table).select('file_name,storage_path').eq('id',id).single(); if(error){alert(error.message);return;}
+  const {data:blob,error:be}=await supabaseClient.storage.from(STORAGE_BUCKET).download(data.storage_path); if(be){alert(be.message);return;}
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=data.file_name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+async function exportPNG(){
+  if(!window.html2canvas){alert('Biblioteca de exportação não carregada.');return;}
+  const target=document.getElementById('appContent'); if(!target||target.classList.contains('hidden')){alert('Carregue as duas planilhas para exportar a viabilidade.');return;}
+  const old=document.querySelector('.report-toolbar'); old?.classList.add('hidden');
+  try{const canvas=await html2canvas(target,{backgroundColor:'#f4f7fb',scale:2,useCORS:true}); const a=document.createElement('a'); a.download=`Bfoam-Viabilidade-${new Date().toISOString().slice(0,10)}.png`; a.href=canvas.toDataURL('image/png'); a.click();}finally{old?.classList.remove('hidden');}
+}
+
+// Eventos
+const loginBtnEl=document.getElementById('loginBtn'), loginPasswordEl=document.getElementById('loginPassword'), logoutBtnEl=document.getElementById('logoutBtn');
+const adminUploadIntEl=document.getElementById('adminUploadInt'), adminUploadExtEl=document.getElementById('adminUploadExt');
+const adminDownloadIntEl=document.getElementById('adminDownloadInt'), adminDownloadExtEl=document.getElementById('adminDownloadExt');
+const downloadIntTopEl=document.getElementById('downloadIntTop'), downloadExtTopEl=document.getElementById('downloadExtTop'), pngTopEl=document.getElementById('pngTop');
+const downloadCurrentExcelEl=document.getElementById('downloadCurrentExcel'), exportPngEl=document.getElementById('exportPng');
+const fileInternaEl=document.getElementById('fileInterna'), fileExternaEl=document.getElementById('fileExterna');
+loginBtnEl.onclick=login; loginPasswordEl.addEventListener('keydown',e=>{if(e.key==='Enter')login();}); logoutBtnEl.onclick=logout;
+adminUploadIntEl.onclick=()=>fileInternaEl.click(); adminUploadExtEl.onclick=()=>fileExternaEl.click();
+fileInternaEl.onchange=e=>uploadOriginal('interna',e.target.files[0]).catch(err=>alert('Erro ao carregar Interna: '+err.message));
+fileExternaEl.onchange=e=>uploadOriginal('externa',e.target.files[0]).catch(err=>alert('Erro ao carregar Externa: '+err.message));
+adminDownloadIntEl.onclick=()=>downloadOriginal('interna'); adminDownloadExtEl.onclick=()=>downloadOriginal('externa');
+downloadIntTopEl.onclick=()=>downloadOriginal('interna'); downloadExtTopEl.onclick=()=>downloadOriginal('externa');
+downloadCurrentExcelEl.onclick=()=>{if(mode==='int')downloadOriginal('interna');else if(mode==='ext')downloadOriginal('externa');else alert('No comparativo, escolha Interna ou Externa para baixar o Excel original correspondente.');};
+exportPngEl.onclick=exportPNG; pngTopEl.onclick=exportPNG;
+
+// Se já houver sessão Supabase, entra sem pedir senha novamente.
+(async()=>{const {data}=await supabaseClient.auth.getSession(); if(data.session){currentUser=data.session.user;currentRole=await getRole(currentUser);await enterApp();}})();
+</script></body></html>
