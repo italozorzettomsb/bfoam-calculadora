@@ -177,6 +177,79 @@ let currentUser = null, currentRole = null;
 let FILES = { interna:null, externa:null };
 let EXTERNA = null, INTERNA = null;
 
+/* ========== LEITURA DAS PLANILHAS (.xlsx) — SheetJS ==========
+   Lê os mesmos endereços de célula das planilhas rev00 F-PJ-028. */
+function cellNum(wb, sheet, addr, fallback){
+  const ws = wb.Sheets[sheet];
+  if(!ws) return fallback!==undefined?fallback:0;
+  const c = ws[addr];
+  const v = c ? c.v : undefined;
+  return (typeof v === "number" && isFinite(v)) ? v : (fallback!==undefined?fallback:0);
+}
+function parseWorkbook(wb, label){
+  const unitCost = cellNum(wb,'Sumário de Custo Ideal','J4');
+  const capexInicial = cellNum(wb,'CAPEX','I34');
+  const cols=['C','D','E','F','G','H','I','J','K','L','M','N','O'];
+  const processes=[];
+  cols.forEach(col=>{
+    const ws = wb.Sheets['Breakdown Processos e MOD'];
+    if(!ws) return;
+    const mod = ws[col+'6'] ? ws[col+'6'].v : undefined;
+    const cap = ws[col+'22'] ? ws[col+'22'].v : undefined;
+    const desc = ws[col+'3'] ? ws[col+'3'].v : '';
+    if(typeof mod==='number' && mod>0 && typeof cap==='number' && isFinite(cap) && cap>0){
+      processes.push({ nome: desc || ('Processo '+col), mod, cap });
+    }
+  });
+  const price = cellNum(wb,'Receita','D19',20);
+  const qty1 = cellNum(wb,'Receita','D12',0);
+  const growth = cellNum(wb,'Receita','E13',0);
+  const wacc = cellNum(wb,'EV','C10',0.20475);
+  const g = cellNum(wb,'EV','C11',0);
+  const devolucaoRate = cellNum(wb,'EV','C18',0);
+  const ipi = cellNum(wb,'Impostos','C16',0);
+  const icms = cellNum(wb,'Impostos','C17',0);
+  const pis = cellNum(wb,'Impostos','C18',0);
+  const cofins = cellNum(wb,'Impostos','C19',0);
+  const irRate = cellNum(wb,'Impostos','C22',0);
+  const csllRate = cellNum(wb,'Impostos','C23',0);
+  const importUnit = cellNum(wb,'OPEX','C17',0);
+  const desembaracoUnit = cellNum(wb,'OPEX','C18',0);
+  const comissao = cellNum(wb,'OPEX','C19',0);
+  const frete = cellNum(wb,'OPEX','C20',0);
+  const embalagem = cellNum(wb,'OPEX','C21',0);
+  const royalties = cellNum(wb,'OPEX','C22',0);
+  const descontos = cellNum(wb,'OPEX','C23',0);
+  const salarioBase = cellNum(wb,'OPEX','D28',1800);
+  const reajuste = cellNum(wb,'OPEX','D29',0.06);
+  const mesesVenda = cellNum(wb,'OPEX','D32',12);
+  const diasRecebimento = cellNum(wb,'NCG','D26',90);
+  const diasEstoque = cellNum(wb,'NCG','D27',60);
+  const diasPagamento = cellNum(wb,'NCG','D28',0);
+  return {
+    label, unitCost, capexInicial, processes, salarioBase, reajuste,
+    inssRate:0.268, fgtsRate:0.08, mesesVenda, devolucaoRate,
+    taxRates: { ipi, icms, pis, cofins }, irRate, csllRate,
+    opexVar: { importUnit, desembaracoUnit, comissao, frete, embalagem, royalties, descontos },
+    wacc, g, diasRecebimento, diasEstoque, diasPagamento,
+    defaults: { price, qty1, growth }
+  };
+}
+function readWorkbookFile(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      try{
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, {type:"array"});
+        resolve(wb);
+      }catch(err){ reject(err); }
+    };
+    reader.onerror = ()=>reject(new Error("Falha ao ler o arquivo"));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 function fmtDate(v){return v?new Date(v).toLocaleString('pt-BR'):'';}
 function fileSize(n){if(!n)return ''; const u=['B','KB','MB','GB']; let i=0,x=n; while(x>=1024&&i<u.length-1){x/=1024;i++;} return `${x.toFixed(i?1:0)} ${u[i]}`;}
