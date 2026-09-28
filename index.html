@@ -70,6 +70,7 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
       <button id="togglePassword" class="toggle-password" type="button" aria-label="Mostrar senha" title="Mostrar senha">◉</button>
     </div>
     <div id="loginErr" class="auth-err"></div>
+    <div id="loginDiag" style="display:none;margin:8px 0 10px;padding:9px 10px;border:1px solid #f0b8b8;border-radius:8px;background:#fff5f5;color:#7a1f1f;font-size:10px;line-height:1.55;word-break:break-word"></div>
     <button id="loginBtn">Entrar</button>
   </div>
 </div>
@@ -598,34 +599,61 @@ async function getRole(user){
   if(!error && p?.role) return p.role;
   return user.email===ADMIN_EMAIL?'admin':'user';
 }
+function formatAuthError(label, error){
+  if(!error) return '';
+  return `${label}: code=${error.code||'—'} | status=${error.status||'—'} | ${error.message||'Erro sem mensagem'}`;
+}
+
 async function login(){
   const pw=document.getElementById('loginPassword').value;
-  const errEl=document.getElementById('loginErr'); errEl.textContent='';
+  const errEl=document.getElementById('loginErr');
+  errEl.textContent='';
   if(!pw){errEl.textContent='Digite sua senha.';return;}
   const btn=document.getElementById('loginBtn');
   btn.disabled=true; btn.textContent='Entrando…';
   try{
-    // O aplicativo usa o Auth do Supabase. Tentamos primeiro o administrador e,
-    // se a senha não corresponder, tentamos o usuário comum.
-    let result=await supabaseClient.auth.signInWithPassword({email:ADMIN_EMAIL,password:pw});
-    if(result.error){
-      await supabaseClient.auth.signOut();
-      result=await supabaseClient.auth.signInWithPassword({email:USER_EMAIL,password:pw});
-    }
-    if(result.error){
-      const msg=(result.error.message||'').toLowerCase();
-      if(msg.includes('email not confirmed')) errEl.textContent='Este usuário ainda não está confirmado no Supabase.';
-      else if(msg.includes('invalid login credentials')) errEl.textContent='Senha incorreta.';
-      else errEl.textContent='Não foi possível entrar. Verifique o usuário e a senha no Supabase.';
-      console.error('Erro de login Supabase:',result.error);
+    // Diagnóstico temporário: tentamos os dois usuários e mostramos o erro REAL retornado pelo Auth.
+    let adminResult=await supabaseClient.auth.signInWithPassword({email:ADMIN_EMAIL,password:pw});
+    if(!adminResult.error){
+      currentUser=adminResult.data.user;
+      currentRole=await getRole(currentUser);
+      await enterApp();
       return;
     }
-    currentUser=result.data.user;
-    currentRole=await getRole(currentUser);
-    await enterApp();
+
+    await supabaseClient.auth.signOut();
+    let userResult=await supabaseClient.auth.signInWithPassword({email:USER_EMAIL,password:pw});
+    if(!userResult.error){
+      currentUser=userResult.data.user;
+      currentRole=await getRole(currentUser);
+      await enterApp();
+      return;
+    }
+
+    console.error('Supabase Auth — administrador:', adminResult.error);
+    console.error('Supabase Auth — usuário:', userResult.error);
+
+    const a=formatAuthError('Admin',adminResult.error);
+    const u=formatAuthError('Usuário',userResult.error);
+    const sameError = (adminResult.error?.code===userResult.error?.code && adminResult.error?.message===userResult.error?.message);
+
+    if(sameError){
+      errEl.textContent=`Erro Supabase: ${adminResult.error?.message||'não identificado'} [${adminResult.error?.code||'sem código'}]`;
+    }else{
+      errEl.textContent=`Falha de acesso. ${u}`;
+    }
+
+    // Mostra o diagnóstico completo abaixo da mensagem apenas nesta versão de teste.
+    const diag=document.getElementById('loginDiag');
+    if(diag){
+      diag.innerHTML=`<b>Diagnóstico</b><br>Projeto: zkqkoahdwzrjlmbjcsv<br>${esc(a)}<br>${esc(u)}`;
+      diag.style.display='block';
+    }
   }catch(e){
-    console.error(e);
-    errEl.textContent='Não foi possível conectar ao sistema de acesso.';
+    console.error('Exceção no login:',e);
+    errEl.textContent='Erro ao executar o login.';
+    const diag=document.getElementById('loginDiag');
+    if(diag){diag.textContent=`Exceção: ${e?.message||e}`;diag.style.display='block';}
   }finally{
     btn.disabled=false; btn.textContent='Entrar';
   }
