@@ -78,7 +78,6 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
 <header><div class="header-inner" style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap">
   <div class="brand">
     <h1>Bfoam — Viabilidade do Projeto</h1>
-    <p>Produção Interna x Produção Externa — dados calculados a partir das planilhas originais armazenadas no Supabase.</p>
   </div>
   <div style="text-align:right">
     <div class="top-actions">
@@ -127,7 +126,7 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--primar
 
   <div id="appContent" class="hidden report-capture">
     <div class="report-toolbar">
-      <button id="downloadCurrentExcel" class="btn">⬇ Baixar Excel original desta visão</button>
+      <button id="downloadCurrentExcel" class="btn">⬇ Baixar Excel desta simulação</button>
       <button id="exportPng" class="btn primary">▣ Exportar viabilidade em PNG</button>
     </div>
 
@@ -775,6 +774,59 @@ async function downloadOriginal(type){
   const url=URL.createObjectURL(data); const a=document.createElement('a'); a.href=url; a.download=f.file_name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   setStatus(`✓ Download concluído: ${f.file_name}`);
 }
+async function downloadSimulationExcel(type){
+  const f=FILES[type];
+  if(!f){alert('Não existe planilha cadastrada.');return;}
+
+  try{
+    setStatus('Preparando Excel da simulação…');
+
+    const {data,error}=await supabaseClient.storage.from(STORAGE_BUCKET).download(f.storage_path);
+    if(error) throw error;
+
+    const buffer=await data.arrayBuffer();
+    const wb=XLSX.read(new Uint8Array(buffer),{type:'array'});
+    const inputs=getInputs();
+
+    // Mantém o arquivo original no Supabase intacto.
+    // As alterações abaixo existem somente na cópia gerada para download.
+    const ws=wb.Sheets['Receita'];
+    if(ws){
+      ws['D19']={t:'n',v:Number(inputs.price)||0};
+      ws['D12']={t:'n',v:Number(inputs.qty1)||0};
+      ws['E13']={t:'n',v:Number(inputs.growth[0])||0};
+    }
+
+    // Registra todos os parâmetros usados pelo aplicativo, inclusive
+    // os crescimentos individuais e o coeficiente de custo.
+    const simRows=[
+      ['PARÂMETROS DE SIMULAÇÃO',''],
+      ['Parâmetro','Valor'],
+      ['Preço de venda (R$/un)',Number(inputs.price)||0],
+      ['Quantidade vendida no Ano 1 (un)',Number(inputs.qty1)||0],
+      ['Ano 2 (%)',Number(inputs.growth[0])*100],
+      ['Ano 3 (%)',Number(inputs.growth[1])*100],
+      ['Ano 4 (%)',Number(inputs.growth[2])*100],
+      ['Ano 5 (%)',Number(inputs.growth[3])*100],
+      ['Ano 6 (%)',Number(inputs.growth[4])*100],
+      ['Coeficiente de custo',Number(inputs.coef)||0]
+    ];
+    const simWs=XLSX.utils.aoa_to_sheet(simRows);
+    simWs['!cols']=[{wch:36},{wch:18}];
+    XLSX.utils.book_append_sheet(wb,simWs,'Simulação');
+
+    const baseName=(f.file_name||'Bfoam.xlsx').replace(/\.xlsx$/i,'');
+    const modeLabel=type==='interna'?'Interna':'Externa';
+    const fileName=`${baseName} - Simulação ${modeLabel}.xlsx`;
+
+    XLSX.writeFile(wb,fileName);
+    setStatus(`✓ Download concluído: ${fileName}`);
+  }catch(err){
+    console.error(err);
+    alert('Erro ao gerar o Excel da simulação: '+(err.message||err));
+    setStatus('Erro ao gerar o Excel da simulação.');
+  }
+}
 async function deleteVersion(type,id){
   if(currentRole!=='admin') return;
   if(!confirm('Excluir esta versão do histórico? O arquivo original também será removido do Storage.')) return;
@@ -831,7 +883,7 @@ fileInternaEl.onchange=e=>uploadOriginal('interna',e.target.files[0]).catch(err=
 fileExternaEl.onchange=e=>uploadOriginal('externa',e.target.files[0]).catch(err=>alert('Erro ao carregar Externa: '+err.message));
 adminDownloadIntEl.onclick=()=>downloadOriginal('interna'); adminDownloadExtEl.onclick=()=>downloadOriginal('externa');
 downloadIntTopEl.onclick=()=>downloadOriginal('interna'); downloadExtTopEl.onclick=()=>downloadOriginal('externa');
-downloadCurrentExcelEl.onclick=()=>{if(mode==='int')downloadOriginal('interna');else if(mode==='ext')downloadOriginal('externa');else alert('No comparativo, escolha Interna ou Externa para baixar o Excel original correspondente.');};
+downloadCurrentExcelEl.onclick=()=>{if(mode==='int')downloadSimulationExcel('interna');else if(mode==='ext')downloadSimulationExcel('externa');else alert('No comparativo, escolha Interna ou Externa para baixar o Excel da simulação correspondente.');};
 exportPngEl.onclick=exportPNG; pngTopEl.onclick=exportPNG;
 
 // Se já houver sessão Supabase, entra sem pedir senha novamente.
